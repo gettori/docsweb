@@ -1,0 +1,466 @@
+---
+import AgentSvg from "./AgentSvg.astro";
+import BrewCopy from "./BrewCopy.astro";
+import ToriWindow from "../../islands/ToriWindow";
+import { SITE } from "../../config";
+
+// label, agent, side and offset, top, parallax depth, starting state
+const PILLS: [string, string, string, number, number, number][] = [
+  ["claude \u00b7 webhooks", "claude", "L3", 150, 22, 0],
+  ["codex \u00b7 rate-limit", "codex", "R4", 120, 14, 1],
+  ["gemini \u00b7 search", "gemini", "L1.5", 420, 30, 2],
+  ["opencode \u00b7 dark-mode", "opencode", "R1.5", 440, 18, 1],
+  ["copilot \u00b7 infra", "copilot", "L5", 690, 12, 2],
+  ["claude \u00b7 tests", "claude", "R5", 700, 26, 0],
+];
+const WORDS = [
+  ["is working.", "work"],
+  ["needs you.", "need"],
+  ["is done.", "done"],
+];
+---
+
+<header class="hero" data-hero>
+  <canvas class="aurora" data-aurora></canvas>
+  <div class="fade"></div>
+  <div class="grain"></div>
+  <div class="dots"></div>
+
+  <div class="pills" aria-hidden="true">
+    {
+      PILLS.map(([label, agent, pos, top, depth, st], i) => (
+        <div
+          class="pill-wrap"
+          style={`${pos[0] === "L" ? "left" : "right"}:${pos.slice(1)}%;top:${top}px;--d:${depth}`}
+        >
+          <div class="pill" data-pill data-st={st} style={`animation-duration:${5 + i * 0.7}s;animation-delay:-${i * 1.3}s`}>
+            <AgentSvg agent={agent} size={14} class={`mark mark-${agent}`} />
+            {label}
+            <span class="dot">
+              <i />
+              <i />
+            </span>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+
+  <a href="/docs/" class="chip rise">
+    <span class="new">New</span>Autopilot: issues in, pull requests out<span class="arrow">-&gt;</span>
+  </a>
+
+  <h1 class="rise" style="animation-delay:.1s">
+    <span class="line">Run every agent.</span>
+    <span class="line quiet">Know which one</span>
+    <span class="words" data-words>
+      {WORDS.map(([w, k], i) => <span class:list={["word", "accent-word", k, i === 0 && "on"]}>{w}</span>)}
+    </span>
+  </h1>
+
+  <p class="sub rise" style="animation-delay:.2s">
+    A Mac app that runs Claude Code, Codex, Gemini and the rest of your agents side by side, and taps you on the shoulder only when one needs you.
+  </p>
+
+  <div class="ctas rise" style="animation-delay:.3s">
+    <a href={SITE.download} class="primary">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
+        ><path
+          d="M16.4 12.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9-1.7 0-3.3 1-4.2 2.6-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8 1.6 0 2 .8 3.4.8 1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9-.1 0-2.7-1-2.7-4.1zM13.9 5c.7-.9 1.2-2 1-3.2-1 0-2.3.7-3 1.6-.7.8-1.2 2-1.1 3.1 1.2.1 2.3-.6 3.1-1.5z"
+        ></path></svg
+      >Download for macOS
+    </a>
+    <BrewCopy />
+  </div>
+  <div class="meta">
+    <span>{SITE.openSource ? "Free and open source" : "Free, Apache-2.0"}</span><span>&middot;</span><span
+      >Apple Silicon and Intel</span
+    ><span>&middot;</span><span>No telemetry</span>
+  </div>
+
+  <div class="win-wrap" data-hero-win>
+    <div class="halo"></div>
+    <div class="tilt">
+      <ToriWindow client:only="solid-js" mode="loop" maxScale={1} />
+      <div class="gloss"></div>
+    </div>
+  </div>
+</header>
+
+<style>
+  .hero {
+    position: relative;
+    isolation: isolate;
+    min-height: 100vh;
+    padding: clamp(120px, 16vh, 170px) var(--pad-x) 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .aurora {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    filter: blur(40px) saturate(1.2);
+    opacity: 0.9;
+  }
+  :global([data-theme="light"]) .aurora {
+    opacity: 0.55;
+  }
+  .fade {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(80% 60% at 50% 110%, var(--page) 30%, transparent 70%),
+      linear-gradient(180deg, transparent 60%, var(--page));
+  }
+  .grain {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    opacity: 0.22;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .dots {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: radial-gradient(light-dark(rgba(20, 22, 30, 0.09), rgba(255, 255, 255, 0.07)) 1px, transparent 1px);
+    background-size: 28px 28px;
+    mask-image: radial-gradient(60% 50% at 50% 35%, #000, transparent);
+  }
+
+  .pills {
+    display: none;
+  }
+  @media (min-width: 1340px) {
+    .pills {
+      display: block;
+    }
+  }
+  .pill-wrap {
+    position: absolute;
+    z-index: 1;
+    pointer-events: none;
+    transform: translate(calc(var(--mx, 0) * var(--d) * 1px), calc(var(--my, 0) * var(--d) * 1px));
+    transition: transform 0.6s var(--ease);
+  }
+  .pill {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    height: 40px;
+    padding: 0 14px 0 12px;
+    border-radius: 999px;
+    background: var(--float);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--line);
+    box-shadow: 0 12px 40px var(--shadow);
+    font-size: 13.5px;
+    color: var(--soft);
+    white-space: nowrap;
+    animation: v-drift 6s ease-in-out infinite;
+    transition: border-color 0.6s, box-shadow 0.6s;
+    --c: var(--work);
+  }
+  .pill[data-st="1"] {
+    --c: var(--need);
+    border-color: rgba(251, 113, 133, 0.5);
+    box-shadow: 0 12px 40px var(--shadow), 0 0 30px rgba(251, 113, 133, 0.45);
+  }
+  .pill[data-st="2"] {
+    --c: var(--done);
+  }
+  .mark {
+    color: var(--text);
+  }
+  .mark-claude {
+    color: #d97757;
+  }
+  .mark-gemini {
+    color: #8e75b2;
+  }
+  .dot {
+    position: relative;
+    width: 8px;
+    height: 8px;
+    margin-left: 4px;
+  }
+  .dot i {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--c);
+    transition: background 0.6s;
+  }
+  .dot i + i {
+    animation: v-ping 1.8s ease-out infinite;
+  }
+
+  .rise {
+    animation: v-rise 1s var(--ease) both;
+  }
+  .chip {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 34px;
+    padding: 0 14px 0 8px;
+    border-radius: 999px;
+    background: var(--glass);
+    border: 1px solid var(--hair);
+    font-size: 13px;
+    color: var(--soft);
+  }
+  .chip:hover {
+    color: var(--text);
+    border-color: var(--line);
+  }
+  .new {
+    display: flex;
+    align-items: center;
+    height: 22px;
+    padding: 0 8px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: var(--on-accent);
+    font-weight: 600;
+    font-size: 11.5px;
+  }
+  .arrow {
+    color: var(--faint);
+    font-family: var(--mono);
+  }
+  h1 {
+    position: relative;
+    z-index: 2;
+    margin: 28px 0 0;
+    font-size: clamp(46px, 8.4vw, 128px);
+    line-height: 0.95;
+    letter-spacing: -0.055em;
+    font-weight: 700;
+    color: var(--strong);
+  }
+  .line {
+    display: block;
+  }
+  .quiet {
+    color: light-dark(#8a8f9b, #aeb4c2);
+  }
+  .words {
+    display: inline-grid;
+    margin-top: 0.04em;
+  }
+  .word {
+    grid-area: 1 / 1;
+    padding: 0 0.08em 0.08em;
+    opacity: 0;
+    filter: blur(12px);
+    transform: translateY(0.35em);
+    transition: all 0.8s var(--ease);
+  }
+  .word.on {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+  .word.gone {
+    transform: translateY(-0.35em);
+  }
+  .word.work {
+    color: var(--work-hi);
+    text-shadow: 0 0 60px rgba(192, 132, 252, 0.6);
+  }
+  .word.need {
+    color: var(--need-hi);
+    text-shadow: 0 0 60px rgba(251, 113, 133, 0.7);
+  }
+  .word.done {
+    color: var(--done-hi);
+    text-shadow: 0 0 60px rgba(45, 212, 191, 0.6);
+  }
+  .sub {
+    position: relative;
+    z-index: 2;
+    margin: 26px 0 0;
+    max-width: 38ch;
+    font-size: clamp(17px, 1.5vw, 20px);
+    line-height: 1.5;
+    color: var(--muted);
+    text-wrap: balance;
+  }
+  .ctas {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 34px;
+    max-width: 100%;
+  }
+  .primary {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 52px;
+    padding: 0 22px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #f8dfb8, #e2b378);
+    color: var(--on-accent);
+    font-weight: 600;
+    font-size: 15.5px;
+    box-shadow:
+      0 10px 40px rgba(217, 164, 104, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    transition: transform 0.2s var(--ease), box-shadow 0.2s;
+  }
+  .primary:hover {
+    color: var(--on-accent);
+    transform: translateY(-1px);
+    box-shadow:
+      0 14px 50px rgba(217, 164, 104, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  }
+  .meta {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 20px;
+    font-size: 12.5px;
+    color: var(--faint);
+  }
+
+  .win-wrap {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 1200px;
+    margin-top: clamp(56px, 8vw, 96px);
+    perspective: 2000px;
+  }
+  .halo {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    top: -4%;
+    height: 70%;
+    border-radius: 50%;
+    background: conic-gradient(from 180deg, #c084fc, #fb7185, #d9a468, #2dd4bf, #c084fc);
+    filter: blur(90px);
+    opacity: calc(0.25 + var(--hp, 0) * 0.3);
+    animation: v-spin 18s linear infinite;
+  }
+  .tilt {
+    position: relative;
+    aspect-ratio: 1200 / 740;
+    transform-origin: 50% 0;
+    transform: rotateX(calc((1 - var(--hp, 0)) * 26deg)) scale(calc(0.86 + var(--hp, 0) * 0.14))
+      translateY(calc((1 - var(--hp, 0)) * -20px));
+    border-radius: 14px;
+    box-shadow:
+      0 60px 160px light-dark(rgba(40, 36, 70, 0.26), rgba(0, 0, 0, 0.7)),
+      0 0 0 1px var(--hair);
+    will-change: transform;
+  }
+  .gloss {
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    pointer-events: none;
+    background: linear-gradient(115deg, rgba(255, 255, 255, 0.08), transparent 30%, transparent 70%, rgba(255, 255, 255, 0.03));
+  }
+</style>
+
+<script>
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const hero = document.querySelector<HTMLElement>("[data-hero]")!;
+  const root = document.documentElement;
+
+  // Aurora: five soft blobs at a sixth of the resolution, blurred by CSS.
+  const cv = document.querySelector<HTMLCanvasElement>("[data-aurora]")!;
+  const ctx = cv.getContext("2d")!;
+  const blobs: [string, number, number, number][] = [
+    ["217,164,104", 0.3, 0.35, 0.9],
+    ["192,132,252", 0.7, 0.3, 1.1],
+    ["251,113,133", 0.55, 0.62, 0.7],
+    ["45,212,191", 0.2, 0.7, 0.8],
+    ["192,132,252", 0.85, 0.75, 0.6],
+  ];
+  const m = { x: 0.5, y: 0.4 };
+  const sm = { x: 0.5, y: 0.4 };
+  let heroVisible = true;
+  new IntersectionObserver((e) => (heroVisible = e[0].isIntersecting)).observe(hero);
+  const draw = (ts: number) => {
+    const w = (cv.clientWidth / 6) | 0;
+    const h = (cv.clientHeight / 6) | 0;
+    if (cv.width !== w || cv.height !== h) {
+      cv.width = w;
+      cv.height = h;
+    }
+    if (heroVisible) {
+      sm.x += (m.x - sm.x) * 0.04;
+      sm.y += (m.y - sm.y) * 0.04;
+      const t = (reduced ? 0 : ts) / 1000;
+      ctx.clearRect(0, 0, w, h);
+      ctx.globalCompositeOperation = "lighter";
+      blobs.forEach((b, i) => {
+        const x = (b[1] + Math.sin(t * 0.13 * b[3] + i * 1.7) * 0.12 + (sm.x - 0.5) * 0.12 * (i % 2 ? 1 : -1)) * w;
+        const y = (b[2] + Math.cos(t * 0.11 * b[3] + i) * 0.1 + (sm.y - 0.5) * 0.1) * h * 0.8;
+        const rad = Math.max(w, h) * (0.28 + 0.05 * Math.sin(t * 0.2 + i));
+        const g = ctx.createRadialGradient(x, y, 0, x, y, rad);
+        g.addColorStop(0, `rgba(${b[0]},.34)`);
+        g.addColorStop(1, `rgba(${b[0]},0)`);
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, w, h);
+      });
+    }
+    if (!reduced) requestAnimationFrame(draw);
+  };
+  requestAnimationFrame(draw);
+
+  hero.addEventListener("mousemove", (ev) => {
+    const r = hero.getBoundingClientRect();
+    m.x = (ev.clientX - r.left) / r.width;
+    m.y = (ev.clientY - r.top) / Math.min(r.height, innerHeight);
+    root.style.setProperty("--mx", ((m.x - 0.5) * 2).toFixed(3));
+    root.style.setProperty("--my", ((m.y - 0.5) * 2).toFixed(3));
+  });
+
+  // The rotating word and the pills share one 2.6s beat, like the app's status marks.
+  if (!reduced) {
+    const words = [...document.querySelectorAll<HTMLElement>("[data-words] .word")];
+    const pills = [...document.querySelectorAll<HTMLElement>("[data-pill]")];
+    let tick = 0;
+    setInterval(() => {
+      if (document.hidden || !heroVisible) return;
+      tick++;
+      const on = tick % 3;
+      words.forEach((w, i) => {
+        w.classList.toggle("on", i === on);
+        w.classList.toggle("gone", i === (on + 2) % 3);
+      });
+      pills.forEach((p) => (p.dataset.st = String((Number(p.dataset.st) + 1) % 3)));
+    }, 2600);
+  }
+
+  const win = document.querySelector<HTMLElement>("[data-hero-win]")!;
+  const onScroll = () => {
+    const top = win.getBoundingClientRect().top;
+    const hp = reduced ? 1 : Math.max(0, Math.min(1, 1 - (top - 90) / (innerHeight * 0.6)));
+    root.style.setProperty("--hp", hp.toFixed(3));
+  };
+  addEventListener("scroll", onScroll, { passive: true });
+  addEventListener("resize", onScroll);
+  onScroll();
+</script>

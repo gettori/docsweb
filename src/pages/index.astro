@@ -1,0 +1,41 @@
+---
+import Base from "../components/home/Base.astro";
+import Nav from "../components/home/Nav.astro";
+import Hero from "../components/home/Hero.astro";
+import Marquee from "../components/home/Marquee.astro";
+import Scatter from "../components/home/Scatter.astro";
+import Bento from "../components/home/Bento.astro";
+import Closing from "../components/home/Closing.astro";
+import Footer from "../components/home/Footer.astro";
+import SixPlaces from "../islands/SixPlaces";
+import Story from "../islands/Story";
+import CaptainGame from "../islands/CaptainGame";
+---
+
+<Base>
+  <Nav />
+  <main>
+    <Hero />
+    <Marquee />
+    <Scatter />
+    <section class="section">
+      <SixPlaces client:visible />
+    </section>
+    <div class="story-slot" data-story>
+      <Story client:only="solid-js" />
+    </div>
+    <section class="section">
+      <CaptainGame client:visible />
+    </section>
+    <Bento />
+    <Closing />
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .story-slot {
+    position: relative;
+    height: 440vh;
+  }
+</style>

@@ -1,0 +1,21 @@
+---
+import { AGENT_PATHS } from "../../app/agentPaths";
+
+interface Props {
+  agent: string;
+  size?: number;
+  class?: string;
+}
+const { agent, size = 16, class: cls } = Astro.props;
+---
+
+<svg
+  viewBox={agent === "codex" ? "3 3 18 18" : "0 0 24 24"}
+  width={size}
+  height={size}
+  fill="currentColor"
+  aria-hidden="true"
+  class={cls}
+>
+  <path d={AGENT_PATHS[agent]} />
+</svg>

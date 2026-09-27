@@ -1,0 +1,92 @@
+---
+import { SITE } from "../../config";
+
+interface Props {
+  tone?: "glass" | "night";
+}
+const { tone = "glass" } = Astro.props;
+---
+
+<div class:list={["brew", tone]}>
+  <span class="dollar">$</span>
+  <span class="cmd">{SITE.brew}</span>
+  <button type="button" data-copy={SITE.brew}>Copy</button>
+</div>
+
+<style>
+  .brew {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 52px;
+    max-width: 100%;
+    padding: 0 8px 0 20px;
+    border-radius: 999px;
+    background: var(--glass);
+    border: 1px solid var(--line);
+    backdrop-filter: blur(10px);
+    font-family: var(--mono);
+    font-size: 13.5px;
+    color: var(--soft);
+    overflow: hidden;
+  }
+  .brew.night {
+    color-scheme: dark;
+    height: 54px;
+    background: rgba(10, 8, 24, 0.45);
+    border-color: rgba(216, 180, 254, 0.22);
+    color: #f5efff;
+  }
+  .dollar {
+    color: var(--faint);
+  }
+  .night .dollar {
+    color: #cbc3e3;
+  }
+  .cmd {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  button {
+    flex: none;
+    height: 38px;
+    padding: 0 14px;
+    border: none;
+    border-radius: 999px;
+    background: var(--glass-hi);
+    color: var(--text);
+    font: 500 13px var(--sans);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  button:hover {
+    background: light-dark(rgba(20, 22, 30, 0.13), rgba(255, 255, 255, 0.14));
+  }
+  .night button {
+    height: 40px;
+    background: rgba(216, 180, 254, 0.14);
+  }
+  :global([data-theme="light"]) .brew.night {
+    color-scheme: light;
+    background: var(--glass);
+    border-color: var(--line);
+    color: var(--soft);
+  }
+  :global([data-theme="light"]) .night .dollar {
+    color: var(--faint);
+  }
+  :global([data-theme="light"]) .night button {
+    background: var(--glass-hi);
+  }
+</style>
+
+<script>
+  for (const btn of document.querySelectorAll<HTMLButtonElement>("button[data-copy]")) {
+    btn.addEventListener("click", () => {
+      navigator.clipboard?.writeText(btn.dataset.copy ?? "").catch(() => {});
+      btn.textContent = "Copied";
+      setTimeout(() => (btn.textContent = "Copy"), 1600);
+    });
+  }
+</script>

@@ -1,0 +1,813 @@
+---
+import AgentSvg from "./AgentSvg.astro";
+import { SITE } from "../../config";
+
+const ORBIT = ["claude", "codex", "gemini", "opencode", "copilot", "kimi", "pi"];
+
+// Real `tori` syntax and output (src-tauri/src/cli.rs): full session ids, the
+// seven column table, `ask` printing only the answer, `spawn` printing the id.
+const CLI: [string, string, number][] = [
+  ["$ tori sessions --live", "var(--text)", 0],
+  ["ID                                    AGENT   ACCOUNT  STATE      BRANCH          FOLDER                 TITLE", "var(--faint)", 0.5],
+  ["7c1e9a2f-4b0d-4e2a-9f61-3d8c2b7a5e14  claude  work     needs you  feat/webhooks   ~/work/api-webhooks    Sign webhook payloads", "var(--need-hi)", 0.7],
+  ["d4b80c13-9e7f-4a55-8c02-61f0e3a9b7d2  codex   default  working    fix/rate-limit  ~/work/api-rate-limit  Cap the rate limiter", "var(--work-hi)", 0.9],
+  ["a92f6e07-3c1b-47d8-b5e6-0f4d9a2c8e31  gemini  default  idle       feat/search     ~/work/web-search      Search results page", "var(--done-hi)", 1.1],
+  ['$ tori ask "Deploy to staging?"', "var(--text)", 2.4],
+  ["yes", "var(--done-hi)", 4.2],
+  ['$ tori spawn --agent codex --new-worktree fix/retry --prompt "retry 5xx deliveries"', "var(--text)", 5.4],
+  ["0f3b7d5e-8c2a-4b1e-9d6f-2a7c4e1b9f30", "var(--work-hi)", 6.4],
+  ['$ tori steer 0f3b7d5e-8c2a-4b1e-9d6f-2a7c4e1b9f30 "also cover 429s"', "var(--text)", 7.4],
+  ["steer: 0f3b7d5e-8c2a-4b1e-9d6f-2a7c4e1b9f30", "var(--faint)", 8.2],
+];
+---
+
+<section class="section">
+  <div class="section-inner">
+    <h2 class="h2 head">Everything a crew <span class="accent-word gold">needs.</span></h2>
+    <div class="grid">
+      <div class="card orbit-card" data-spot style="--spot:217,164,104">
+        <div class="text">
+          <div class="title">Bring your own agent</div>
+          <div class="body">
+            Claude, Codex, OpenCode, Gemini, Copilot, Kimi and Pi come bundled. Anything that speaks ACP is a four line TOML file, and any other CLI runs in a terminal tab with the same status dot.
+          </div>
+        </div>
+        <div class="orbit">
+          <div class="ring"></div>
+          <div class="core"></div>
+          <img src="/app-icon.png" alt="" class="sun" />
+          <div class="spin">
+            {
+              ORBIT.map((a, i) => (
+                <div class="arm" style={`transform:rotate(${Math.round((i * 360) / 7)}deg) translateX(110px)`}>
+                  <div style={`transform:rotate(-${Math.round((i * 360) / 7)}deg)`}>
+                    <div class={`planet p-${a}`}>
+                      <AgentSvg agent={a} size={18} />
+                    </div>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="card steer-card" data-spot style="--spot:192,132,252">
+        <div class="title">Steer mid-turn</div>
+        <div class="body">Type while it works. The message lands at the agent's next step instead of waiting for the turn to end.</div>
+        <div class="steer">
+          <div class="steer-bubble"><span>Steer</span>also cover the retry path</div>
+          <div class="steer-box">
+            <div class="steer-status"><AgentSvg agent="claude" size={12} class="breathe" />Working 38s</div>
+            <div class="steer-line">
+              <span class="typed">also cover the retry path</span><span class="caret"></span>
+            </div>
+            <div class="steer-hint">Steer this turn, picked up in 1.5-5.4s</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card phone-card" data-spot style="--spot:251,113,133">
+        <div class="title">In your pocket</div>
+        <div class="body">Pair the phone app with a QR code, over your own network or Tailscale. Answer, steer or stop a turn from anywhere.</div>
+        <div class="stores">
+          <a href={SITE.android} class="store">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.4395 5.5586c-.675 1.1664-1.352 2.3318-2.0274 3.498-.0366-.0155-.0742-.0286-.1113-.043-1.8249-.6957-3.484-.8-4.42-.787-1.8551.0185-3.3544.4643-4.2597.8203-.084-.1494-1.7526-3.021-2.0215-3.4864a1.1451 1.1451 0 0 0-.1406-.1914c-.3312-.364-.9054-.4859-1.379-.203-.475.282-.7136.9361-.3886 1.5019 1.9466 3.3696-.0966-.2158 1.9473 3.3593.0172.031-.4946.2642-1.3926 1.0177C2.8987 12.176.452 14.772 0 18.9902h24c-.119-1.1108-.3686-2.099-.7461-3.0683-.7438-1.9118-1.8435-3.2928-2.7402-4.1836a12.1048 12.1048 0 0 0-2.1309-1.6875c.6594-1.122 1.312-2.2559 1.9649-3.3848.2077-.3615.1886-.7956-.0079-1.1191a1.1001 1.1001 0 0 0-.8515-.5332c-.5225-.0536-.9392.3128-1.0488.5449zm-.0391 8.461c.3944.5926.324 1.3306-.1563 1.6503-.4799.3197-1.188.0985-1.582-.4941-.3944-.5927-.324-1.3307.1563-1.6504.4727-.315 1.1812-.1086 1.582.4941zM7.207 13.5273c.4803.3197.5506 1.0577.1563 1.6504-.394.5926-1.1038.8138-1.584.4941-.48-.3197-.5503-1.0577-.1563-1.6504.4008-.6021 1.1087-.8106 1.584-.4941z"></path></svg>
+            <span><small>Download the APK</small>Android</span>
+          </a>
+        </div>
+        <div class="phone">
+          <div class="island"></div>
+          <div class="p-head">
+            <span class="p-back">&lsaquo;</span>
+            <div>
+              <b>Sign webhook payloads</b>
+              <small><i></i>Needs you &middot; api &rsaquo; feat/webhooks</small>
+            </div>
+          </div>
+          <div class="p-user">run the webhook tests</div>
+          <div class="p-text">Signed payloads with the endpoint secret. Running the webhook tests now.</div>
+          <div class="p-slot">
+            <div class="p-pending">
+              <b>Allow Bash?</b>
+              <code>pnpm test webhooks</code>
+              <div class="p-btns"><span>Deny</span><span class="p-allow">Allow once<i class="tap"></i></span></div>
+            </div>
+            <div class="p-done">
+              <svg width="26" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                ><path d="M4 12 9 17 20 6"></path></svg
+              >
+              Back to work.
+            </div>
+          </div>
+          <div class="p-composer">Steer the running turn</div>
+        </div>
+      </div>
+
+      <div class="card topics-card" data-spot style="--spot:217,164,104">
+        <div class="title">One branch, many repos</div>
+        <div class="body">A Topic is one branch with a worktree in each repo you pick. Files, search and changes cover all of them.</div>
+        <svg viewBox="0 0 300 150" class="topics" fill="none" aria-hidden="true">
+          <path d="M90 75 C150 75 150 25 214 25" class="rail"></path>
+          <path d="M90 75 L214 75" class="rail"></path>
+          <path d="M90 75 C150 75 150 125 214 125" class="rail"></path>
+          <path d="M90 75 C150 75 150 25 214 25" class="flow"></path>
+          <path d="M90 75 L214 75" class="flow"></path>
+          <path d="M90 75 C150 75 150 125 214 125" class="flow"></path>
+          <rect x="4" y="60" width="92" height="30" rx="15" class="gold-pill"></rect>
+          <text x="50" y="80" text-anchor="middle" class="gold-t">webhooks</text>
+          <rect x="214" y="12" width="70" height="26" rx="8" class="node"></rect>
+          <text x="249" y="29" text-anchor="middle" class="t">api</text>
+          <rect x="214" y="62" width="70" height="26" rx="8" class="node"></rect>
+          <text x="249" y="79" text-anchor="middle" class="t">web</text>
+          <rect x="214" y="112" width="70" height="26" rx="8" class="node"></rect>
+          <text x="249" y="129" text-anchor="middle" class="t">sdk</text>
+        </svg>
+      </div>
+
+      <div class="card cli-card" data-spot style="--spot:217,164,104">
+        <div class="cli-head">
+          <div class="title">Scriptable</div>
+          <div class="body">
+            A <code>tori</code> CLI in every shell Tori opens, plus an MCP server, so scripts and agents can drive Tori too. <code
+              >tori ask</code
+            > puts a question in the chat that called it and waits for you.
+          </div>
+        </div>
+        <div class="term">
+          <div class="term-bar"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i><span
+              >zsh &middot; api/feat/webhooks</span
+            ></div>
+          <div class="term-body">
+            {CLI.map(([t, c, d]) => <div style={`color:${c};animation-delay:${d}s`}>{t}</div>)}
+          </div>
+        </div>
+      </div>
+
+      <div class="card privacy-card" data-spot style="--spot:45,212,191">
+        <div class="title">Private by construction</div>
+        <div class="body">No telemetry. Your agent talks to its vendor on your subscription, exactly as in a terminal. Tori proxies nothing.</div>
+        <svg viewBox="0 0 300 120" class="privacy" fill="none" aria-hidden="true">
+          <path d="M66 40 L236 40" stroke-width="2" stroke-dasharray="6 10" class="flow-teal"></path>
+          <path d="M66 90 L176 90" class="dim" stroke-width="2" stroke-dasharray="3 7"></path>
+          <circle cx="196" cy="90" r="13" class="off" stroke-width="2"></circle>
+          <path d="M187 99 L205 81" class="off" stroke-width="2"></path>
+          <rect x="2" y="26" width="64" height="28" rx="8" class="node"></rect>
+          <text x="34" y="44" text-anchor="middle" class="t">agent</text>
+          <rect x="236" y="26" width="62" height="28" rx="8" class="teal-pill"></rect>
+          <text x="267" y="44" text-anchor="middle" class="teal-t">vendor</text>
+          <rect x="2" y="76" width="64" height="28" rx="8" class="gold-pill"></rect>
+          <text x="34" y="94" text-anchor="middle" class="gold-t">tori</text>
+          <text x="222" y="95" class="faint-t">nothing</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .head {
+    max-width: 14ch;
+  }
+  .gold {
+    color: var(--link);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "orbit" "steer" "phone" "topics" "cli" "privacy";
+    gap: 12px;
+    margin-top: 40px;
+  }
+  @media (min-width: 720px) {
+    .grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-areas: "orbit orbit" "steer phone" "topics phone" "cli cli" "privacy privacy";
+    }
+  }
+  @media (min-width: 1100px) {
+    .grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-areas: "orbit orbit phone" "steer topics phone" "cli cli privacy";
+    }
+  }
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 260px;
+    padding: 26px;
+    border-radius: 26px;
+    overflow: hidden;
+    background:
+      radial-gradient(420px circle at var(--x, 50%) var(--y, 50%), rgba(var(--spot), 0.11), transparent 50%),
+      var(--card);
+    border: 1px solid var(--hair);
+  }
+  .title {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+  .body {
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+  .body code {
+    font-family: var(--mono);
+    color: var(--link);
+  }
+
+  .orbit-card {
+    grid-area: orbit;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    min-height: 280px;
+  }
+  .text {
+    flex: 1 1 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .orbit {
+    position: relative;
+    flex: 1 1 240px;
+    height: 240px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ring {
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    border: 1px dashed var(--line);
+  }
+  .core {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(217, 164, 104, 0.25), transparent 70%);
+  }
+  .sun {
+    position: relative;
+    z-index: 2;
+    width: 60px;
+    height: 60px;
+    filter: drop-shadow(0 0 30px rgba(217, 164, 104, 0.5));
+  }
+  .spin {
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    animation: v-spin 26s linear infinite;
+  }
+  .arm {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 0;
+    height: 0;
+  }
+  .planet {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    margin: -20px 0 0 -20px;
+    border-radius: 12px;
+    background: var(--raised);
+    border: 1px solid var(--line);
+    box-shadow: 0 8px 20px var(--shadow);
+    color: var(--text);
+    animation: spinr 26s linear infinite;
+  }
+  @keyframes spinr {
+    to {
+      transform: rotate(-360deg);
+    }
+  }
+  .p-claude {
+    color: #d97757;
+  }
+  .p-gemini {
+    color: #8e75b2;
+  }
+
+  .steer-card {
+    grid-area: steer;
+    min-height: 280px;
+  }
+  .steer {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .steer-bubble {
+    align-self: flex-end;
+    padding: 7px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--hair);
+    background: light-dark(#ecebe7, #272628);
+    font-size: 13px;
+    animation: steerIn 7s infinite;
+  }
+  .steer-bubble span {
+    display: block;
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--work-hi);
+  }
+  @keyframes steerIn {
+    0%,
+    62% {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    68%,
+    94% {
+      opacity: 1;
+      transform: none;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+  .steer-box {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px;
+    border-radius: 16px;
+    background: light-dark(#f6f5f2, #0b0c10);
+    border: 1px solid var(--hair);
+  }
+  .steer-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--work-hi);
+  }
+  .steer-status :global(.breathe) {
+    color: #d97757;
+    animation: v-breathe 1.6s infinite;
+  }
+  .steer-line {
+    display: flex;
+    align-items: center;
+    min-height: 20px;
+    font-family: var(--mono);
+    font-size: 13px;
+  }
+  .typed {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 0;
+    animation: type 7s steps(25) infinite;
+  }
+  @keyframes type {
+    0% {
+      width: 0;
+    }
+    50%,
+    60% {
+      width: 25ch;
+    }
+    62%,
+    100% {
+      width: 0;
+    }
+  }
+  .caret {
+    width: 7px;
+    height: 15px;
+    background: #d9a468;
+    animation: blink 1s steps(1) infinite;
+  }
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
+  }
+  .steer-hint {
+    font-size: 12px;
+    color: var(--faint);
+  }
+
+  .phone-card {
+    grid-area: phone;
+  }
+  .stores {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .store {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 46px;
+    padding: 0 16px 0 12px;
+    border-radius: 12px;
+    background: var(--glass);
+    border: 1px solid var(--line);
+    color: var(--text);
+    transition: background 0.2s;
+  }
+  .store:hover {
+    background: var(--glass-hi);
+    color: var(--text);
+  }
+  .store svg {
+    width: 22px;
+    height: 22px;
+    fill: #3ddc84;
+  }
+  .store span {
+    display: flex;
+    flex-direction: column;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.15;
+  }
+  .store small {
+    font-size: 10.5px;
+    font-weight: 500;
+    color: var(--muted);
+  }
+  .phone {
+    position: relative;
+    margin: auto auto 0;
+    width: 236px;
+    height: 470px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 38px 12px 12px;
+    border-radius: 40px;
+    background: light-dark(#ffffff, #050608);
+    border: 6px solid #23262e;
+    box-shadow:
+      0 30px 60px rgba(0, 0, 0, 0.5),
+      0 0 0 1px rgba(255, 255, 255, 0.08),
+      0 0 80px rgba(251, 113, 133, 0.15);
+    overflow: hidden;
+    font-size: 12px;
+  }
+  .island {
+    position: absolute;
+    top: 11px;
+    left: 50%;
+    width: 70px;
+    height: 20px;
+    margin-left: -35px;
+    border-radius: 999px;
+    background: #000;
+  }
+  .p-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--hair);
+  }
+  .p-back {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: light-dark(#efeff1, #1b1e25);
+    color: var(--muted);
+  }
+  .p-head b {
+    display: block;
+    font-size: 12px;
+  }
+  .p-head small {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 9.5px;
+    color: var(--faint);
+  }
+  .p-head small i {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--need);
+  }
+  .p-user {
+    align-self: flex-end;
+    padding: 6px 9px;
+    border-radius: 8px;
+    border: 1px solid var(--hair);
+    background: light-dark(#ecebe7, #272628);
+    font-size: 11px;
+  }
+  .p-text {
+    font-size: 11px;
+    line-height: 1.45;
+    color: var(--soft);
+  }
+  .p-slot {
+    position: relative;
+    margin-top: auto;
+    min-height: 104px;
+  }
+  .p-pending,
+  .p-done {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 11px;
+    border-radius: 14px;
+  }
+  .p-pending {
+    background: light-dark(#fdf0f2, #2a1f26);
+    border: 1px solid rgba(251, 113, 133, 0.5);
+    animation: swapA 5s infinite;
+  }
+  .p-pending b {
+    font-size: 11.5px;
+  }
+  .p-pending code {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--muted);
+  }
+  .p-btns {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+    margin-top: auto;
+  }
+  .p-btns span {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    height: 26px;
+    padding: 0 10px;
+    border-radius: 7px;
+    background: light-dark(#ebecef, #252a34);
+    font-size: 11px;
+  }
+  .p-btns .p-allow {
+    background: #d9a468;
+    color: #4a3719;
+    font-weight: 600;
+  }
+  .tap {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 26px;
+    height: 26px;
+    margin: -13px 0 0 -13px;
+    border-radius: 50%;
+    background: #fff;
+    animation: tap 5s infinite;
+  }
+  @keyframes tap {
+    0%,
+    40% {
+      transform: scale(1);
+      opacity: 0;
+    }
+    44% {
+      transform: scale(0.6);
+      opacity: 0.9;
+    }
+    52% {
+      transform: scale(1.8);
+      opacity: 0;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+  .p-done {
+    align-items: center;
+    justify-content: center;
+    background: light-dark(#e6f6f3, #12211f);
+    border: 1px solid rgba(45, 212, 191, 0.45);
+    color: light-dark(#0f766e, #99f6e4);
+    animation: swapB 5s infinite;
+  }
+  @keyframes swapA {
+    0%,
+    45% {
+      opacity: 1;
+    }
+    50%,
+    95% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  @keyframes swapB {
+    0%,
+    45% {
+      opacity: 0;
+    }
+    50%,
+    95% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+  .p-composer {
+    padding: 10px;
+    border-radius: 12px;
+    border: 1px solid var(--hair);
+    background: light-dark(#f6f5f2, #111318);
+    color: var(--faint);
+    font-size: 11px;
+  }
+
+  .topics-card {
+    grid-area: topics;
+  }
+  .topics,
+  .privacy {
+    margin-top: auto;
+    width: 100%;
+    height: auto;
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+  .rail {
+    stroke: var(--line);
+    stroke-width: 2;
+  }
+  .flow {
+    stroke: var(--link);
+    stroke-width: 2;
+    stroke-dasharray: 6 14;
+    animation: flow 1.2s linear infinite;
+  }
+  .flow-teal {
+    stroke: var(--done);
+    animation: flow 1s linear infinite;
+  }
+  @keyframes flow {
+    to {
+      stroke-dashoffset: -40;
+    }
+  }
+  .node {
+    fill: var(--raised);
+    stroke: var(--line);
+  }
+  .t {
+    fill: var(--text);
+  }
+  .faint-t {
+    fill: var(--faint);
+  }
+  .dim {
+    stroke: var(--line);
+  }
+  .off {
+    stroke: light-dark(rgba(20, 22, 30, 0.3), rgba(255, 255, 255, 0.3));
+  }
+  .gold-pill {
+    fill: light-dark(#fbf0e0, #2a2116);
+    stroke: #d9a468;
+  }
+  .gold-t {
+    fill: light-dark(#8a5a1c, #f3d3a4);
+  }
+  .teal-pill {
+    fill: light-dark(#e3f5f2, #12211f);
+    stroke: rgba(45, 212, 191, 0.5);
+  }
+  .teal-t {
+    fill: light-dark(#0f766e, #99f6e4);
+  }
+
+  .cli-card {
+    grid-area: cli;
+  }
+  .cli-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px 20px;
+  }
+  .cli-head .body {
+    flex: 1 1 320px;
+  }
+  .term {
+    color: var(--text);
+    flex: 1;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 16px;
+    background: light-dark(#ffffff, var(--term));
+    border: 1px solid var(--hair);
+    overflow: hidden;
+  }
+  .term-bar {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    padding: 0 12px;
+    background: light-dark(#ececef, #121419);
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--faint);
+  }
+  .term-bar i {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+  }
+  .term-bar span {
+    margin-left: 8px;
+  }
+  .term-body {
+    position: relative;
+    padding: 16px 18px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.8;
+    overflow: hidden;
+    mask-image: linear-gradient(90deg, #000 88%, transparent);
+  }
+  .term-body div {
+    white-space: pre;
+    opacity: 0;
+    animation: cli 11s infinite;
+  }
+  @keyframes cli {
+    0%,
+    4% {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    8%,
+    88% {
+      opacity: 1;
+      transform: none;
+    }
+    96%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  .privacy-card {
+    grid-area: privacy;
+  }
+  .privacy {
+    font-size: 11px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .term-body div,
+    .p-pending,
+    .steer-bubble {
+      opacity: 1;
+    }
+    .typed {
+      width: auto;
+    }
+    .p-done {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  for (const el of document.querySelectorAll<HTMLElement>("[data-spot]")) {
+    el.addEventListener("mousemove", (ev) => {
+      const r = el.getBoundingClientRect();
+      el.style.setProperty("--x", `${ev.clientX - r.left}px`);
+      el.style.setProperty("--y", `${ev.clientY - r.top}px`);
+    });
+  }
+</script>

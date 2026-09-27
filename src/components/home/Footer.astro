@@ -1,0 +1,52 @@
+---
+import { SITE } from "../../config";
+---
+
+<footer class="footer">
+  <span class="brand"><img src="/app-icon.png" alt="" width="18" height="18" />Tori</span>
+  <span>macOS, Apple Silicon and Intel</span>
+  <a href={SITE.android} class="fact">Android companion</a>
+  <span>Alpha, unsigned build</span>
+  <span>Apache-2.0</span>
+  <span>No telemetry</span>
+  <span class="links">
+    <a href="/docs/">Docs</a>
+    <a href="/changelog/">Changelog</a>
+    <a href={SITE.github}>GitHub</a>
+  </span>
+</footer>
+
+<style>
+  .footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 28px;
+    padding: 26px var(--pad-x);
+    font-size: 13px;
+    color: var(--faint);
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--soft);
+  }
+  .fact {
+    color: inherit;
+  }
+  .fact:hover {
+    color: var(--text);
+  }
+  .links {
+    margin-left: auto;
+    display: flex;
+    gap: 20px;
+  }
+  .links a {
+    color: var(--muted);
+  }
+  .links a:hover {
+    color: var(--text);
+  }
+</style>

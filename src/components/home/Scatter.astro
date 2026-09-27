@@ -1,0 +1,272 @@
+---
+import SidebarTree from "../../islands/SidebarTree";
+
+// Eleven terminals, each landing on the branch row whose rollup it becomes.
+// [title, row y inside the tree panel, lines]
+const TERMS: [string, number, string[]][] = [
+  ["claude \u00b7 api/feat/webhooks", 96, ["\u23fa Update(test/sign.test.ts)", "  \u23bf Updated with 52 additions", "  Bash command", "    pnpm test webhooks", "  Do you want to proceed?", "  \u276f 1. Yes", "    2. Yes, and don't ask again"]],
+  ["zsh \u00b7 api/feat/webhooks", 96, ["$ git status", "  On branch feat/webhooks", "  2 files changed", "$ pnpm lint", "  0 problems"]],
+  ["codex \u00b7 api/fix/rate-limit", 150, ["> apply_patch src/limiter.ts", "  + if (bucket.count >= limit) {", "exec pnpm test limiter", "  18 passed", "thinking", "> read src/limiter.test.ts"]],
+  ["claude \u00b7 api", 186, ["\u23fa Reading src/webhooks/deliver.ts", "\u23fa Bash(pnpm lint)", "  \u23bf 0 problems", "\u273b Pondering\u2026", "\u23fa Update(src/webhooks/deliver.ts)"]],
+  ["gemini \u00b7 web/feat/search", 258, ["\u2726 Searching for \"useQuery\"", "  Found 14 matches", "\u2726 WriteFile src/Results.tsx", "\u2726 Shell pnpm typecheck", "  ok"]],
+  ["claude \u00b7 web/feat/search", 258, ["\u23fa Reading test/search.test.ts", "\u23fa Bash(pnpm test search)", "  \u23bf 31 passed", "\u273b Musing\u2026"]],
+  ["zsh \u00b7 web", 258, ["$ pnpm dev", "  VITE v7 ready in 412 ms", "  hmr update /src/Search.tsx", "  hmr update /src/Results.tsx"]],
+  ["opencode \u00b7 web/dark-mode", 294, ["\u2022 edit tokens.css", "\u2022 edit theme.ts", "\u2022 bash pnpm build", "  built in 3.2s", "\u2022 edit Button.tsx"]],
+  ["claude \u00b7 web/dark-mode", 294, ["\u23fa Update(src/Card.tsx)", "  \u23bf Updated with 12 additions", "\u273b Thinking\u2026"]],
+  ["copilot \u00b7 infra", 366, ["\u25cf Bump provider versions", "  aws 5.62 -> 5.70", "\u25cf Run terraform validate", "  Success!", "\u25cf Done"]],
+  ["zsh \u00b7 infra", 366, ["$ terraform plan", "  Refreshing state...", "  Plan: 0 to add, 1 to change", "$ git status", "  nothing to commit"]],
+];
+
+let seed = 5;
+const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+const PANEL_TOP = -250;
+const tiles = TERMS.map(([title, rowY, lines], i) => {
+  const x0 = Math.round(-640 + rnd() * 1000);
+  const y0 = Math.round(-330 + rnd() * 470);
+  const z0 = Math.round(-260 + rnd() * 320);
+  const r0 = +(rnd() * 26 - 13).toFixed(1);
+  const x1 = -180;
+  const y1 = PANEL_TOP + rowY - 15;
+  const tf =
+    `translate3d(calc(${x0}px + ${x1 - x0}px * var(--k)), calc(${y0}px + ${y1 - y0}px * var(--k)), calc(${z0}px * (1 - var(--k)))) ` +
+    `rotate(calc(${r0}deg * (1 - var(--k)))) rotateY(calc(${(r0 * 1.4).toFixed(1)}deg * (1 - var(--k))))`;
+  return { title, lines: [...lines, ...lines], tf, dur: 5 + (i % 5) * 1.3 };
+});
+---
+
+<section class="scatter" data-scatter>
+  <div class="stage">
+    <div class="copy">
+      <div class="swap">
+        <h2 class="a">Eleven terminals.</h2>
+        <h2 class="b">One <span class="accent-word gold">tree.</span></h2>
+      </div>
+      <div class="swap sub">
+        <p class="a">Four agents, three repos, a handful of worktrees. Which one is waiting on you?</p>
+        <p class="b">Every session rolls up to its branch, project and space. The rose mark is the one that needs you.</p>
+      </div>
+    </div>
+    <div class="field" style="--s:1">
+      <div class="panel">
+        <SidebarTree />
+      </div>
+      {
+        tiles.map((t) => (
+          <div class="tile" style={`transform:${t.tf}`}>
+            <div class="term">
+              <div class="bar">
+                <i />
+                <i />
+                <i />
+                <span>{t.title}</span>
+              </div>
+              <div class="out">
+                <div style={`animation-duration:${t.dur}s`}>
+                  {t.lines.map((l) => (
+                    <div>{l}</div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+    <div class="hint">scroll to sort <span>v</span></div>
+  </div>
+</section>
+
+<style>
+  .scatter {
+    position: relative;
+    height: 280vh;
+    --k: 0;
+    --tile: 15, 16, 20;
+    --edge: 255, 255, 255;
+  }
+  :global([data-theme="light"]) .scatter {
+    --tile: 255, 255, 255;
+    --edge: 20, 22, 30;
+  }
+  .stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 1400px;
+  }
+  .copy {
+    position: absolute;
+    top: clamp(84px, 12vh, 130px);
+    left: 0;
+    right: 0;
+    z-index: 6;
+    padding: 0 16px;
+    text-align: center;
+    pointer-events: none;
+  }
+  .swap {
+    display: inline-grid;
+  }
+  .swap > * {
+    grid-area: 1 / 1;
+  }
+  h2 {
+    margin: 0;
+    font-size: clamp(40px, 6.4vw, 100px);
+    line-height: 1;
+    letter-spacing: -0.055em;
+    font-weight: 700;
+    color: var(--strong);
+  }
+  .a {
+    opacity: calc(1 - var(--k) * 2.4);
+    filter: blur(calc(var(--k) * 14px));
+  }
+  h2.a {
+    text-shadow: 0 10px 40px light-dark(rgba(246, 245, 242, 0.9), rgba(0, 0, 0, 0.8));
+  }
+  .b {
+    opacity: calc(var(--k) * 2.4 - 1.3);
+  }
+  h2.b {
+    filter: blur(calc((1 - var(--k)) * 10px));
+  }
+  .gold {
+    color: var(--accent-text);
+  }
+  .sub {
+    display: grid;
+    max-width: 560px;
+    margin: 16px auto 0;
+  }
+  .sub p {
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+  .field {
+    position: relative;
+    width: 0;
+    height: 0;
+    transform: scale(var(--s)) translateY(80px);
+    transform-style: preserve-3d;
+  }
+  .panel {
+    position: absolute;
+    left: -200px;
+    top: -250px;
+    width: 400px;
+    height: 430px;
+    display: flex;
+    padding-top: 8px;
+    border-radius: 20px;
+    background: light-dark(rgba(255, 255, 255, 0.96), rgba(21, 23, 28, 0.94));
+    border: 1px solid var(--hair);
+    box-shadow:
+      0 40px 120px light-dark(rgba(40, 36, 70, 0.18), rgba(0, 0, 0, 0.6)),
+      0 0 90px rgba(217, 164, 104, calc(var(--k) * 0.18));
+    opacity: calc(var(--k) * 1.6 - 0.6);
+    transform: scale(calc(0.92 + var(--k) * 0.08));
+    overflow: hidden;
+    text-align: left;
+  }
+  .panel > :global(*) {
+    flex: 1;
+  }
+  .tile {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: calc(280px + 80px * var(--k));
+    height: calc(168px - 138px * var(--k));
+    border-radius: calc(12px - 4px * var(--k));
+    background: rgba(var(--tile), calc(1 - var(--k)));
+    border: 1px solid rgba(var(--edge), calc(0.1 - var(--k) * 0.1));
+    box-shadow: 0 24px 60px light-dark(rgba(40, 36, 70, calc(0.16 - var(--k) * 0.16)), rgba(0, 0, 0, calc(0.55 - var(--k) * 0.55)));
+    overflow: hidden;
+    will-change: transform;
+    pointer-events: none;
+  }
+  .term {
+    position: absolute;
+    inset: 0;
+    opacity: calc(1 - var(--k) * 1.4);
+    font-family: var(--mono);
+    font-size: 10.5px;
+    text-align: left;
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    height: 24px;
+    padding: 0 9px;
+    background: light-dark(#ececef, #1a1c22);
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .bar i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: light-dark(#c9ccd3, #3a3f4a);
+  }
+  .bar span {
+    margin-left: 6px;
+  }
+  .out {
+    height: 144px;
+    overflow: hidden;
+    padding: 6px 10px;
+    color: light-dark(#5a6070, #8f97a8);
+    line-height: 16px;
+  }
+  .out > div {
+    animation: up linear infinite;
+  }
+  .out > div > div {
+    white-space: pre;
+    min-height: 16px;
+  }
+  @keyframes up {
+    to {
+      transform: translateY(-50%);
+    }
+  }
+  .hint {
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--faint);
+    opacity: calc(1 - var(--k) * 3);
+  }
+  .hint span {
+    display: inline-block;
+    animation: v-drift 1.6s ease-in-out infinite;
+  }
+</style>
+
+<script>
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const sec = document.querySelector<HTMLElement>("[data-scatter]")!;
+  const field = sec.querySelector<HTMLElement>(".field")!;
+  const update = () => {
+    const r = sec.getBoundingClientRect();
+    let k = Math.max(0, Math.min(1, -r.top / Math.max(1, r.height - innerHeight)));
+    k = Math.max(0, Math.min(1, (k - 0.1) / 0.6));
+    k = reduced ? 1 : k * k * (3 - 2 * k);
+    sec.style.setProperty("--k", k.toFixed(4));
+    field.style.setProperty("--s", Math.min(1, innerWidth / 1340, (innerHeight - 150) / 720).toFixed(3));
+  };
+  addEventListener("scroll", update, { passive: true });
+  addEventListener("resize", update);
+  update();
+</script>

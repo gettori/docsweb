@@ -1,0 +1,82 @@
+---
+import AgentSvg from "./AgentSvg.astro";
+
+const AGENTS: [string, string][] = [
+  ["claude", "Claude Code"],
+  ["codex", "Codex"],
+  ["gemini", "Gemini"],
+  ["opencode", "OpenCode"],
+  ["copilot", "Copilot"],
+  ["kimi", "Kimi"],
+  ["pi", "Pi"],
+  ["", "any ACP agent"],
+];
+const run = [...AGENTS, ...AGENTS];
+---
+
+<section class="marquee">
+  <div class="mono-label label">Drives the agents you already pay for</div>
+  <div class="track">
+    {
+      run.map(([agent, name], i) => (
+        <div class="item" aria-hidden={i >= AGENTS.length ? "true" : undefined}>
+          {agent ? <AgentSvg agent={agent} size={40} class={`glyph g-${agent}`} /> : <span class="plus">+</span>}
+          {name}
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .marquee {
+    padding: clamp(80px, 10vw, 140px) 0 20px;
+    overflow: hidden;
+  }
+  .label {
+    text-align: center;
+    font-size: 13px;
+    margin-bottom: 26px;
+  }
+  .track {
+    display: flex;
+    width: max-content;
+    animation: mq 40s linear infinite;
+  }
+  .marquee:hover .track {
+    animation-play-state: paused;
+  }
+  @keyframes mq {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  .item {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 0 34px;
+    font-size: clamp(34px, 5vw, 68px);
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    white-space: nowrap;
+    color: transparent;
+    -webkit-text-stroke: 1px light-dark(rgba(22, 24, 29, 0.3), rgba(233, 236, 242, 0.3));
+  }
+  .glyph {
+    width: 0.62em;
+    height: 0.62em;
+    color: var(--text);
+  }
+  .g-claude {
+    color: #d97757;
+  }
+  .g-gemini {
+    color: #8e75b2;
+  }
+  .plus {
+    color: var(--link);
+    -webkit-text-stroke: 0;
+    font-size: 0.7em;
+  }
+</style>

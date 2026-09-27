@@ -1,0 +1,116 @@
+---
+import { SITE } from "../../config";
+---
+
+<nav class="nav">
+  <a href="/" class="brand"><img src="/app-icon.png" alt="" width="22" height="22" />Tori</a>
+  <span class="links">
+    <a href="/docs/">Docs</a>
+    <a href="/changelog/">Changelog</a>
+    <a href={SITE.github}>GitHub</a>
+  </span>
+  <button type="button" class="theme" data-theme-toggle aria-label="Switch between light and dark">
+    <svg class="sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+      ><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg
+    >
+    <svg class="moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+      ><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg
+    >
+  </button>
+  <a href={SITE.download} class="download">Download</a>
+</nav>
+
+<style>
+  .nav {
+    position: fixed;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 6px 6px 14px;
+    border-radius: 999px;
+    background: var(--float);
+    backdrop-filter: blur(18px) saturate(1.4);
+    -webkit-backdrop-filter: blur(18px) saturate(1.4);
+    border: 1px solid var(--hair);
+    box-shadow: 0 10px 40px var(--shadow);
+    white-space: nowrap;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: 10px;
+    color: var(--strong);
+    font-weight: 700;
+    font-size: 15px;
+  }
+  .links {
+    display: flex;
+  }
+  .links a {
+    padding: 7px 12px;
+    border-radius: 999px;
+    color: var(--muted);
+    font-size: 13.5px;
+    transition: color 0.2s, background 0.2s;
+  }
+  .links a:hover {
+    color: var(--text);
+    background: var(--glass);
+  }
+  .theme {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: none;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: color 0.2s, background 0.2s;
+  }
+  .theme:hover {
+    color: var(--text);
+    background: var(--glass);
+  }
+  :global([data-theme="light"]) .sun,
+  :global(:root:not([data-theme="light"])) .moon {
+    display: none;
+  }
+  .download {
+    display: flex;
+    align-items: center;
+    height: 34px;
+    margin-left: 4px;
+    padding: 0 14px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: var(--on-accent);
+    font-weight: 600;
+    font-size: 13.5px;
+  }
+  .download:hover {
+    color: var(--on-accent);
+    background: var(--link-hover);
+  }
+  @media (max-width: 1099px) {
+    .links {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  document.querySelector("[data-theme-toggle]")?.addEventListener("click", () => {
+    const next = document.documentElement.dataset.theme === "light" ? "dark" : "light";
+    localStorage.setItem("starlight-theme", next);
+    document.documentElement.dataset.theme = next;
+  });
+</script>

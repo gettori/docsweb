@@ -1,0 +1,39 @@
+---
+import "@fontsource-variable/geist";
+import "@fontsource-variable/geist-mono";
+import "@fontsource-variable/inter";
+import "@fontsource/instrument-serif/400-italic.css";
+import "../../styles/site.css";
+
+const title = "Tori: a cockpit for the coding agents you already run";
+const description =
+  "A Mac app that runs Claude Code, Codex, Gemini and the rest of your agents side by side, and tells you the moment one needs you.";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <script is:inline>
+      // Shares Starlight's storage key so the docs and the home page keep one choice.
+      (() => {
+        const q = matchMedia("(prefers-color-scheme: light)");
+        const apply = () => {
+          const saved = localStorage.getItem("starlight-theme");
+          document.documentElement.dataset.theme = saved === "light" || saved === "dark" ? saved : q.matches ? "light" : "dark";
+        };
+        apply();
+        q.addEventListener("change", apply);
+      })();
+    </script>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
