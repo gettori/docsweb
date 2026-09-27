@@ -1,0 +1,18 @@
+:root {
+  --sl-font: "Geist Variable", -apple-system, system-ui, sans-serif;
+  --sl-font-mono: "Geist Mono Variable", ui-monospace, monospace;
+}
+
+/* Starlight's own theme rules sit in a cascade layer, so a bare :root here would beat its light theme. */
+:root:not([data-theme="light"]) {
+  --sl-color-accent-low: #3a2c18;
+  --sl-color-accent: #d9a468;
+  --sl-color-accent-high: #f3d3a4;
+  --sl-color-black: #0a0b0e;
+}
+
+:root[data-theme="light"] {
+  --sl-color-accent-low: #f1e3c4;
+  --sl-color-accent: #7e5e2f;
+  --sl-color-accent-high: #4a3719;
+}
