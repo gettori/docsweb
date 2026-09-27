@@ -1,0 +1,42 @@
+/* A chat tab's leading provider mark, and the status it carries. */
+
+.mark {
+  align-items: center;
+  display: inline-flex;
+  flex: none;
+  position: relative;
+}
+
+/* At rest the strip is chrome: a row of brand colours in it would compete with
+   the tab you are reading. Worn as its own class, swapped out while working,
+   rather than declared on `.mark` for the tint to override: the tint lives in
+   `@layer components` and this sheet is unlayered, so an unlayered colour here
+   would win the cascade whatever its specificity, and the mark would breathe
+   in grey. The lane strip swaps its idle tone the same way. */
+.rest {
+  color: var(--fg-subtle);
+}
+
+/* Working is both halves of `agentMarks`, the breathe and the tint, and neither
+   is redeclared here: the chat's lane strip wears the same two for the same
+   reason, and two surfaces showing one agent must not drift to two colours or
+   two rhythms. */
+
+/* Waiting on you: no motion, because nothing is running. */
+.needsYou {
+  color: var(--attention-fg);
+}
+
+/* The shape half of the signal, so "needs you" is not carried by colour alone.
+   Ringed in the tab's own background so it reads as sitting on top of the mark
+   rather than as part of the glyph. */
+.badge {
+  background: var(--attention-fg);
+  border-radius: 50%;
+  box-shadow: 0 0 0 calc(1.5px * var(--ui-scale)) var(--canvas-card);
+  height: calc(5px * var(--ui-scale));
+  position: absolute;
+  right: calc(-1px * var(--ui-scale));
+  top: calc(-1px * var(--ui-scale));
+  width: calc(5px * var(--ui-scale));
+}

@@ -1,0 +1,136 @@
+/* The one Button. Ports the old global `.btn` block and the dialog `modalBtn`
+   block onto the shared semantic tokens, unified into six variants and three
+   sizes. Colored variants (primary/success/warn/danger) hover with a brightness
+   lift (from `modalBtn`); the flat variants (default/ghost) hover to a gold
+   brand border. Keyboard focus paints a --brand-ring; primary is the brand
+   gold (--brand-default fill, --brand-on text). */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(6px * var(--ui-scale));
+  height: var(--control-height);
+  background: var(--neutral-hover);
+  border: 1px solid var(--border-default);
+  color: var(--fg-default);
+  border-radius: var(--tori-radius-md);
+  padding: 0 calc(12px * var(--ui-scale));
+  font-family: inherit;
+  font-size: var(--tori-text-md);
+  line-height: 1.4;
+  /* A label is one line. Without this a button in a flex row shrinks to its
+     longest word, so "Add worktree" broke in two the moment a sibling (the
+     branch dialog's path hint) claimed the space. */
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    border-color var(--tori-duration-fast) ease,
+    background var(--tori-duration-fast) ease,
+    box-shadow var(--tori-duration-fast) ease,
+    filter var(--tori-duration-fast) ease;
+}
+
+/* Keyboard focus: a gold brand ring (pointer focus stays quiet). */
+.btn:focus-visible {
+  outline: none;
+  border-color: var(--brand-default);
+  box-shadow: 0 0 0 3px var(--brand-ring);
+}
+
+/* Active press: a subtle settle, shared by every variant. */
+.btn:active:not(:disabled) {
+  filter: brightness(0.96);
+}
+
+/* Icons are CSS-sized to the standard control icon (overrides Lucide's numeric
+   width/height attrs), so they scale with the UI and no call site sets a size. */
+.btn svg {
+  width: var(--control-icon);
+  height: var(--control-icon);
+  flex: 0 0 auto;
+}
+
+.label {
+  display: inline-block;
+}
+
+/* ---- Variants ---- */
+
+/* default: the flat --neutral-hover base above, nothing extra. */
+.default {
+}
+
+.primary {
+  background: var(--brand-default);
+  border-color: var(--brand-default);
+  color: var(--brand-on);
+  font-weight: 600;
+}
+
+.success {
+  background: var(--success-emphasis);
+  border-color: var(--success-emphasis);
+  color: var(--fg-on-emphasis);
+  font-weight: 600;
+}
+
+.warn {
+  /* Darker than the --attention-fg text color so white label text stays legible. */
+  background: var(--attention-emphasis);
+  border-color: var(--attention-emphasis);
+  color: var(--fg-on-emphasis);
+}
+
+.danger {
+  background: var(--danger-emphasis);
+  border-color: var(--danger-emphasis);
+  color: var(--fg-on-emphasis);
+}
+
+.ghost {
+  background: transparent;
+}
+
+/* ---- Hover ---- */
+.default:hover,
+.ghost:hover {
+  border-color: var(--brand-default);
+}
+
+.primary:hover,
+.success:hover,
+.warn:hover,
+.danger:hover {
+  filter: brightness(1.08);
+}
+
+/* ---- Sizes: fixed outer height (md is the base above), tighter horizontal
+   padding as they shrink. Height, not padding, sets the vertical size, so a
+   button is the same height whatever it holds. ---- */
+.md {
+}
+
+.sm {
+  height: var(--control-height-sm);
+  padding: 0 calc(10px * var(--ui-scale));
+}
+
+.xs {
+  height: var(--control-height-xs);
+  padding: 0 calc(8px * var(--ui-scale));
+  font-size: var(--tori-text-md);
+}
+
+/* ---- Icon-only: a square whose side is the size's fixed height, no label ---- */
+.iconOnly {
+  padding: 0;
+  aspect-ratio: 1;
+}
+
+/* ---- Disabled ---- */
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: none;
+}

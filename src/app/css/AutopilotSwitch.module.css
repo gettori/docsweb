@@ -1,0 +1,101 @@
+@layer components {
+  .pill {
+    display: inline-flex;
+    font-family: var(--tori-font-ui);
+    align-items: center;
+    gap: var(--tori-space-1);
+    padding: var(--tori-space-1);
+    border-radius: var(--tori-radius-pill);
+    background: var(--neutral-subtle);
+    border: var(--tori-border-thin) solid var(--border-default);
+  }
+  .pill[data-view="workspace"][data-state="needs"] {
+    border-color: var(--needs-you-border);
+  }
+  .pill[data-state="error"] {
+    border-color: var(--danger-border);
+  }
+
+  .segment {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--tori-space-3);
+    min-width: var(--tori-space-8);
+    height: var(--control-height-sm);
+    padding: 0;
+    border: none;
+    border-radius: var(--tori-radius-pill);
+    background: transparent;
+    color: var(--fg-muted);
+    font: inherit;
+    font-size: var(--tori-text-sm);
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background var(--tori-duration-fast) var(--tori-ease);
+  }
+  .segment:hover {
+    background: var(--neutral-hover);
+    color: var(--fg-default);
+  }
+  .segment:focus-visible {
+    outline: var(--tori-border-thick) solid var(--brand-ring);
+    outline-offset: var(--tori-space-1);
+  }
+
+  /* The wider gap is room for the badge and the error mark, which hang off the
+     wheel's corner; kept in every state so the pill never changes width. */
+  .active,
+  .active:hover {
+    gap: var(--tori-space-5);
+    padding: 0 var(--tori-space-5) 0 var(--tori-space-4);
+    background: var(--progress-subtle);
+    box-shadow: inset 0 0 0 var(--tori-border-thin) var(--progress-border);
+    color: var(--progress-on-subtle);
+    cursor: default;
+  }
+  /* The workspace wears the brand, the cockpit the autopilot's violet. */
+  .pill[data-view="workspace"] .active {
+    background: var(--brand-subtle);
+    box-shadow: inset 0 0 0 var(--tori-border-thin) var(--brand-ring);
+    color: var(--brand-default);
+    cursor: pointer;
+  }
+
+  .open::after {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: var(--tori-radius-pill);
+    box-shadow: 0 0 0 var(--tori-border-thick) var(--brand-ring);
+    pointer-events: none;
+  }
+
+  /* The wheel is 2px narrower than the panel icon it trades places with. */
+  .pill[data-view="autopilot"] .active > :first-child {
+    margin-inline: calc(1px * var(--ui-scale));
+  }
+
+  .label {
+    display: inline-grid;
+    justify-items: center;
+  }
+  .label > span,
+  .label::after {
+    grid-area: 1 / 1;
+  }
+  .label::after {
+    content: attr(data-widest);
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+  }
+
+  .icon {
+    width: var(--control-icon);
+    height: var(--control-icon);
+    flex: none;
+  }
+}

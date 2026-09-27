@@ -1,0 +1,463 @@
+@layer components {
+  .view {
+    display: grid;
+    grid-template-columns: calc(340px * var(--ui-scale)) minmax(0, 1fr) calc(340px * var(--ui-scale));
+    height: 100%;
+    min-height: 0;
+    background: var(--canvas-default);
+    font-family: var(--tori-font-ui);
+  }
+
+  .workers {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tori-space-5);
+    min-height: 0;
+    overflow-y: auto;
+    padding: var(--tori-space-7) var(--tori-space-6);
+    border-right: var(--tori-border-thin) solid var(--border-default);
+  }
+
+  .empty {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tori-space-3);
+    padding: var(--tori-space-6);
+    border-radius: var(--tori-radius-xl);
+    border: var(--tori-border-thin) dashed var(--progress-border);
+    background: var(--progress-subtle);
+    font-size: var(--tori-text-md);
+    line-height: var(--tori-line-normal);
+    color: var(--fg-muted);
+  }
+  .emptyTitle {
+    font-size: var(--tori-text-xl);
+    font-weight: 600;
+    color: var(--progress-on-subtle);
+  }
+
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--tori-space-5);
+    padding: var(--tori-space-5) var(--tori-space-5) var(--tori-space-4);
+    overflow: hidden;
+    border-radius: var(--tori-radius-xl);
+    background: var(--canvas-card);
+    border: var(--tori-border-thin) solid var(--border-default);
+    transition: border-color var(--tori-duration-fast) var(--tori-ease);
+  }
+  .card:hover,
+  .card[data-status="working"] {
+    border-color: var(--progress-border);
+  }
+  .card[data-status="needs"] {
+    border-color: var(--needs-you-border);
+  }
+
+  .cardHead {
+    display: flex;
+    align-items: center;
+    gap: var(--tori-space-5);
+    min-width: 0;
+  }
+  /* A porthole: the ring fills with the worker's progress, in its state's colour. */
+  .ring {
+    --p: 100%;
+    --ring: var(--status-running);
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: calc(48px * var(--ui-scale));
+    height: calc(48px * var(--ui-scale));
+    border-radius: var(--tori-radius-pill);
+    background:
+      radial-gradient(closest-side, var(--canvas-card) calc(100% - 4px * var(--ui-scale)), transparent calc(100% - 4px * var(--ui-scale) + 0.5px)),
+      conic-gradient(var(--ring) 0 var(--p), var(--progress-border) var(--p) 100%);
+    font-family: var(--tori-font-mono);
+    font-size: var(--tori-text-xs);
+    color: var(--progress-on-subtle);
+  }
+  .ring[data-status="working"] {
+    --ring: var(--status-progress);
+  }
+  .ring[data-status="idle"] {
+    --ring: var(--status-idle);
+  }
+  .ring[data-status="needs"] {
+    --ring: var(--status-needs-you);
+  }
+  .cardName {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tori-space-1);
+    min-width: 0;
+  }
+  .cardRef {
+    flex: none;
+    font-family: var(--tori-font-mono);
+    font-size: var(--tori-text-md);
+    color: var(--fg-muted);
+  }
+  .cardTitle {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--tori-text-xl);
+    font-weight: 600;
+    color: var(--fg-default);
+  }
+  .cardBranch {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: var(--tori-font-mono);
+    font-size: var(--tori-text-md);
+    color: var(--fg-subtle);
+  }
+
+  .contract {
+    font-size: var(--tori-text-md);
+    color: var(--fg-muted);
+  }
+  .contract > summary {
+    cursor: pointer;
+    color: var(--progress-on-subtle);
+  }
+  .contractText {
+    margin: var(--tori-space-3) 0 0;
+    white-space: pre-wrap;
+    line-height: var(--tori-line-normal);
+  }
+
+  .log {
+    padding: var(--tori-space-4) var(--tori-space-5);
+    border-radius: var(--tori-radius-lg);
+    background: var(--canvas-default);
+    font-family: var(--tori-font-mono);
+    font-size: var(--tori-text-md);
+    line-height: 1.7;
+    color: var(--fg-muted);
+  }
+  .logLine {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: pre;
+  }
+
+  .cardFoot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--tori-space-4);
+  }
+  .doing {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--tori-space-4);
+    min-width: 0;
+    font-size: var(--tori-text-md);
+    color: var(--fg-muted);
+  }
+  .doing[data-status="working"] {
+    color: var(--progress-on-subtle);
+  }
+  .doing[data-status="idle"] {
+    color: var(--status-idle);
+  }
+  .doing[data-status="needs"] {
+    color: var(--needs-you-on-subtle);
+  }
+  .watchIcon {
+    width: calc(13px * var(--ui-scale));
+    height: calc(13px * var(--ui-scale));
+  }
+
+  .progress {
+    --card-fill: 0;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--status-progress);
+    transform: scaleX(var(--card-fill));
+    transform-origin: left;
+  }
+
+  .queued {
+    display: flex;
+    align-items: center;
+    gap: var(--tori-space-5);
+    min-height: calc(48px * var(--ui-scale));
+    padding: 0 var(--tori-space-5);
+    border-radius: var(--tori-radius-lg);
+    border: var(--tori-border-thin) dashed var(--border-strong);
+  }
+  .queuedTitle {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--tori-text-xl);
+    color: var(--fg-default);
+  }
+  .queuedAfter {
+    flex: none;
+    font-size: var(--tori-text-md);
+    color: var(--fg-subtle);
+  }
+
+  .center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 0;
+    min-height: 0;
+  }
+
+  /* ---- the banner: the time of day over the water ---- */
+  .hero {
+    position: relative;
+    flex: none;
+    width: 100%;
+    height: calc(176px * var(--ui-scale));
+    overflow: hidden;
+  }
+  .dim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, var(--tori-scene-dim-top), var(--tori-scene-dim-bottom));
+  }
+  .heroRow {
+    position: absolute;
+    top: calc(26px * var(--ui-scale));
+    left: calc(40px * var(--ui-scale));
+    right: calc(40px * var(--ui-scale));
+    display: flex;
+    align-items: flex-start;
+    gap: var(--tori-space-6);
+  }
+  .heroText {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tori-space-3);
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--tori-space-4);
+    font-size: var(--tori-text-md);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--tori-scene-eyebrow);
+  }
+  .eyebrowDot {
+    --dot-color: var(--status-progress);
+    width: calc(7px * var(--ui-scale));
+    height: calc(7px * var(--ui-scale));
+    border-radius: var(--tori-radius-pill);
+    background: var(--dot-color);
+    box-shadow: 0 0 calc(8px * var(--ui-scale)) var(--dot-color);
+  }
+  .hero[data-state="idle"] .eyebrowDot {
+    --dot-color: var(--status-idle);
+  }
+  .hero[data-state="needs"] .eyebrowDot {
+    --dot-color: var(--status-needs-you);
+  }
+  .hero[data-state="error"] .eyebrowDot {
+    --dot-color: var(--danger-fg);
+  }
+  .hero[data-state="off"] .eyebrowDot {
+    --dot-color: var(--status-running);
+  }
+  .heroTitle {
+    margin: 0;
+    font-size: calc(30px * var(--ui-scale));
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    color: var(--tori-scene-ink);
+  }
+  .heroBody {
+    max-width: calc(560px * var(--ui-scale));
+    margin: 0;
+    font-size: var(--tori-text-xl);
+    line-height: 1.5;
+    color: var(--tori-scene-ink-muted);
+  }
+
+  .sail,
+  .anchor {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--tori-space-4);
+    flex: none;
+    height: calc(36px * var(--ui-scale));
+    padding: 0 var(--tori-space-6);
+    border-radius: var(--tori-radius-pill);
+    font: inherit;
+    font-size: var(--tori-text-lg);
+    font-weight: 600;
+    cursor: pointer;
+    transition: filter var(--tori-duration-fast) var(--tori-ease);
+  }
+  .sail {
+    border: none;
+    background: var(--status-progress);
+    color: var(--canvas-default);
+    box-shadow: 0 calc(4px * var(--ui-scale)) calc(14px * var(--ui-scale)) color-mix(in oklab, var(--status-progress) 40%, transparent);
+  }
+  .anchor {
+    border: var(--tori-border-thin) solid var(--tori-scene-glass-border);
+    background: var(--tori-scene-glass);
+    color: var(--tori-scene-ink);
+    backdrop-filter: blur(6px);
+  }
+  .sail:hover,
+  .anchor:hover {
+    filter: brightness(1.12);
+  }
+  .sail:focus-visible,
+  .anchor:focus-visible {
+    outline: var(--tori-border-thick) solid var(--brand-ring);
+    outline-offset: var(--tori-space-1);
+  }
+  .helmIcon {
+    width: calc(16px * var(--ui-scale));
+    height: calc(16px * var(--ui-scale));
+  }
+
+  .column {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tori-space-6);
+    flex: 1 1 auto;
+    width: 100%;
+    max-width: calc(860px * var(--ui-scale));
+    min-height: 0;
+    padding: var(--tori-space-6) var(--tori-space-7);
+    box-sizing: border-box;
+  }
+  /* Pinned to the bottom by margin, not by justify-content: flex-end, which
+     puts the top of an overflowing thread out of scroll reach. */
+  .scroll {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tori-space-6);
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+  }
+  .scroll > :first-child {
+    margin-top: auto;
+  }
+  .column[data-live="true"] .scroll {
+    flex: 0 1 auto;
+  }
+  .chat {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  .activity {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tori-space-6);
+    min-height: 0;
+    padding: var(--tori-space-7) var(--tori-space-6);
+    border-left: var(--tori-border-thin) solid var(--border-default);
+  }
+  .activityList {
+    --dot: calc(11px * var(--ui-scale));
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+  }
+  /* A timeline: a ring per entry, joined by a rule down to the next one. */
+  .activityRow {
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--dot) minmax(0, 1fr);
+    grid-template-areas:
+      "dot time"
+      ". text";
+    column-gap: var(--tori-space-5);
+    row-gap: var(--tori-space-1);
+    padding-bottom: var(--tori-space-6);
+    line-height: var(--tori-line-normal);
+  }
+  .activityRow::before {
+    content: "";
+    grid-area: dot;
+    align-self: center;
+    box-sizing: border-box;
+    width: var(--dot);
+    height: var(--dot);
+    border-radius: var(--tori-radius-pill);
+    border: calc(2px * var(--ui-scale)) solid var(--status-progress);
+  }
+  .activityRow:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: calc(var(--tori-space-6) + var(--dot) / 2);
+    bottom: calc(-1 * var(--tori-space-1));
+    left: calc(var(--dot) / 2);
+    border-left: var(--tori-border-thin) dashed var(--progress-border);
+  }
+  .activityTime {
+    grid-area: time;
+    font-family: var(--tori-font-mono);
+    font-size: var(--tori-text-md);
+    color: var(--fg-subtle);
+  }
+  .activityText {
+    grid-area: text;
+    font-size: var(--tori-text-xl);
+    color: var(--fg-default);
+  }
+  .activityRow[data-needs-you="true"]::before {
+    border-color: var(--status-needs-you);
+  }
+  .activityRow[data-needs-you="true"] .activityTime {
+    color: var(--needs-you-on-subtle);
+  }
+
+  .harbor {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tori-space-3);
+    padding: var(--tori-space-5) var(--tori-space-6);
+    border-radius: var(--tori-radius-xl);
+    background: var(--progress-subtle);
+    border: var(--tori-border-thin) solid var(--progress-border);
+    font-size: var(--tori-text-xl);
+    line-height: var(--tori-line-normal);
+    color: var(--fg-default);
+  }
+  .harborLabel {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--tori-space-3);
+    font-size: var(--tori-text-md);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--progress-on-subtle);
+  }
+  .harborIcon {
+    width: calc(15px * var(--ui-scale));
+    height: calc(15px * var(--ui-scale));
+  }
+}

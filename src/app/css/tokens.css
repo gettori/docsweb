@@ -1,0 +1,588 @@
+/* Design tokens, two tiers.
+
+   Primitives (--tori-*) are raw, theme-independent values: the palette ramp,
+   spacing, radii, type, motion. Semantic tokens are the roles the UI actually
+   consumes (--canvas-default, --fg-default, ...); they select primitives per theme, keyed on
+   :root[data-theme]. The dark set maps 1:1 to the values that used to live in
+   App.css :root, so dark rendering is unchanged.
+
+   Runtime themes (VS Code themes, later phases) override the semantic tokens as
+   inline props on <html>; these definitions are the pre-theme fallback. */
+@layer tokens {
+  :root {
+    /* ---- Neutral ramp (light end to dark end) ---- */
+    --tori-white: #ffffff;
+    --tori-gray-50: #f3f3f3;
+    --tori-gray-100: #ededed;
+    --tori-gray-150: #e8e8e8;
+    --tori-gray-200: #e0e0e0;
+    --tori-gray-500: #6a6a6a;
+    --tori-gray-600: #808080;
+    --tori-gray-800: #2a2d2e;
+    --tori-gray-850: #2d2d2d;
+    --tori-gray-900: #252526;
+    --tori-gray-950: #1e1e1e;
+    --tori-gray-990: #1a1a1a;
+    --tori-black: #000000;
+
+    /* Foreground endpoints */
+    --tori-fg-dark: #d4d4d4;
+    --tori-fg-light: #1e1e1e;
+
+    /* ---- Cool navy surface ramp (dark theme) ----
+       The dark chrome palette, a deep cool navy rather than a neutral charcoal.
+       Sampled from the premium reference; the dark semantic tokens below select
+       these instead of the neutral grays. Light theme keeps the gray ramp. */
+    --tori-navy-950: #15171c; /* window / desk bg (the tinted shell behind everything) */
+    --tori-navy-900: #1b1e25; /* card: the raised terminal/editor content panel */
+    --tori-navy-850: #1b232e; /* raised head / input field */
+    --tori-navy-800: #252a34; /* card2: raised chips / active tabs, hover / active row */
+    --tori-navy-700: #232c38; /* legacy solid border (superseded by --tori-navy-line for chrome dividers) */
+    /* Cool blue-white hairline: the single divider treatment across the flat UI
+       (panel border, terminal<->editor split, tree/header rules). Depth comes
+       from the one floating card, not from stacking borders. */
+    --tori-navy-line: rgba(200, 215, 255, 0.08);
+    /* A slightly stronger stop of the same cool hairline, for structural lines
+       that must stay legible but still read as quiet (the branch/worktree graph
+       rail). Kept well under the placeholder's weight so it never shouts. */
+    --tori-navy-line-strong: rgba(200, 215, 255, 0.13);
+    --tori-fg-navy: #e4e8f0; /* primary text (cool near-white) */
+    --tori-fg-navy-dim: #98a0b0; /* dim text (muted slate) */
+    --tori-fg-navy-faint: #666e7e; /* faint text (dim slate): quiet icons, placeholders, meta */
+
+    /* ---- Agent brand hues ----
+       A vendor's own colour, worn by its mark while a turn is running. A
+       primitive rather than a palette role: a logo's colour is the vendor's
+       fact, not the theme's, and the palette carries a role only where a mark
+       is also chrome (--agent-claude, worn in the toolbar crumb, which a light
+       theme darkens for contrast).
+
+       Gemini's is the only value here, because it is the only mark this build
+       has whose brand colour is a colour: Codex, Copilot, Kimi, OpenCode and Pi
+       are all published as monochrome black, and their faithful rendering is
+       the theme's own foreground rather than a hue. Source is Simple Icons,
+       slug `googlegemini`, the same set the paths come from. */
+    --tori-agent-gemini: #8e75b2;
+
+    /* Accent (blue) */
+    --tori-blue-100: #cfe3fb;
+    --tori-blue-500: #4a9eff;
+    --tori-blue-600: #005fb8;
+    --tori-blue-900: #094771;
+
+    /* ---- Brand ramp (champagne / brass gold) ----
+       The fixed brand identity, independent of the theme-following blue accent.
+       Chrome selection/focus/active read the semantic --brand-* family below;
+       these primitives are the raw ramp both themes select from. */
+    --tori-gold-50: #faf4e6;
+    --tori-gold-100: #f1e3c4;
+    --tori-gold-200: #e6cf9d;
+    --tori-gold-300: #d9bd85;
+    --tori-gold-400: #d9a468;
+    --tori-gold-500: #c19653;
+    --tori-gold-600: #a97f42;
+    --tori-gold-700: #8a6733;
+    --tori-gold-800: #6b4f27;
+    --tori-gold-900: #4a3719;
+
+    /* ---- Type ---- */
+    --tori-font-ui: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+    /* The bundled Nerd Font sits at the *end*, as a glyph fallback rather than
+       the face: agent output pasted from a shell carries powerline separators
+       and devicons, and a box instead of one is the bug. Browsers fall back per
+       character, so code in the transcript keeps rendering in SF Mono and only
+       the glyphs nothing else has come from the bundle. */
+    --tori-font-mono:
+      ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, "Cascadia Code", "JetBrainsMono Nerd Font Mono", monospace;
+    /* Type ramp. Every step folds --ui-scale, so the whole chrome type system
+       tracks the UI font size (and Cmd +/- zoom) from one multiplier. Each base
+       is the px that step renders at the default UI size (--ui-scale = 1); the
+       ramp carries enough steps to keep the dense 10-13px cluster distinct. */
+    --tori-text-2xs: calc(10px * var(--ui-scale));
+    --tori-text-xs: calc(11px * var(--ui-scale));
+    --tori-text-sm: calc(12px * var(--ui-scale));
+    --tori-text-md: calc(13px * var(--ui-scale));
+    --tori-text-lg: calc(14px * var(--ui-scale));
+    --tori-text-xl: calc(15px * var(--ui-scale));
+    --tori-text-2xl: calc(16px * var(--ui-scale));
+    --tori-text-3xl: calc(18px * var(--ui-scale));
+    --tori-text-4xl: calc(21px * var(--ui-scale));
+    /* Transcript prose. Deliberately *not* on the chrome ramp: it is set at
+       runtime from the terminal font size (see settingsStore.applySettings), so
+       a chat and a terminal read at one size. This default matches the 15px
+       terminal default, covering the first paint and anything that renders
+       these styles without the settings store. */
+    --chat-font-size: 15px;
+    --tori-line-tight: 1.2;
+    --tori-line-normal: 1.5;
+
+    /* ---- Spacing ----
+       Scale-aware like the type ramp: each step folds --ui-scale, so padding,
+       gaps, and margins built on these tokens track the UI font size (and Cmd
+       +/- zoom) from the one multiplier. Bases are the px each step renders at
+       the default UI size (--ui-scale = 1). */
+    --tori-space-1: calc(2px * var(--ui-scale));
+    --tori-space-2: calc(4px * var(--ui-scale));
+    --tori-space-3: calc(6px * var(--ui-scale));
+    --tori-space-4: calc(8px * var(--ui-scale));
+    --tori-space-5: calc(12px * var(--ui-scale));
+    --tori-space-6: calc(16px * var(--ui-scale));
+    --tori-space-7: calc(24px * var(--ui-scale));
+    --tori-space-8: calc(32px * var(--ui-scale));
+
+    /* ---- Radii ---- */
+    --tori-radius-sm: 3px;
+    --tori-radius-md: 8px;
+    --tori-radius-lg: 10px;
+    /* Every surface that floats over the app: dialog, modal, popover, menu,
+       toast, and the work-card. One radius for the whole tier, because they
+       are the same kind of object to the eye whatever the code calls them. */
+    --tori-radius-xl: 12px;
+    --tori-radius-pill: 999px;
+
+    /* ---- Border widths ---- */
+    --tori-border-thin: 1px;
+    --tori-border-thick: 2px;
+
+    /* ---- Controls (buttons, toggles, segmented, tabs) ----
+       Fixed outer heights + a standard icon size, all scaling with the UI.
+       Every control of a given size is exactly one of these tall, regardless
+       of whether it holds text, an icon, or both. No min floor by design. */
+    --control-height: calc(28px * var(--ui-scale));
+    --control-height-sm: calc(24px * var(--ui-scale));
+    --control-height-xs: calc(20px * var(--ui-scale));
+    --control-icon: calc(16px * var(--ui-scale));
+
+    /* ---- Motion ---- */
+    --tori-duration-fast: 80ms;
+    --tori-duration-med: 160ms;
+    --tori-ease: ease;
+
+    /* ---- Settings-driven tokens (overridden by the settings store as inline
+       props on <html>; defaults here match the pre-settings look). ---- */
+    --ui-scale: 1; /* chrome sizing multiplier; = uiFontSize / 15 × zoom */
+    --ui-line-height: var(--tori-line-normal);
+    --editor-font-family: "SF Mono", Menlo, Monaco, monospace;
+    --editor-font-size: 13px;
+
+    /* ---- Syntax (CM6) defaults: VS Code Dark+ palette. Theme-driven in a
+       later phase; defined here so an unthemed boot still colors code. ---- */
+    --syntax-keyword: #569cd6;
+    --syntax-string: #ce9178;
+    --syntax-comment: #6a9955;
+    --syntax-number: #b5cea8;
+    --syntax-function: #dcdcaa;
+    --syntax-type: #4ec9b0;
+    --syntax-variable: #9cdcfe;
+
+    /* ---- Cockpit horizon ----
+       Primitives, not roles: the scenes are pictures of the sky and read the
+       same in every theme, so the ink laid over them does too. */
+    --tori-scene-ink: #f5efff;
+    --tori-scene-ink-muted: #cbbfe6;
+    --tori-scene-eyebrow: #d8b4fe;
+    --tori-scene-dim-top: rgba(34, 30, 46, 0.82);
+    --tori-scene-dim-bottom: rgba(22, 20, 29, 0.5);
+    --tori-scene-glass: rgba(20, 14, 36, 0.45);
+    --tori-scene-glass-border: rgba(216, 180, 254, 0.18);
+  }
+
+  /* ---- BEGIN GENERATED ROLE TOKENS. Run scripts/gen-tokens.mjs; do not edit by hand. ---- */
+
+  /* Derived from src/theme/palettes/*.json by src/theme/roles.ts. Values are
+     literal because this is a fallback: it must paint correctly before any
+     script runs, so it cannot depend on the runtime that resolves palettes. */
+
+  /* ---- Semantic tokens, dark (default) ---- */
+  :root,
+  :root[data-theme="dark"] {
+    /* fg */
+    --fg-default: #e4e8f0;
+    --fg-muted: #98a0b0;
+    --fg-subtle: #666e7e;
+    --fg-watermark: rgba(102, 110, 126, 0.55);
+    --fg-on-emphasis: #ffffff;
+
+    /* canvas */
+    --canvas-default: #15171c;
+    --canvas-card: #1b1e25;
+    --canvas-head: #1b232e;
+    --canvas-input: #20242c;
+
+    /* border */
+    --border-default: rgba(200, 215, 255, 0.08);
+    --border-strong: rgba(200, 215, 255, 0.13);
+    --border-rail: #2c313b;
+
+    /* scrollbar */
+    --scrollbar-thumb: rgba(200, 215, 255, 0.11);
+    --scrollbar-thumb-hover: rgba(200, 215, 255, 0.2);
+
+    /* accent */
+    --accent-fg: #4a9eff;
+    --accent-subtle: #09456e;
+
+    /* neutral */
+    --neutral-hover: #252a34;
+    --neutral-subtle: rgba(128, 128, 128, 0.12);
+
+    /* danger */
+    --danger-fg: #e06c75;
+    --danger-emphasis: #b7585f;
+
+    /* attention */
+    --attention-fg: #d19a66;
+    --attention-emphasis: #b16119;
+
+    /* success */
+    --success-fg: #2ea043;
+    --success-emphasis: #278739;
+
+    /* info */
+    --info-fg: #4ec9b0;
+
+    /* diff */
+    --diff-added: #2ea043;
+    --diff-modified: #d29922;
+    --diff-deleted: #f85149;
+    --diff-added-word: rgba(46, 160, 67, 0.32);
+    --diff-deleted-word: rgba(248, 81, 73, 0.32);
+
+    /* diag */
+    --diag-error: #f85149;
+    --diag-warning: #d29922;
+    --diag-info: #4ec9b0;
+    --diag-hint: #8b949e;
+
+    /* agent */
+    --agent-claude: #d97757;
+
+    /* scrim */
+    --scrim-default: rgba(0, 0, 0, 0.45);
+    --scrim-soft: rgba(0, 0, 0, 0.35);
+    --scrim-strong: rgba(0, 0, 0, 0.72);
+
+    /* status */
+    --status-progress: #c084fc;
+    --status-needs-you: #fb7185;
+    --status-idle: #2dd4bf;
+    --status-running: #7d8ba1;
+
+    /* progress */
+    --progress-subtle: #2f2a3f;
+    --progress-border: rgba(192, 132, 252, 0.42);
+    --progress-on-subtle: #ceacf7;
+
+    /* needsYou */
+    --needs-you-subtle: #362831;
+    --needs-you-border: rgba(251, 113, 133, 0.45);
+    --needs-you-on-subtle: #f2a1b0;
+
+    /* danger */
+    --danger-subtle: #33272f;
+    --danger-border: rgba(224, 108, 117, 0.5);
+    --danger-on-subtle: #e29ea6;
+
+    /* brand */
+    --brand-default: #d9a468;
+    --brand-strong: #d9bd85;
+    --brand-subtle: rgba(201, 150, 83, 0.16);
+    --brand-wash: #272628;
+    --brand-bar: #d9a468;
+    --brand-ring: rgba(201, 150, 83, 0.6);
+    --brand-on: #4a3719;
+
+    /* done */
+    --done-wash: #1a2528;
+    --done-selected: #1e3334;
+    --done-bar: #4ec9b0;
+
+    /* blocking */
+    --blocking-surface: #222327;
+    --blocking-border: #d9a468;
+    --blocking-fg: #e4e8f0;
+    --blocking-accent: #d9bd85;
+
+    /* ansi */
+    --ansi-cursor: #e4e8f0;
+    --ansi-selection: rgba(70, 110, 160, 0.4);
+    --ansi-black: #000000;
+    --ansi-red: #cd3131;
+    --ansi-green: #0dbc79;
+    --ansi-yellow: #e5e510;
+    --ansi-blue: #2472c8;
+    --ansi-magenta: #bc3fbc;
+    --ansi-cyan: #11a8cd;
+    --ansi-white: #e5e5e5;
+    --ansi-bright-black: #696969;
+    --ansi-bright-red: #f14c4c;
+    --ansi-bright-green: #23d18b;
+    --ansi-bright-yellow: #f5f543;
+    --ansi-bright-blue: #3b8eea;
+    --ansi-bright-magenta: #d670d6;
+    --ansi-bright-cyan: #29b8db;
+    --ansi-bright-white: #ffffff;
+
+    /* shadow */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45);
+    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.55);
+
+    /* shell */
+    --shell-glow-rgb: 217 164 104;
+    --shell-card-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+
+    /* tree */
+    --tree-row-hover: #252a34;
+    --tree-row-active: #09456e;
+
+    /* tab */
+    --tab-active-bg: #252a34;
+    --tab-active-fg: #e4e8f0;
+    --tab-hover-bg: #252a34;
+    --tab-inactive-fg: #98a0b0;
+    --tab-dirty: #d9a468;
+
+    /* activity */
+    --activity-touched: #4a9eff;
+    --activity-editing: #d9a468;
+
+    /* scale */
+    --scale-red: #cd4147;
+    --scale-green: #8dc149;
+    --scale-blue: #519aba;
+    --scale-yellow: #cbcb41;
+    --scale-slate: #6d8086;
+    --scale-orange: #e37933;
+    --scale-purple: #a074c4;
+    --scale-pink: #f55385;
+    --scale-silver: #d4d7d6;
+    --scale-steel: #68767d;
+    --scale-graphite: #6a7579;
+
+    /* syntax */
+    --syntax-keyword: #569cd6;
+    --syntax-control: #c586c0;
+    --syntax-operator: #d4d4d4;
+    --syntax-string: #ce9178;
+    --syntax-escape: #d7ba7d;
+    --syntax-regexp: #d16969;
+    --syntax-comment: #6a9955;
+    --syntax-number: #b5cea8;
+    --syntax-constant: #4fc1ff;
+    --syntax-function: #dcdcaa;
+    --syntax-method: #dcdcaa;
+    --syntax-type: #4ec9b0;
+    --syntax-class: #86c691;
+    --syntax-namespace: #4ec9b0;
+    --syntax-variable: #9cdcfe;
+    --syntax-property: #9cdcfe;
+    --syntax-parameter: #7cc7e8;
+    --syntax-tag: #569cd6;
+    --syntax-attribute: #9cdcfe;
+    --syntax-punctuation: #808080;
+  }
+
+  /* ---- Semantic tokens, light ---- */
+  :root[data-theme="light"] {
+    /* fg */
+    --fg-default: #1e1e1e;
+    --fg-muted: #686868;
+    --fg-subtle: #808080;
+    --fg-watermark: rgba(128, 128, 128, 0.65);
+    --fg-on-emphasis: #ffffff;
+
+    /* canvas */
+    --canvas-default: #ffffff;
+    --canvas-card: #f3f3f3;
+    --canvas-head: #e8e8e8;
+    --canvas-input: #ffffff;
+
+    /* border */
+    --border-default: #e0e0e0;
+    --border-strong: rgba(23, 23, 23, 0.13);
+    --border-rail: #dcdcdc;
+
+    /* scrollbar */
+    --scrollbar-thumb: rgba(23, 23, 23, 0.14);
+    --scrollbar-thumb-hover: rgba(23, 23, 23, 0.26);
+
+    /* accent */
+    --accent-fg: #005fb8;
+    --accent-subtle: #cfe3fb;
+
+    /* neutral */
+    --neutral-hover: #ededed;
+    --neutral-subtle: rgba(23, 23, 23, 0.06);
+
+    /* danger */
+    --danger-fg: #ca212d;
+    --danger-emphasis: #cf222e;
+
+    /* attention */
+    --attention-fg: #8d5e00;
+    --attention-emphasis: #bc4c00;
+
+    /* success */
+    --success-fg: #197834;
+    --success-emphasis: #1a7f37;
+
+    /* info */
+    --info-fg: #14756a;
+
+    /* diff */
+    --diff-added: #1a7f37;
+    --diff-modified: #976500;
+    --diff-deleted: #cf222e;
+    --diff-added-word: rgba(26, 127, 55, 0.24);
+    --diff-deleted-word: rgba(207, 34, 46, 0.22);
+
+    /* diag */
+    --diag-error: #cf222e;
+    --diag-warning: #976500;
+    --diag-info: #157a6e;
+    --diag-hint: #6e7781;
+
+    /* agent */
+    --agent-claude: #c2562f;
+
+    /* scrim */
+    --scrim-default: rgba(23, 23, 23, 0.3);
+    --scrim-soft: rgba(23, 23, 23, 0.22);
+    --scrim-strong: rgba(23, 23, 23, 0.5);
+
+    /* status */
+    --status-progress: #7c3aed;
+    --status-needs-you: #e11d48;
+    --status-idle: #0d9488;
+    --status-running: #64748b;
+
+    /* progress */
+    --progress-subtle: #ebe6f3;
+    --progress-border: rgba(124, 58, 237, 0.35);
+    --progress-on-subtle: #562f9a;
+
+    /* needsYou */
+    --needs-you-subtle: #f2e4e7;
+    --needs-you-border: rgba(225, 29, 72, 0.4);
+    --needs-you-on-subtle: #931d37;
+
+    /* danger */
+    --danger-subtle: #f0e4e5;
+    --danger-border: rgba(202, 33, 45, 0.42);
+    --danger-on-subtle: #852027;
+
+    /* brand */
+    --brand-default: #7e5e2f;
+    --brand-strong: #6b4f27;
+    --brand-subtle: rgba(138, 103, 51, 0.14);
+    --brand-wash: #edebe7;
+    --brand-bar: #7e5e2f;
+    --brand-ring: rgba(138, 103, 51, 0.77);
+    --brand-on: #ffffff;
+
+    /* done */
+    --done-wash: #f1f7f6;
+    --done-selected: #e8f1f0;
+    --done-bar: #14756a;
+
+    /* blocking */
+    --blocking-surface: #ece9e6;
+    --blocking-border: #7e5e2f;
+    --blocking-fg: #1e1e1e;
+    --blocking-accent: #6b4f27;
+
+    /* ansi */
+    --ansi-cursor: #1e1e1e;
+    --ansi-selection: rgba(0, 95, 184, 0.25);
+    --ansi-black: #000000;
+    --ansi-red: #cd3131;
+    --ansi-green: #008a00;
+    --ansi-yellow: #7d8000;
+    --ansi-blue: #0451a5;
+    --ansi-magenta: #bc05bc;
+    --ansi-cyan: #0598bc;
+    --ansi-white: #555555;
+    --ansi-bright-black: #666666;
+    --ansi-bright-red: #cd3131;
+    --ansi-bright-green: #0f9d0f;
+    --ansi-bright-yellow: #8a8d00;
+    --ansi-bright-blue: #0451a5;
+    --ansi-bright-magenta: #bc05bc;
+    --ansi-bright-cyan: #0598bc;
+    --ansi-bright-white: #8c8c8c;
+
+    /* shadow */
+    --shadow-sm: 0 1px 2px rgba(23, 23, 23, 0.08);
+    --shadow-md: 0 4px 12px rgba(23, 23, 23, 0.12);
+    --shadow-lg: 0 12px 32px rgba(23, 23, 23, 0.18);
+
+    /* shell */
+    --shell-glow-rgb: 23 23 23;
+    --shell-card-shadow: 0 12px 32px rgba(23, 23, 23, 0.12);
+
+    /* tree */
+    --tree-row-hover: #ededed;
+    --tree-row-active: #cfe3fb;
+
+    /* tab */
+    --tab-active-bg: #ededed;
+    --tab-active-fg: #1e1e1e;
+    --tab-hover-bg: #ededed;
+    --tab-inactive-fg: #686868;
+    --tab-dirty: #7e5e2f;
+
+    /* activity */
+    --activity-touched: #005fb8;
+    --activity-editing: #7e5e2f;
+
+    /* scale */
+    --scale-red: #b02a30;
+    --scale-green: #4f7a1f;
+    --scale-blue: #2b6d8a;
+    --scale-yellow: #7d7d18;
+    --scale-slate: #4a5a60;
+    --scale-orange: #b5551a;
+    --scale-purple: #7a4ea6;
+    --scale-pink: #c22b5c;
+    --scale-silver: #7a7e7d;
+    --scale-steel: #2c3a40;
+    --scale-graphite: #39454a;
+
+    /* syntax */
+    --syntax-keyword: #0000ff;
+    --syntax-control: #af00db;
+    --syntax-operator: #000000;
+    --syntax-string: #a31515;
+    --syntax-escape: #e00000;
+    --syntax-regexp: #811f3f;
+    --syntax-comment: #008000;
+    --syntax-number: #097f54;
+    --syntax-constant: #0070c1;
+    --syntax-function: #795e26;
+    --syntax-method: #795e26;
+    --syntax-type: #247891;
+    --syntax-class: #0f7b6c;
+    --syntax-namespace: #247891;
+    --syntax-variable: #001080;
+    --syntax-property: #001080;
+    --syntax-parameter: #3b6ea5;
+    --syntax-tag: #800000;
+    --syntax-attribute: #e00000;
+    --syntax-punctuation: #808080;
+  }
+
+
+  /* ---- END GENERATED ROLE TOKENS ---- */
+
+  /* ---- Spacing conventions (two-tier rhythm) ----
+     Chrome surfaces (sidebar, toolbar, dialogs, settings, menus, toasts,
+     buttons) are SPACIOUS: generous padding, section rhythm, pills, soft
+     elevation. Reach for --tori-space-5/6/7 (12/16/24px) and --shadow-md/lg.
+     Work surfaces (editor, terminal, file tree, session tree, tabs) stay DENSE:
+     tight rows, upgraded only via radii/hover/type. Reach for --tori-space-2/3
+     (4/6px) and at most --shadow-sm. All chrome spacing >=2px scales with the
+     UI: use a --tori-space-* token or `calc(<px> * var(--ui-scale))`, so padding,
+     gaps, and control dimensions track the UI font size (and Cmd +/- zoom).
+     1px hairlines/borders stay fixed; radii are fixed px (--tori-radius-*). */
+}

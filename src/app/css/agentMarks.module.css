@@ -1,0 +1,79 @@
+/* The animated half of a agent mark: worn while that agent is mid-turn, so
+   the glyph the chat already shows becomes the activity indicator instead of a
+   spinner appearing beside it.
+
+   Opacity and scale, never rotation: these are logos, and a spinning wordmark
+   reads as broken rather than busy. */
+@layer components {
+  /* The tinted half, worn by anything that says "this agent is working": the
+     tab strip's mark and the chat's own lane strip. Keyed on the mark actually
+     rendered rather than on the adapter id, so a session whose provider Tori
+     cannot name keeps the neutral accent instead of borrowing a logo's colour.
+
+     Shared rather than declared twice. Two surfaces showing the same agent for
+     the same reason must not drift to two colours, which is the rule the
+     breathe below already follows. */
+  .tint {
+    color: var(--accent-fg);
+  }
+
+  /* Anthropic's is the one brand hue the palettes carry, because it is worn
+     outside these surfaces too (the toolbar crumb) where it has to answer to
+     the theme's contrast. */
+  .tint[data-mark="claude"] {
+    color: var(--agent-claude);
+  }
+
+  .tint[data-mark="gemini"] {
+    color: var(--tori-agent-gemini);
+  }
+
+  /* Codex, Copilot, Kimi, OpenCode and Pi are all published as monochrome black
+     (Simple Icons; Codex has no entry and OpenAI's own mark is black on light,
+     white on dark). The faithful rendering of a black-or-white brand is the
+     theme's foreground, not a fixed black that would vanish into a dark strip. */
+  .tint[data-mark="codex"],
+  .tint[data-mark="copilot"],
+  .tint[data-mark="kimi"],
+  .tint[data-mark="opencode"],
+  .tint[data-mark="pi"] {
+    color: var(--fg-default);
+  }
+
+  .thinking {
+    /* Not a duration token: the two we have are 80ms and 160ms, both sized for
+       a state change the eye should not notice, and a breath at either reads as
+       a flicker. */
+    animation: agent-breathe 1600ms ease-in-out infinite;
+    transform-origin: center;
+  }
+
+  @keyframes agent-breathe {
+    0%,
+    100% {
+      opacity: 0.45;
+      transform: scale(0.92);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* Reduced motion still needs to say "running", so the pulse stays and only
+     the movement goes. */
+  @media (prefers-reduced-motion: reduce) {
+    .thinking {
+      animation-name: agent-fade;
+    }
+    @keyframes agent-fade {
+      0%,
+      100% {
+        opacity: 0.5;
+      }
+      50% {
+        opacity: 1;
+      }
+    }
+  }
+}

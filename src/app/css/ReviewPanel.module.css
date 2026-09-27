@@ -1,0 +1,634 @@
+/* The Changes tab: a branch row, the commit composer, then stacked sections.
+   Section chrome is shared with the Files tab (PanelSection.module.css); the
+   `.tree-empty` empty-state stays global (via :global), same as FileTree. */
+.reviewPanel {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--canvas-card);
+  font-size: var(--tori-text-xl);
+  user-select: none;
+}
+
+/* Row one, the height the Files and Search tabs open with. */
+.topBar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: calc(4px * var(--ui-scale));
+  min-height: calc(40px * var(--ui-scale));
+  padding: calc(6px * var(--ui-scale));
+}
+
+/* The tab's name, outside a Topic. Inside one the member chips take this
+   spot, the same swap the Search tab makes, so the two tabs open the same way
+   and this matches Search's title exactly. */
+.title {
+  padding-left: calc(4px * var(--ui-scale));
+  color: var(--fg-muted);
+  font-size: var(--tori-text-lg);
+  font-weight: 600;
+}
+
+/* Row two: the repo the chip above names. Shorter than row one, which carries
+   the tab's own title and has to match the other tabs' opening row. */
+.branchBar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: calc(6px * var(--ui-scale));
+  min-height: calc(32px * var(--ui-scale));
+  padding: 0 calc(8px * var(--ui-scale)) 0 calc(12px * var(--ui-scale));
+}
+
+.branchBar > svg {
+  flex: none;
+  width: var(--control-icon);
+  height: var(--control-icon);
+  color: var(--fg-muted);
+}
+
+/* A merge or rebase stopped midway, with Continue, Skip and Abort. */
+.opBar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: calc(6px * var(--ui-scale));
+  min-height: calc(32px * var(--ui-scale));
+  padding: 0 calc(8px * var(--ui-scale)) 0 calc(12px * var(--ui-scale));
+  border-block: 1px solid var(--border-default);
+  background: var(--canvas-card);
+}
+
+.opName {
+  overflow: hidden;
+  color: var(--fg-default);
+  font-size: var(--tori-text-md);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Why the member picked has no changes to read, and the repair beside it. */
+.unusable {
+  display: flex;
+  align-items: center;
+  gap: calc(6px * var(--ui-scale));
+  padding: calc(8px * var(--ui-scale)) calc(12px * var(--ui-scale));
+  color: var(--fg-muted);
+}
+
+/* The branch the repo on screen is on: the panel's title, in effect. */
+.branchName {
+  overflow: hidden;
+  color: var(--fg-default);
+  font-size: var(--tori-text-xl);
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Ahead/behind, and the push it invites. A control rather than a label: the
+   numbers are the reason to push, so they are the thing you press. */
+.aheadPill {
+  flex: none;
+  padding: calc(1px * var(--ui-scale)) calc(8px * var(--ui-scale));
+  background: var(--brand-subtle);
+  border: none;
+  border-radius: var(--tori-radius-sm);
+  color: var(--brand-default);
+  font: inherit;
+  font-size: var(--tori-text-sm);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.aheadPill:hover:not(:disabled) {
+  background: var(--brand-wash);
+}
+
+.aheadPill:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.spacer {
+  flex: 1;
+}
+
+/* The file list and the history under it, which is what scrolls. */
+.stack {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.changesBody {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* The history section. Open, it has a dragged height and the strip heads it;
+   closed, the strip is the whole section, sitting at the bottom. */
+.history {
+  position: relative;
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  min-height: calc(36px * var(--ui-scale));
+  border-top: 1px solid var(--border-default);
+}
+
+.history.historyOpen {
+  min-height: calc(90px * var(--ui-scale));
+}
+
+/* The drag handle sits over the top border rather than beside it. */
+.sash {
+  position: absolute;
+  top: calc(-4px * var(--ui-scale));
+  left: 0;
+  right: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  height: calc(8px * var(--ui-scale));
+}
+
+.tabStrip {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: calc(4px * var(--ui-scale));
+  height: calc(36px * var(--ui-scale));
+  padding: 0 calc(6px * var(--ui-scale)) 0 calc(8px * var(--ui-scale));
+  /* clip, like every tab strip: an OverflowTabBar must never scroll, or a
+     focused tab drags the +N model's hidden tabs halfway in. */
+  overflow: clip;
+}
+
+/* The rule under the tabs, only while there is something under them. */
+.historyOpen .tabStrip {
+  border-bottom: 1px solid var(--border-default);
+}
+
+/* The showing tab's own controls, on the line under the rule. */
+.tabActions {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: calc(4px * var(--ui-scale));
+  min-height: calc(30px * var(--ui-scale));
+  padding: 0 calc(6px * var(--ui-scale)) 0 calc(8px * var(--ui-scale));
+}
+
+.tabCount {
+  color: var(--fg-subtle);
+  font-weight: 500;
+}
+
+/* The graph tab's every-branch switch: a labelled toggle, lit while on. */
+.stripToggle {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: calc(4px * var(--ui-scale));
+  padding: 0 calc(6px * var(--ui-scale));
+  background: none;
+  border: none;
+  border-radius: var(--tori-radius-sm);
+  color: var(--fg-muted);
+  font: inherit;
+  font-family: "SF Mono", Menlo, Monaco, monospace;
+  font-size: var(--tori-text-sm);
+  cursor: pointer;
+}
+
+/* A fact beside the toggles, in their type but without their affordance. */
+.stripMeta {
+  flex: none;
+  padding: 0 calc(2px * var(--ui-scale));
+  color: var(--fg-muted);
+  font-family: "SF Mono", Menlo, Monaco, monospace;
+  font-size: var(--tori-text-sm);
+  white-space: nowrap;
+}
+
+.stripToggle:hover {
+  color: var(--fg-default);
+}
+
+.stripToggle[aria-pressed="true"] {
+  color: var(--brand-default);
+}
+
+.stripToggle > svg {
+  width: var(--control-icon);
+  height: var(--control-icon);
+}
+
+.historyBody {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.tabPanel {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.tabPanel[hidden],
+.historyBody[hidden] {
+  display: none;
+}
+
+/* A section's own scroller, for the bodies that are not already one. */
+.sectionScroll {
+  flex: 1;
+}
+
+/* How many rows a section holds, on its header. */
+.count {
+  flex: none;
+  min-width: calc(16px * var(--ui-scale));
+  padding: 0 calc(5px * var(--ui-scale));
+  background: var(--neutral-subtle);
+  border-radius: var(--tori-radius-pill);
+  color: var(--fg-muted);
+  font-size: var(--tori-text-xs);
+  font-weight: 600;
+  text-align: center;
+}
+
+/* The verb and its variants as one control: a chevron welded to the primary
+   button's right edge. */
+.splitButton {
+  display: inline-flex;
+  flex: none;
+  align-items: stretch;
+}
+
+.splitButton .commitButton {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.splitMore.splitMore {
+  width: calc(20px * var(--ui-scale));
+  background: var(--brand-default);
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  color: var(--brand-on);
+}
+
+.splitMore.splitMore:hover:not(:disabled) {
+  background: var(--brand-strong);
+  color: var(--brand-on);
+}
+
+/* Included in the next commit, or not. The chip itself carries the member's
+   colour, so the button only has to say whether it is on. */
+.chip {
+  display: inline-flex;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0.4;
+}
+
+.chip[aria-pressed="true"] {
+  opacity: 1;
+}
+
+/* The include-untracked box sits in a section header, where the rows around it
+   are 30px tall. */
+.untrackedBox {
+  flex: none;
+  color: var(--fg-muted);
+  font-size: var(--tori-text-xs);
+}
+
+/* One member's band inside a Topic. Nothing on a branch unit, which has one
+   section and no header to separate it from anything. */
+.memberSection {
+  display: block;
+}
+
+/* Which members the message below lands in. Present only inside a Topic, so
+   it is never a row explaining the one repo there is. */
+.commitTarget {
+  display: flex;
+  align-items: center;
+  gap: calc(4px * var(--ui-scale));
+  padding: 0 0 calc(4px * var(--ui-scale));
+  color: var(--fg-muted);
+  font-size: var(--tori-text-md);
+}
+
+.reviewPanel :global(.tree-empty) {
+  padding: calc(8px * var(--ui-scale)) calc(12px * var(--ui-scale));
+  color: var(--fg-muted);
+}
+
+/* Conflicts / Staged / Changes inside one member. Quieter than a section
+   header, which is the thing above them. */
+.groupHeader {
+  margin: calc(8px * var(--ui-scale)) calc(4px * var(--ui-scale)) calc(2px * var(--ui-scale));
+  padding: calc(2px * var(--ui-scale)) calc(8px * var(--ui-scale));
+  color: var(--fg-subtle);
+  font-size: var(--tori-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* The file tree's row, so the two lists read as one kind of thing. */
+.reviewRow {
+  display: flex;
+  align-items: center;
+  gap: calc(4px * var(--ui-scale));
+  margin: 0 calc(4px * var(--ui-scale));
+  padding: calc(4px * var(--ui-scale)) calc(8px * var(--ui-scale));
+  border-radius: var(--tori-radius-sm);
+  color: var(--fg-default);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--tori-duration-fast) ease;
+}
+
+.reviewRow:hover {
+  background: var(--tree-row-hover);
+}
+
+/* The row whose diff the editor is showing, same cue as the tree's active file. */
+.reviewRow.active {
+  background: var(--brand-subtle);
+}
+
+.reviewRow.active .reviewName {
+  font-weight: 500;
+}
+
+.reviewStatus {
+  flex: none;
+  margin-left: auto;
+  width: calc(18px * var(--ui-scale));
+  text-align: center;
+  font-family: "SF Mono", Menlo, Monaco, monospace;
+  font-size: var(--tori-text-md);
+}
+
+.reviewStatus.added {
+  color: var(--diff-added);
+}
+.reviewStatus.modified {
+  color: var(--diff-modified);
+}
+.reviewStatus.deleted {
+  color: var(--diff-deleted);
+}
+.reviewStatus.untracked {
+  color: var(--fg-muted);
+}
+/* Conflicts are the one status that is blocking rather than descriptive:
+   nothing below can be committed until they are gone. */
+.reviewStatus.conflicted {
+  color: var(--danger-fg);
+}
+
+/* The conflict row is a <button> so it is reachable by keyboard, which costs
+   the browser's own button chrome back. Everything else it takes from
+   `.reviewRow`, so the two kinds of row still read as one list. */
+.conflictRow {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+
+/* The row and the ask beside it. The ask cannot live *inside* the row, which is
+   itself a button, so the two are laid out as one line here and the name takes
+   whatever the ask leaves. Same reveal-on-hover rule as `.rowAction`: an
+   unmerged path has no other actions, so a permanently visible button on every
+   row would be the loudest thing in the panel. */
+.conflictRowWrap {
+  display: flex;
+  align-items: center;
+  gap: calc(4px * var(--ui-scale));
+  padding-right: calc(8px * var(--ui-scale));
+}
+.askButton {
+  flex: none;
+  opacity: 0;
+}
+.conflictRowWrap:hover .askButton,
+.askButton:focus-visible {
+  opacity: 1;
+}
+
+/* The file's own name. Never shrinks below itself: the folder beside it is the
+   part that gives way when the panel is narrow. */
+/* The name keeps its width while the folder beside it gives way; only when
+   the row is narrower than the name alone does the name shorten. */
+.reviewName {
+  flex: 0 1 auto;
+  overflow: hidden;
+  min-width: 0;
+  color: var(--fg-default);
+  text-overflow: ellipsis;
+}
+
+/* The folders above the file, dimmed, taking the slack and giving it back
+   first. Right-to-left so a long path keeps its tail, which is the half that
+   says which file this is. */
+.reviewDir {
+  flex: 1 1 0;
+  overflow: hidden;
+  min-width: 0;
+  color: var(--fg-muted);
+  direction: rtl;
+  font-size: var(--tori-text-md);
+  text-align: left;
+  text-overflow: ellipsis;
+}
+
+/* A rename's source path. Dimmed, because the destination is the one that
+   still exists and the one every action on the row acts on. */
+.renameFrom {
+  color: var(--fg-muted);
+}
+
+/* A row's trailing controls, hidden until the row is hovered or one of them has
+   focus, so a list reads as names rather than as rows of buttons. Zero width
+   at rest rather than `display: none`, so the name has the whole row until the
+   controls arrive and a Tab can still land on one, which then reveals them. */
+.rowEnd {
+  display: inline-flex;
+  flex: none;
+  overflow: hidden;
+  align-items: center;
+  gap: calc(1px * var(--ui-scale));
+  width: 0;
+  opacity: 0;
+}
+
+.reviewRow:hover .rowEnd,
+.stashRow:hover .rowEnd,
+.rowEnd:focus-within {
+  width: auto;
+  opacity: 1;
+}
+
+/* A stash entry. Same rhythm as a file row, but nothing to expand: the message
+   takes the slack so the age and the three actions sit hard right. */
+.stashRow {
+  display: flex;
+  align-items: center;
+  gap: calc(4px * var(--ui-scale));
+  margin: 0 calc(4px * var(--ui-scale));
+  padding: calc(4px * var(--ui-scale)) calc(8px * var(--ui-scale));
+  border-radius: var(--tori-radius-sm);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.stashRow:hover {
+  background: var(--tree-row-hover);
+}
+
+/* Open, with its files under it. The tint is the disclosure: an icon leads
+   the row, not a chevron, so it does not read as another section header. */
+.stashRow.active {
+  background: var(--brand-subtle);
+}
+
+.stashIcon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: calc(16px * var(--ui-scale));
+  color: var(--fg-muted);
+}
+
+.stashIcon > svg {
+  width: var(--control-icon);
+  height: var(--control-icon);
+}
+
+.stashRow .reviewName {
+  flex: 1;
+}
+
+.stashMeta {
+  flex: none;
+  color: var(--fg-muted);
+  font-size: var(--tori-text-md);
+}
+
+/* The composer as one card: the message box's own border and background,
+   holding the message and the row of numbers and buttons under it. */
+.commitCard {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  margin: calc(4px * var(--ui-scale)) calc(8px * var(--ui-scale)) calc(8px * var(--ui-scale));
+  background: var(--canvas-input);
+  border: 1px solid var(--border-default);
+  border-radius: var(--tori-radius-md);
+  transition: border-color var(--tori-duration-fast) ease;
+}
+
+.commitCard:focus-within {
+  border-color: var(--brand-default);
+}
+
+.commitCard .commitTarget {
+  padding: calc(6px * var(--ui-scale)) calc(10px * var(--ui-scale)) 0;
+}
+
+/* The message, sized in rows by `fitMessage`. The card carries the border, so
+   the box itself is bare; `resize: none` because the row count is the height
+   and a dragged box would be overwritten by the next keystroke. */
+.commitInput {
+  composes: input from "./patterns.module.css";
+  resize: none;
+}
+
+/* Doubled for specificity, the way `.splitMore` is: `composes` lands the
+   pattern's rule after this file's in the bundle, so a plain `border: none`
+   loses to it and the card draws a second box inside itself. */
+.commitInput.commitInput {
+  background: none;
+  border: none;
+}
+
+/* The numbers and the verb they qualify. Wraps rather than squeezes: at the
+   panel's narrowest the buttons take their own line and the count keeps its
+   words, which beats "Nothing to commit" worn down to "N..". */
+.commitFooter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: calc(6px * var(--ui-scale));
+  padding: calc(2px * var(--ui-scale)) calc(8px * var(--ui-scale)) calc(8px * var(--ui-scale))
+    calc(10px * var(--ui-scale));
+}
+
+.commitStats {
+  overflow: hidden;
+  /* Its own width and no more, floored at its longest word: "3 files" takes
+     the room "3 files" needs, and the buttons wrap before "Nothing to commit"
+     is worn down to "N..". */
+  flex: 0 1 auto;
+  min-width: min-content;
+  color: var(--fg-muted);
+  font-family: "SF Mono", Menlo, Monaco, monospace;
+  font-size: var(--tori-text-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.commitActions {
+  display: flex;
+  flex: none;
+  gap: calc(6px * var(--ui-scale));
+  margin-left: auto;
+}
+
+/* Commit fills the split button, which is what has the width. */
+.commitButton {
+  flex: 1;
+}
+
+/* Announced, never drawn: the two checkbox descriptions that used to be a
+   `title` on the surrounding `<label>`, which no keyboard user ever saw (see
+   ReviewPanel.tsx). Same recipe as `.srOnly` in Settings.module.css, copied
+   rather than shared so this module stays self-contained. */
+/* The ... menu's tick column, kept when empty so the labels line up. */
+.checkSlot {
+  flex: none;
+  display: inline-flex;
+  width: var(--control-icon);
+  height: var(--control-icon);
+}
+
+.checkSlot > svg {
+  width: 100%;
+  height: 100%;
+}
+
+.srOnly {
+  composes: srOnly from "./patterns.module.css";
+}

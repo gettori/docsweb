@@ -1,0 +1,393 @@
+/* Left sidebar (Space -> Project -> branch-unit -> Session tree) styles,
+   hash-scoped. Buttons use the shared <Button> component. Kept global in
+   App.css: the .tree-body pane wrapper (App.tsx), and the shared .tree-empty
+   empty-state base (also used by ReviewPanel). */
+.tree {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  font-size: var(--tori-text-xl);
+  -webkit-user-select: none;
+  user-select: none;
+  min-height: 0;
+  min-width: 0;
+  /* The tree's own horizontal insets. The filter field and every project card
+     line up on these, so the column reads as one edge instead of two.
+
+     The right inset is not a margin: `.treeScroll` pads by it, so anything
+     inside it already stands that far off the right edge and adding a margin on
+     top would push the cards visibly left of centre. Cards therefore run flush
+     into it, and the filter - which sits outside the scroll area - pads itself
+     by the same amount. It is also the lane the overlay scrollbar's thumb
+     floats in. */
+  /* The tree's own horizontal insets. The filter field and every project card
+     line up on these, so the column reads as one edge instead of two.
+
+     `--tree-inset` is declared on `.rowScope` too (SidebarRows.module.css),
+     because a stylesheet cannot read another's and the rows have to measure
+     the same in the workshop as they do here. The two values are the same
+     value and have to stay that way. */
+  --tree-inset: calc(8px * var(--ui-scale));
+  --tree-gutter: calc(4px * var(--ui-scale));
+}
+
+/* The title, its menu and the filter in one wrapping row. The wrap *is* the
+   layout rule: the field asks for 120px and takes the next line when what the
+   title leaves is less than that. */
+.treeHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  --head-gap: calc(6px * var(--ui-scale));
+  gap: var(--head-gap);
+  padding-inline: calc(8px + var(--tree-inset)) var(--tree-gutter);
+}
+
+/* The pane tab strips' own height (`.unified-strip` in App.css), so the
+   sidebar's head lines up with the tabs across the window. Carried by a strut
+   rather than the row's `min-height`, which a second line would spend on
+   centring both lines - lifting the title as the field appeared. */
+.headStrut {
+  width: 0;
+  /* Zero wide still takes a gap, and that gap would inset the title past the
+     column everything below it lines up on. */
+  margin-inline-end: calc(-1 * var(--head-gap));
+  min-height: calc(40px * var(--ui-scale));
+}
+
+/* The one thing this column makes, in a filled box beside the bare filter
+   glyph: the pair reads as add-then-find, and the fill is what says which of
+   the two acts rather than reveals. */
+.headAdd {
+  margin-left: auto;
+  color: var(--fg-muted);
+  background: var(--neutral-subtle);
+}
+
+.headAdd:hover {
+  color: var(--fg-default);
+}
+
+/* Holds the right edge while the field is closed, and gives way to it when it
+   opens, since a growing field leaves no free space for the auto margin.
+   General sibling rather than adjacent: the field sits between the two while
+   it is open, and the pair still has to stay together. */
+.searchToggle {
+  margin-left: auto;
+  color: var(--fg-subtle);
+}
+
+.headAdd ~ .searchToggle {
+  margin-left: 0;
+}
+
+.searchToggle:hover {
+  color: var(--fg-default);
+}
+
+/* The Topic list on the tree's insets, like the cards it replaces, and stood
+   off the title and the strip by block padding of its own: the New Topic
+   button that used to hold the gap at the top has moved into the head row. */
+.topicList {
+  padding-inline: var(--tree-inset) var(--tree-gutter);
+  padding-block: calc(8px * var(--ui-scale));
+}
+
+.searchInput {
+  /* The 120px is the threshold itself: a field that cannot have that much
+     beside the title is a field on its own line. */
+  flex: 1 1 calc(120px * var(--ui-scale));
+  min-width: calc(120px * var(--ui-scale));
+  background: transparent;
+  border: 1px solid var(--border-default);
+  color: var(--fg-default);
+  caret-color: var(--brand-default);
+  border-radius: var(--tori-radius-md);
+  padding: calc(6px * var(--ui-scale)) calc(10px * var(--ui-scale));
+  font-size: var(--tori-text-xl);
+  outline: none;
+  transition:
+    border-color var(--tori-duration-fast) ease,
+    box-shadow var(--tori-duration-fast) ease;
+}
+
+/* Placeholder reads as a faint hint, not real content. */
+.searchInput::placeholder {
+  color: var(--fg-watermark);
+  opacity: 1;
+}
+
+/* A quiet edge rather than the brand ring: this field opens focused every
+   time, so a loud focus state would be its resting state. */
+.searchInput:focus {
+  border-color: var(--border-strong);
+}
+
+/* ---- Tree title ---- */
+/* The name at title weight with its kind trailing it, as one group inside the
+   head row so the filter can wrap under the pair rather than between them. */
+.spaceHeader {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: calc(6px * var(--ui-scale));
+  min-height: calc(26px * var(--ui-scale));
+  padding-block: calc(10px * var(--ui-scale));
+}
+
+/* Truncates rather than wrapping, so a long space name cannot push the kind
+   label and the ellipsis off the column. */
+.spaceHeaderName {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--fg-default);
+  font-size: var(--tori-text-3xl);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-transform: capitalize;
+}
+
+.spaceHeaderKind {
+  flex: none;
+  color: var(--fg-subtle);
+  font-size: var(--tori-text-lg);
+}
+
+/* The trigger wraps the button rather than being it (Dropdown's `wrapper`), so
+   this is placement and the reveal only. `opacity` and not `display`, so the
+   keyboard keeps the way in that the pointer gets on hover. */
+.spaceHeaderMenu {
+  flex: none;
+  margin-left: auto;
+  /* The row aligns its two labels on their baseline; an icon button has no
+     baseline worth sharing, so it centres against them instead. */
+  align-self: center;
+  display: inline-flex;
+  opacity: 0;
+  transition: opacity var(--tori-duration-fast) ease;
+}
+
+.spaceHeader:hover .spaceHeaderMenu,
+.spaceHeaderMenu:focus-within,
+.spaceHeaderMenu[data-expanded] {
+  opacity: 1;
+}
+
+.spaceHeaderMenuBtn {
+  color: var(--fg-subtle);
+}
+
+.spaceHeaderMenuBtn:hover {
+  color: var(--fg-default);
+}
+
+.dockBtn {
+  justify-self: end;
+}
+
+/* Strip buttons (the dock toggle and the tiles) share one bare-icon variant:
+   transparent fill and border so only the glyph shows at rest, hover reveals
+   the brand border, and the lit one drops to a brand-tinted icon. */
+.stripBtn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(30px * var(--ui-scale));
+  height: calc(30px * var(--ui-scale));
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--fg-subtle);
+  border-radius: var(--tori-radius-md);
+  cursor: pointer;
+  transition:
+    color var(--tori-duration-fast) ease,
+    border-color var(--tori-duration-fast) ease;
+}
+.stripBtn:hover {
+  color: var(--fg-default);
+  border-color: var(--brand-default);
+}
+/* Active (menu or dock open): brand-tinted icon only. Border stays transparent,
+   so a hover over it still gets the brand border on top. */
+.stripBtn.active {
+  color: var(--brand-default);
+}
+
+/* The frame of an OverlayScroll: the bar is drawn, floats over the content, and
+   costs no width, so the reserved `scrollbar-gutter` this used to need is gone.
+   The right padding stays, at the width that gutter had: it is what the thumb
+   floats in, so a card's border is never under the pill. */
+.treeScroll {
+  flex: 1;
+  min-height: 0;
+  padding: 0 var(--tree-gutter) calc(10px * var(--ui-scale)) 0;
+}
+
+.spaceBar {
+  position: relative;
+  /* The Topics list is content-height, and without this the strip floats up
+     under it. */
+  margin-top: auto;
+  display: grid;
+  /* The tiles start at the sidebar's own left edge and the dock button keeps
+     the right one. They were centred while the gear held the left track; with
+     nothing there to balance, centring would leave the first space floating in
+     a gap. A squeeze comes out of the tiles, which scroll. */
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: calc(6px * var(--ui-scale));
+  /* Right on `--tree-gutter`, like the head and the tree above it, so the dock
+     button lands on the one edge the whole column ends on. */
+  padding: calc(8px * var(--ui-scale)) var(--tree-gutter) calc(16px * var(--ui-scale))
+    calc(10px * var(--ui-scale));
+  /* A relayout boundary. The pill opens by animating widths, and without this
+     every frame of that dirties the column above it, tree and all. Size
+     containment needs the height stated: the padding plus one tile. */
+  height: calc(54px * var(--ui-scale));
+  contain: size layout;
+}
+
+.stripNav {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: calc(6px * var(--ui-scale));
+}
+
+/* Divider from the tree above, inset 8px from each edge so it does not run into
+   the sidebar's corners. A pseudo-element rather than border-top, which a padded
+   box cannot inset. */
+.spaceBar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: calc(8px * var(--ui-scale));
+  right: calc(8px * var(--ui-scale));
+  height: 1px;
+  background: var(--border-default);
+  opacity: 0.5;
+}
+
+/* The space tiles, packed left and no wider than they need to be. It shrinks
+   and scrolls rather than growing, so the mode tiles stay next to the spaces
+   instead of being pushed to the far edge. */
+.spaceScroll {
+  flex: 0 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: calc(3px * var(--ui-scale));
+  overflow-x: auto;
+  /* `overflow-x: auto` clips the other axis too, and a tile's bubble hangs 4px
+     off its top right corner. The padding is that overhang, inside the clip
+     box; the margins hand the same room back so the strip does not move. */
+  padding: calc(4px * var(--ui-scale)) calc(4px * var(--ui-scale)) 0 0;
+  margin: calc(-4px * var(--ui-scale)) calc(-4px * var(--ui-scale)) 0 0;
+  /* Scrollable but never drawn. Dropping the names buys room first; past that
+     there is nothing left to give, and a 30px strip is too short to spend any
+     of its height on a bar. */
+  scrollbar-width: none;
+}
+
+.spaceScroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Vertical rule between the space tiles and the mode tiles. */
+.spaceDivider {
+  flex: none;
+  align-self: stretch;
+  width: 1px;
+  margin: calc(2px * var(--ui-scale)) calc(2px * var(--ui-scale));
+  background: var(--border-default);
+}
+
+/* ---- The space menu's heading: which space the four rows below act on.
+   It sits inside <Menu>'s `.heading`, which supplies the inset and the muted
+   voice; what is added here is the glyph and the name, because a heading that
+   is only a word would repeat what the rows already say. The glyph wears the
+   space's own hue, the one thing that tells two tiles apart at a glance. ---- */
+.spaceMenuHead {
+  /* Set inline per space, the same way `.space` sets it on a tile; declared
+     here so the var always resolves and a space with no swatch of its own
+     falls back to the theme's glow rather than dropping the colour. */
+  --space-hue-rgb: var(--shell-glow-rgb);
+  display: flex;
+  align-items: center;
+  gap: var(--tori-space-4);
+  min-width: 0;
+}
+.spaceMenuHead svg {
+  flex: none;
+  width: var(--control-icon);
+  height: var(--control-icon);
+  color: rgb(var(--space-hue-rgb));
+}
+/* The initials, in the glyph's place and its hue, for a space that has no icon. */
+.spaceMenuMark {
+  flex: none;
+  width: var(--control-icon);
+  text-align: center;
+  font-size: var(--tori-text-xs);
+  font-weight: 600;
+  color: rgb(var(--space-hue-rgb));
+}
+.spaceMenuName {
+  font-weight: 600;
+  color: var(--fg-default);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* The same head, for a project's menu. Restated rather than shared with the
+   space one above: the mark is the project's own icon rather than a space's
+   initial, so it can be an image, and the kind badge is a third child that has
+   to push to the far edge. */
+.projectMenuHead {
+  display: flex;
+  align-items: center;
+  gap: var(--tori-space-4);
+  min-width: 0;
+}
+/* Both shapes `ProjectIcon` resolves to, at the size the sidebar row wears
+   them: a glyph in the name's ink, so the two read as one unit, and an image
+   letterboxed rather than cropped. */
+.projectMenuHead svg {
+  flex: none;
+  width: var(--control-icon);
+  height: var(--control-icon);
+  color: var(--fg-default);
+}
+.projectMenuHead img {
+  flex: none;
+  width: var(--control-icon);
+  height: var(--control-icon);
+  object-fit: contain;
+  border-radius: calc(3px * var(--ui-scale));
+}
+.projectMenuName {
+  font-weight: 600;
+  color: var(--fg-default);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Which of the three menus this is. The kinds differ in what they can do, and
+   the rows alone never said which kind you had opened. */
+.projectMenuBadge {
+  margin-left: auto;
+  flex: none;
+  padding: calc(1px * var(--ui-scale)) calc(5px * var(--ui-scale));
+  font-size: var(--tori-text-2xs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1.3;
+  color: var(--fg-subtle);
+  border: var(--tori-border-thin) solid var(--border-strong);
+  border-radius: var(--tori-radius-sm);
+}

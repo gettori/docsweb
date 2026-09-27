@@ -1,0 +1,209 @@
+/* Checkpoint timeline inside the Changes panel, hash-scoped. Tokens and the
+   --ui-scale multipliers match ReviewPanel's so the two read as one surface.
+   prefers-reduced-motion is handled globally (src/styles/base.css). */
+.timeline {
+  border-bottom: 1px solid var(--border-default);
+  padding: calc(4px * var(--ui-scale)) 0 calc(6px * var(--ui-scale));
+}
+
+.timelineHeader {
+  display: flex;
+  align-items: center;
+  gap: calc(8px * var(--ui-scale));
+  padding: calc(2px * var(--ui-scale)) calc(8px * var(--ui-scale));
+}
+
+.timelineTitle {
+  flex: 1;
+  color: var(--fg-muted);
+  font-size: var(--tori-text-md);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.cumulativeToggle {
+  display: flex;
+  align-items: center;
+  gap: calc(4px * var(--ui-scale));
+  color: var(--fg-muted);
+  font-size: var(--tori-text-md);
+  cursor: pointer;
+}
+
+/* The turn strip scrolls on its own rather than widening the panel. */
+.strip {
+  display: flex;
+  gap: calc(3px * var(--ui-scale));
+  overflow-x: auto;
+  padding: calc(4px * var(--ui-scale)) calc(8px * var(--ui-scale));
+}
+
+.strip:focus-visible {
+  outline: 1px solid var(--accent-fg);
+  outline-offset: -1px;
+}
+
+.turnChip {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  min-width: calc(44px * var(--ui-scale));
+  padding: calc(3px * var(--ui-scale)) calc(5px * var(--ui-scale));
+  border: 1px solid var(--border-default);
+  border-radius: var(--tori-radius-sm);
+  background: var(--canvas-default);
+  color: var(--fg-muted);
+  font-size: var(--tori-text-sm);
+  cursor: pointer;
+}
+
+.turnChip:hover {
+  background: var(--neutral-hover);
+}
+
+.turnChipActive {
+  border-color: var(--accent-fg);
+  color: var(--fg-default);
+}
+
+/* A backstop is a pre-revert safety snapshot, not a turn the agent ran. */
+.turnChipBackstop {
+  border-style: dashed;
+}
+
+.turnTime {
+  font-variant-numeric: tabular-nums;
+}
+
+.turnCount {
+  color: var(--fg-muted);
+}
+
+.scopeHint {
+  padding: calc(2px * var(--ui-scale)) calc(8px * var(--ui-scale)) calc(4px * var(--ui-scale));
+  color: var(--fg-muted);
+  font-size: var(--tori-text-md);
+  line-height: 1.4;
+}
+
+.timelineActions {
+  padding: calc(2px * var(--ui-scale)) calc(8px * var(--ui-scale));
+}
+
+/* "Revert tree to here" is a shared <Button size="sm"> now. */
+
+.timelineEmpty {
+  padding: calc(4px * var(--ui-scale)) calc(8px * var(--ui-scale));
+  color: var(--fg-muted);
+  font-size: var(--tori-text-md);
+}
+
+.timelineRow {
+  display: flex;
+  align-items: center;
+  gap: calc(6px * var(--ui-scale));
+  padding: calc(2px * var(--ui-scale)) calc(8px * var(--ui-scale));
+  cursor: pointer;
+}
+
+.timelineRow:hover {
+  background: var(--neutral-hover);
+}
+
+.timelineStatus {
+  flex: none;
+  width: calc(14px * var(--ui-scale));
+  text-align: center;
+  font-family: "SF Mono", Menlo, Monaco, monospace;
+  font-size: var(--tori-text-md);
+}
+
+.timelineStatus.added {
+  color: var(--diff-added);
+}
+.timelineStatus.modified {
+  color: var(--diff-modified);
+}
+.timelineStatus.deleted {
+  color: var(--diff-deleted);
+}
+
+.timelineName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--fg-default);
+}
+
+.timelineDiff {
+  font-family: "SF Mono", Menlo, Monaco, monospace;
+  font-size: var(--tori-text-md);
+  line-height: 1.4;
+  overflow-x: auto;
+  padding: calc(4px * var(--ui-scale)) 0;
+  background: var(--canvas-default);
+}
+
+.diffLine {
+  white-space: pre;
+  padding: 0 calc(8px * var(--ui-scale));
+}
+
+.diffLine.add {
+  color: var(--diff-added);
+}
+.diffLine.del {
+  color: var(--diff-deleted);
+}
+.diffLine.hunk {
+  color: var(--accent-fg);
+}
+.diffLine.meta {
+  color: var(--fg-muted);
+}
+
+/* A file more than one live chat wrote this turn. Marked rather than resolved:
+   both sessions really did write it, so reverting is not only this session's
+   business. */
+/* A pre-discard snapshot. Same row shape as a turn's file, minus the click-to-
+   expand, plus a trailing time and its own Restore button. */
+.backstopRow {
+  display: flex;
+  align-items: center;
+  gap: calc(6px * var(--ui-scale));
+  padding: calc(2px * var(--ui-scale)) calc(8px * var(--ui-scale));
+}
+
+.backstopRow:hover {
+  background: var(--neutral-hover);
+}
+
+/* The label takes the slack so the time and Restore sit hard right. */
+.backstopRow .timelineName {
+  flex: 1;
+}
+
+.backstopTime {
+  flex: none;
+  color: var(--fg-muted);
+  font-size: var(--tori-text-md);
+}
+
+.sharedMarker {
+  margin-left: var(--tori-space-2);
+  padding: 0 var(--tori-space-1);
+  border-radius: var(--tori-radius-sm);
+  background: var(--attention-subtle, var(--neutral-hover));
+  color: var(--attention-fg);
+  font-size: var(--tori-text-xs);
+}
+
+/* Announced, never drawn: what the cumulative checkbox compares against, which
+   used to be a `title` on the surrounding `<label>` that no keyboard user ever
+   saw. Same recipe as `.srOnly` in ReviewPanel.module.css, copied rather than
+   shared so this module stays self-contained. */
+.srOnly {
+  composes: srOnly from "./patterns.module.css";
+}

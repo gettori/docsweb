@@ -1,0 +1,184 @@
+/* The shared tab pill (mirrors the editor/terminal strips): transparent at rest,
+   a wash that fades downward under the pointer and again, in brand under a bar,
+   when the tab is the selected one. The sidebar's recipe turned ninety degrees:
+   a strip runs across, so its mark hangs from the top edge rather than standing
+   on the left, and the tab reads as the thing the pane below it is showing.
+
+   The fill lives on the wrapper rather than on the button, because the close is
+   a sibling of the button now (see Tab.tsx) and the two have to read as one
+   pill. The wrapper is always rendered, so a strip with no close button gets
+   the same box as one with. */
+/* The pill's horizontal breathing room. One value for every shape, so an
+   icon-only tab and a labelled one sit on the same rhythm. */
+.pill {
+  --tab-pad: calc(8px * var(--ui-scale));
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  /* Square on the bar's side, rounded away from it, as the sidebar's rows are on
+     theirs: a rounded top corner clips the bar into a lozenge. */
+  border-radius: 0 0 var(--tori-radius-md) var(--tori-radius-md);
+  background: transparent;
+  transition: background var(--tori-duration-fast) ease;
+}
+
+/* Selected off Kobalte's own `data-selected` rather than off a prop, so the
+   highlight cannot drift from the selection the strip actually holds. */
+.pill:hover:not(:has([data-selected])) {
+  background: linear-gradient(to bottom, var(--tab-hover-bg), transparent);
+}
+
+/* The sidebar's selected-row recipe (`.row.branch.sel`, `.railItemActive`) laid
+   on its side: the brand bar across the full top edge over a wash that fades
+   downward, so a column marks "here" along the edge it starts from and a row
+   does the same. Brand rather than `--tab-active-bg`, which resolves to the same
+   grey as the hover and left the bar to carry the whole distinction. */
+.pill:has([data-selected]) {
+  background:
+    linear-gradient(var(--brand-bar), var(--brand-bar)) center top / 100%
+      var(--tori-border-thick) no-repeat,
+    linear-gradient(to bottom, var(--brand-subtle), transparent);
+}
+
+/* Driven by the autopilot. A layer of its own rather than part of the
+   background, which hover, selection and a blurred pane all rewrite. */
+.pill[data-locked]::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--tori-border-thick);
+  background: var(--status-progress);
+  pointer-events: none;
+}
+
+/* A strip whose pane does not hold focus draws no selection at all: the fill and
+   the rail both say "this is the one", and two panes saying it at once is two
+   answers to a question with one. The label keeps its brighter colour, which
+   says which tab the pane would come back to without claiming the focus. */
+:global(.unified-strip.pane-blur) .pill:has([data-selected]) {
+  background: transparent;
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(6px * var(--ui-scale));
+  height: var(--control-height);
+  padding: 0 var(--tab-pad);
+  background: transparent;
+  border: none;
+  border-radius: var(--tori-radius-md);
+  color: var(--tab-inactive-fg);
+  font-family: inherit;
+  font-size: var(--tori-text-lg);
+  line-height: 1.4;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color var(--tori-duration-fast) ease;
+}
+
+.tab svg {
+  width: var(--control-icon);
+  height: var(--control-icon);
+  flex: 0 0 auto;
+}
+
+.pill:hover .tab,
+.pill:has([data-selected]) .tab {
+  color: var(--tab-active-fg);
+}
+
+/* The ring is drawn on the whole pill, not on the button inside it: the button
+   no longer has the pill's full box, so a ring on it would stop short of the
+   close. */
+.tab:focus-visible {
+  outline: none;
+}
+
+.pill:has(.tab:focus-visible) {
+  box-shadow: 0 0 0 2px var(--brand-ring);
+}
+
+.label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: calc(160px * var(--ui-scale));
+}
+
+/* The replaceable tab. Italic rather than a glyph or a dimming: the strip
+   already spends its trailing space on dirty and status dots, and dimming a tab
+   is what this one says about every unselected tab beside it. */
+.tab[data-transient] .label {
+  font-style: italic;
+}
+
+/* The quiet tab: muted bold text, a flat fill only while it is the one
+   showing, so the strip reads as one control rather than three buttons. */
+.pill[data-quiet] {
+  border-radius: var(--tori-radius-sm);
+}
+
+.pill[data-quiet]:hover:not(:has([data-selected])) {
+  background: transparent;
+}
+
+.pill[data-quiet]:has([data-selected]) {
+  background: var(--neutral-subtle);
+}
+
+.pill[data-quiet] .tab {
+  gap: calc(5px * var(--ui-scale));
+  height: auto;
+  padding: calc(3px * var(--ui-scale)) calc(8px * var(--ui-scale));
+  color: var(--fg-muted);
+  font-weight: 600;
+}
+
+.pill[data-quiet]:hover .tab,
+.pill[data-quiet]:has([data-selected]) .tab {
+  color: var(--fg-default);
+}
+
+/* Trailing close: a small quiet glyph that brightens on hover. A sibling of the
+   tab button rather than a child, so it is its own hit area and clicking it
+   never selects the tab. Pointer-only, and hidden from assistive tech; see the
+   note in Tab.tsx. */
+.close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(2px * var(--ui-scale));
+  margin-right: calc(6px * var(--ui-scale));
+  background: transparent;
+  border: none;
+  border-radius: var(--tori-radius-sm);
+  color: var(--fg-muted);
+  cursor: pointer;
+}
+
+.lockSlot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(2px * var(--ui-scale));
+  margin-right: calc(6px * var(--ui-scale));
+}
+
+/* The button already carries the pill's right padding, so the close sits closer
+   to the label than the pill edge without it. */
+.pill:has(.close) .tab,
+.pill:has(.lockSlot) .tab {
+  padding-right: calc(4px * var(--ui-scale));
+}
+
+.close svg {
+  width: calc(12px * var(--ui-scale));
+  height: calc(12px * var(--ui-scale));
+}
+
+.close:hover {
+  background: var(--neutral-hover);
+  color: var(--fg-default);
+}

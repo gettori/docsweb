@@ -1,0 +1,138 @@
+/* Toolbar (top menubar) styles, hash-scoped. Buttons use the shared <Button>
+   component. Kept global in App.css: the .sm.dim modifier, the
+   .workspace/.work-split/.pane layout (App.tsx), and .claude-icon (the seti
+   mark) which is reached here via :global(). */
+/* Toolbar (background + bottom border live on .topbar so the whole bar matches) */
+.toolbar {
+  padding: calc(2px * var(--ui-scale)) calc(10px * var(--ui-scale)) 0;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.tbEmpty {
+  color: var(--fg-muted);
+  font-size: var(--tori-text-lg);
+  padding: calc(2px * var(--ui-scale)) 0;
+}
+
+.tbRow {
+  display: flex;
+  align-items: center;
+  gap: calc(12px * var(--ui-scale));
+}
+
+.tbInfo {
+  display: flex;
+  align-items: center;
+  gap: calc(10px * var(--ui-scale));
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+}
+
+.tbName {
+  font-weight: 600;
+  font-size: var(--tori-text-xl);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: calc(280px * var(--ui-scale));
+}
+
+/* Content width, shrinking only once the bar runs out, so a long branch still
+   gets all the room there is and a Topic's member chips sit right after the
+   trail instead of at the far end of the bar. */
+.tbCrumb {
+  display: flex;
+  align-items: center;
+  gap: calc(6px * var(--ui-scale));
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* No max-width. A fixed cap ellipsised every branch past ~200px even with half
+   the bar empty beside it; the flex shrink below does the same job only when
+   the crumbs actually run out of room, and then it takes it from the longest. */
+.tbCrumb .crumb {
+  font-size: var(--tori-text-lg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  color: var(--fg-subtle);
+}
+
+/* Where you actually are, so it shrinks last and carries the full weight. */
+.tbCrumb .crumb.leaf {
+  flex: 0 1 auto;
+  font-size: var(--tori-text-xl);
+  color: var(--fg-default);
+}
+
+.tbCrumb .crumbSep {
+  flex: 0 0 auto;
+  width: calc(12px * var(--ui-scale));
+  height: calc(12px * var(--ui-scale));
+  color: var(--fg-subtle);
+}
+
+.tbErr {
+  margin-top: calc(6px * var(--ui-scale));
+  color: var(--danger-fg);
+  font-size: var(--tori-text-md);
+}
+
+/* Topic members: one chip per repo, the active root filled in. */
+.members {
+  display: flex;
+  align-items: center;
+  gap: calc(4px * var(--ui-scale));
+  margin-left: calc(8px * var(--ui-scale));
+}
+.member {
+  --chip-hue: var(--fg-muted);
+  --chip-rgb: 128 128 128;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: calc(22px * var(--ui-scale));
+  height: calc(20px * var(--ui-scale));
+  padding: 0 calc(5px * var(--ui-scale));
+  border: 1px solid rgb(var(--chip-rgb) / 0.5);
+  border-radius: var(--tori-radius-sm);
+  background: rgb(var(--chip-rgb) / 0.12);
+  color: var(--chip-hue);
+  cursor: pointer;
+}
+.member :global(svg),
+.member img {
+  width: calc(12px * var(--ui-scale));
+  height: calc(12px * var(--ui-scale));
+}
+.member img {
+  object-fit: contain;
+  border-radius: calc(2px * var(--ui-scale));
+}
+.member:hover:not(:disabled) {
+  background: rgb(var(--chip-rgb) / 0.24);
+}
+.memberActive {
+  background: rgb(var(--chip-rgb) / 0.32);
+  border-color: var(--chip-hue);
+}
+.memberOff {
+  opacity: 0.45;
+  cursor: default;
+}
+.memberDragging {
+  opacity: 0.5;
+}
+/* The whole chip, for the reason TopicItem's `.memberOver` states: a drop
+   lands where this one sits, on either side of it. */
+.memberOver {
+  box-shadow: inset 0 0 0 1px var(--brand-default);
+}
