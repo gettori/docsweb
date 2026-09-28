@@ -3,9 +3,76 @@ title: Tori documentation
 description: A cockpit for the coding agents you already run.
 ---
 
-Placeholder. The full documentation is being written.
-
 Tori is a macOS app that puts every agent session you have going into one
 window: a tree of projects and branches, a real terminal and chat per session,
-an editor with language servers, and a review panel that stages and commits what
-the agent wrote.
+an editor with language servers, and a review panel that stages and commits
+what the agent wrote. It does not bundle an agent and it is not tied to one.
+Claude ships supported out of the box, and any other CLI agent is a TOML file
+away.
+
+## Why
+
+Running one agent in one terminal is fine. Running four, across three
+repositories and a couple of worktrees, is a tab-management problem, and the
+part you actually care about (which one is waiting on you) is the part a
+terminal cannot tell you.
+
+Tori watches each agent's own session transcripts and process state, so every
+row in the tree says **working**, **needs you**, or **done**, and a parent row
+rolls its children up. You look at one list and know where to go next.
+
+## What it does
+
+**Sessions.** A tree of sessions grouped into spaces, with a git branch graph
+and worktree support. Clicking a session focuses its terminal or chat tab, or
+resumes it if it is not running. Turn level checkpoints snapshot the repo per
+prompt, so you can diff or revert a single turn.
+
+**Editor and review.** A CodeMirror editor with language servers, diff
+gutters, and markdown, image and PDF preview. The Changes panel stages,
+unstages, commits, pushes, and opens a pull request, hunk by hunk if you want.
+You can send a hunk comment or an editor selection straight into a session,
+and search across the whole project.
+
+**Autopilot.** Hand it a queue of issues and pull requests and it starts a
+worker session for each, watches them, and only stops for you when a
+decision needs to leave the machine: opening a pull request, submitting a
+review, or merging. Off by default.
+
+**Your phone.** Pair a phone with a running Tori over the network (or over
+Tailscale, from anywhere) and you get the session tree, chat, and autopilot's
+decision cards there too.
+
+**Interface.** A command palette, quick open, a shortcut sheet, menu bar
+tray, OS notifications, and a dock badge for sessions that need you. Dark and
+light themes.
+
+## Supported agents
+
+Tori ships with adapters for seven agent CLIs: **Claude**, **Codex**,
+**Copilot**, **Gemini**, **Kimi**, **OpenCode**, and **Pi**. It drives
+whichever of these you already have installed; it does not bundle any of
+them. Settings > Agents shows which ones it found, at what version, and what
+it can do with each, since the adapters do not all have the same
+capabilities: Claude is the most deeply integrated (live status from its own
+hooks, mid-turn steering, a fork-based rewind), and the others run over the
+[Agent Client Protocol](https://agentclientprotocol.com) with a shared,
+smaller floor.
+
+Adding another agent does not require a fork. Drop a TOML file into
+`~/.config/tori/agents/` describing how to launch it; the schema is
+documented and stable.
+
+## Privacy
+
+Tori sends no telemetry. There is no analytics, no crash reporting, and no
+usage tracking of any kind. It makes two network requests on its own behalf,
+both anonymous, both at most once a day, both silent on failure: a check
+against GitHub Releases for a newer version, and a read of a public,
+unauthenticated model list that feeds the context meter. Your agent's own
+traffic, and your git pushes and fetches, go straight from your machine to
+your agent's vendor and your remote; Tori starts the process, reads its
+output, and adds no endpoint of its own.
+
+Everything Tori itself writes is a plain file on your machine, under
+`~/.config/tori/`.
