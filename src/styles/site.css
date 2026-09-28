@@ -159,3 +159,13 @@ a:hover {
     transition: none !important;
   }
 }
+
+/* Lets the browser crossfade between the home page and the docs, which opt in too. */
+@view-transition {
+  navigation: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+}

@@ -8,6 +8,7 @@ export default defineConfig({
       title: "Tori",
       logo: { src: "./src/assets/app-icon.png" },
       favicon: "/favicon.png",
+      disable404Route: true,
       customCss: [
         "@fontsource-variable/geist",
         "@fontsource-variable/geist-mono",

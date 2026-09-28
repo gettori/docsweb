@@ -9,9 +9,13 @@ An agent that supports it (Claude, Codex, Copilot, OpenCode) can have more
 than one signed-in account, each with its own home directory so the two
 logins never collide. Add one from that agent's detail page in Settings >
 Agents: a name, an optional folder, and a real terminal tab running the
-vendor's own sign-in. Removing an account you asked Tori to create deletes
-its sessions along with it; removing one you pointed at a folder you already
-had only forgets it, the folder and its login stay exactly as they were.
+vendor's own sign-in.
+
+:::caution[Removing an account]
+Removing an account you asked Tori to create deletes its sessions along with
+it; removing one you pointed at a folder you already had only forgets it, the
+folder and its login stay exactly as they were.
+:::
 
 The account you never explicitly set up, your existing login from before
 Tori, always stays available too; Tori never copies or stores its

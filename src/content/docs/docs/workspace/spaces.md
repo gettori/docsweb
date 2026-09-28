@@ -37,8 +37,11 @@ graph for that branch), and, when a worktree or branch is done with, either
 Fan out creates two, three or four worktrees at once from one stated goal,
 each on its own branch, for trying a few approaches in parallel. It groups
 under one header row in the tree. Once you know which one you want,
-**Promote this attempt** keeps that worktree and deletes the others, branch,
-sessions, checkpoints and all. Promoting cannot be undone.
+**Promote this attempt** keeps that worktree.
+
+:::danger[Promoting cannot be undone]
+It deletes the other attempts, branch, sessions, checkpoints and all.
+:::
 
 Reached from a project's context menu, **Fan out**.
 

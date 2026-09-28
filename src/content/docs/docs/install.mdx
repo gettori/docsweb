@@ -3,6 +3,8 @@ title: Install
 description: Install Tori on macOS.
 ---
 
+import { Steps } from "@astrojs/starlight/components";
+
 Tori is macOS only, and ships as an unsigned universal app (Apple Silicon and
 Intel). Unsigned means macOS will refuse to open it on the first try. That is
 expected, and getting past it takes about ten seconds.
@@ -17,41 +19,48 @@ installing it.
 brew install --cask gettori/tap/tori
 ```
 
+:::tip[No Gatekeeper dance]
 The cask clears the quarantine flag for you, so the Gatekeeper steps below
 are only for a DMG you downloaded yourself. The rest of this page is that
 route.
+:::
 
-## 1. Install
+## Install from the DMG
+
+<Steps>
 
 1. Download `Tori_<version>_universal.dmg` from the
    [Releases page](https://github.com/gettori/releases/releases).
-2. Open the DMG and drag **Tori** into **Applications**.
-3. Eject the DMG.
 
-## 2. Open it the first time
+2. Open the DMG, drag **Tori** into **Applications**, and eject the DMG.
 
-Double click Tori in Applications. macOS will block it with a message like
-"Apple could not verify 'Tori' is free of malware." Dismiss that dialog,
-then:
+3. Double click Tori in Applications. macOS will block it with a message like
+   "Apple could not verify 'Tori' is free of malware." Dismiss that dialog.
 
-1. Open **System Settings**.
-2. Go to **Privacy & Security**.
-3. Scroll down to the **Security** section. You will see a line naming Tori,
-   with an **Open Anyway** button next to it.
-4. Click **Open Anyway**, then confirm (Touch ID or your password).
+4. Open **System Settings**, go to **Privacy & Security**, and scroll down to
+   the **Security** section. You will see a line naming Tori, with an **Open
+   Anyway** button next to it.
 
-Tori opens, and every later launch is a normal double click.
+5. Click **Open Anyway**, then confirm (Touch ID or your password). Tori
+   opens, and every later launch is a normal double click.
 
+</Steps>
+
+:::note[No Open Anyway button?]
+It only appears after you have tried to open the app at least once. If you do
+not see it, go back and double click Tori first.
+:::
+
+:::caution[The right click trick is gone]
 The "right click and choose Open" trick no longer works. It was the standard
 advice for years, and it was removed in macOS 15 (Sequoia). If you find that
 suggestion elsewhere, it is out of date, use **Open Anyway** above.
+:::
 
-The **Open Anyway** button only appears after you have tried to open the app
-at least once. If you do not see it, go back and double click Tori first.
+### Or, from the terminal
 
-## 3. Or, from the terminal
-
-Removing the quarantine attribute does the same thing in one command:
+Removing the quarantine attribute does the same thing as steps 3 to 5 in one
+command:
 
 ```sh
 xattr -cr /Applications/Tori.app

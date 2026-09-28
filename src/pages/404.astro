@@ -1,0 +1,111 @@
+---
+import Base from "../components/home/Base.astro";
+import Nav from "../components/home/Nav.astro";
+import Footer from "../components/home/Footer.astro";
+import CaptainGame from "../islands/CaptainGame";
+import "../app/css/tokens.css";
+---
+
+<Base>
+  <Nav />
+  <main>
+    <header class="lost">
+      <div class="dots" aria-hidden="true"></div>
+      <span class="code mono-label"><i></i>404, page not found</span>
+      <h1 class="h2">This page <span class="accent-word">wandered off.</span></h1>
+      <p>It is not here, but your crew is. Keep them moving while you are around, then head back.</p>
+      <div class="ctas">
+        <a href="/docs/" class="primary">Back to the docs</a>
+        <a href="/" class="ghost">Home</a>
+      </div>
+    </header>
+    <section class="section game">
+      <CaptainGame client:visible />
+    </section>
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .lost {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    padding: clamp(130px, 16vw, 190px) var(--pad-x) 0;
+    text-align: center;
+  }
+  .dots {
+    position: absolute;
+    inset: 0 0 -80px;
+    z-index: -1;
+    background-image: radial-gradient(light-dark(rgba(20, 22, 30, 0.09), rgba(255, 255, 255, 0.07)) 1px, transparent 1px);
+    background-size: 28px 28px;
+    mask-image: radial-gradient(55% 60% at 50% 45%, #000, transparent);
+  }
+  .code {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 12px 5px 10px;
+    border-radius: 999px;
+    background: var(--glass);
+    border: 1px solid var(--hair);
+  }
+  .code i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--need);
+    animation: v-breathe 1s infinite;
+  }
+  h1 {
+    color: var(--strong);
+  }
+  h1 .accent-word {
+    color: var(--need-hi);
+  }
+  p {
+    max-width: 44ch;
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+  .ctas {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .ctas a {
+    display: flex;
+    align-items: center;
+    height: 42px;
+    padding: 0 18px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 14.5px;
+  }
+  .primary {
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+  .primary:hover {
+    color: var(--on-accent);
+    background: var(--link-hover);
+  }
+  .ghost {
+    color: var(--text);
+    background: var(--glass);
+    border: 1px solid var(--hair);
+  }
+  .ghost:hover {
+    color: var(--strong);
+    background: var(--glass-hi);
+  }
+  .game {
+    padding-top: clamp(50px, 6vw, 80px);
+  }
+</style>

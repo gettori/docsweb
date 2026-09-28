@@ -1,0 +1,73 @@
+---
+title: First run
+description: What the setup window walks you through.
+---
+
+import { Steps } from "@astrojs/starlight/components";
+
+The first time Tori opens with no space set up yet, it shows a short intro
+followed by setup. You can replay the intro later from Settings.
+
+## The intro
+
+Eight slides, one idea each: every agent session in one window, a workspace
+organized the way your disk already is, one branch checked out across
+several repos at once, your agents and hosts on your own machine, undoing any
+turn an agent took, reviewing what it wrote, handing a queue to Autopilot,
+and your sessions on your phone. Back and Next move through them; the last
+slide's button reads **Set up Tori**.
+
+## Setup
+
+Six steps. A rail on the side tracks progress and lets you go back, but not
+skip ahead past where you have reached.
+
+<Steps>
+
+1. ### Agents
+
+   Tori probes your PATH for the agent CLIs it knows how to drive. Sign in from
+   here if one needs it: sign-in opens your browser with a code to paste. This
+   step is not required. If nothing is found, you can continue anyway and add
+   one later from Settings > Agents.
+
+1. ### Base folder
+
+   Pick the folder that holds your projects, the macOS folder picker. This is
+   required, it is the last step before Tori can open. If git is not installed,
+   this step offers to install it (Command Line Tools or Homebrew, depending on
+   what is already on your machine).
+
+1. ### Space
+
+   Pick an existing space or create a new one. Tori opens on whichever space you
+   choose here. Required.
+
+1. ### Git hosts
+
+   Sign in to GitHub or GitLab. Pushes, fetches and pull requests you make
+   through Tori go out as this account, and it is what lets the next step clone
+   a private repository over HTTPS. Skippable, you can add a host later from
+   Settings > Integrations.
+
+1. ### First project
+
+   Three ways to start:
+
+   - an empty folder,
+   - clone a repository from its URL, or
+   - a bare repository with worktrees: one bare repo, with each branch you work
+     on checked out as its own sibling folder. This is the layout to pick if you
+     plan to run several agents on different branches of the same repo at once.
+
+   Skippable, add a project from the sidebar later. Cloning or setting up
+   worktrees both need git.
+
+1. ### Ready
+
+   A summary of what got set up: how many agents were found, your base folder,
+   your space, whether a git host is signed in, and whether a project was
+   created. Everything here can be changed later in Settings. Click **Open
+   Tori** to finish.
+
+</Steps>

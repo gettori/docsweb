@@ -10,9 +10,11 @@ without you approving it first: opening a pull request, submitting a review,
 and merging are each their own approval, spent once, tied to the exact draft
 shown to you.
 
-Off by default. Turn it on with **Enable autopilot** in Settings >
-Autopilot, which puts a Cockpit switch in the title bar (`Cmd+Shift+J`
-toggles between it and your normal workspace).
+:::note[Off by default]
+Turn it on with **Enable autopilot** in Settings > Autopilot, which puts a
+Cockpit switch in the title bar (`Cmd+Shift+J` toggles between it and your
+normal workspace).
+:::
 
 ## Per-project contract
 

@@ -303,3 +303,44 @@ starlight-toc a[aria-current="true"] {
     transition: none;
   }
 }
+
+/* Cross-document view transitions: the header and sidebar hold still while the page underneath swaps. */
+@view-transition {
+  navigation: auto;
+}
+.header {
+  view-transition-name: tori-header;
+}
+.sidebar-pane {
+  view-transition-name: tori-sidebar;
+}
+main {
+  view-transition-name: tori-page;
+}
+::view-transition-group(tori-header),
+::view-transition-group(tori-sidebar) {
+  animation: none;
+}
+::view-transition-old(tori-page) {
+  animation: tori-page-out 0.16s ease-in both;
+}
+::view-transition-new(tori-page) {
+  animation: tori-page-in 0.32s var(--tori-ease) both;
+}
+@keyframes tori-page-out {
+  to {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+@keyframes tori-page-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+}
