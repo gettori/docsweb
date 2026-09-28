@@ -1,6 +1,8 @@
 :root {
   --sl-font: "Geist Variable", -apple-system, system-ui, sans-serif;
   --sl-font-mono: "Geist Mono Variable", ui-monospace, monospace;
+  --tori-gold: #f3d3a4;
+  --tori-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 /* Starlight's own theme rules sit in a cascade layer, so a bare :root here would beat its light theme. */
@@ -9,10 +11,258 @@
   --sl-color-accent: #d9a468;
   --sl-color-accent-high: #f3d3a4;
   --sl-color-black: #0a0b0e;
+  --sl-color-bg-nav: #0c0d11;
+  --sl-color-bg-sidebar: #0c0d11;
+  --tori-work: #c084fc;
+  --tori-need: #fb7185;
+  --tori-done: #2dd4bf;
+  --tori-glass: rgba(255, 255, 255, 0.04);
+  --tori-hair: rgba(255, 255, 255, 0.08);
+  --tori-glow: rgba(217, 164, 104, 0.16);
+  --tori-brand-bar: #d9a468;
+  --tori-brand-subtle: rgba(201, 150, 83, 0.16);
 }
 
 :root[data-theme="light"] {
   --sl-color-accent-low: #f1e3c4;
   --sl-color-accent: #7e5e2f;
   --sl-color-accent-high: #4a3719;
+  --tori-work: #7c3aed;
+  --tori-need: #e11d48;
+  --tori-done: #0d9488;
+  --tori-glass: rgba(20, 22, 30, 0.03);
+  --tori-hair: rgba(20, 22, 30, 0.09);
+  --tori-glow: rgba(176, 111, 34, 0.12);
+  --tori-brand-bar: #7e5e2f;
+  --tori-brand-subtle: rgba(138, 103, 51, 0.14);
+}
+
+::selection {
+  background: #d9a468;
+  color: #2a1d0c;
+}
+
+.header {
+  backdrop-filter: blur(14px) saturate(1.3);
+  background: color-mix(in srgb, var(--sl-color-bg-nav) 78%, transparent);
+  border-bottom-color: var(--tori-hair);
+}
+.sidebar-pane {
+  border-inline-end-color: var(--tori-hair);
+}
+
+.main-frame {
+  background:
+    radial-gradient(900px 380px at 70% -120px, var(--tori-glow), transparent 70%),
+    var(--sl-color-bg);
+}
+
+/* Sidebar, drawn like the app's session tree. */
+.sidebar-content summary .large {
+  font-family: var(--sl-font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--sl-color-gray-3);
+}
+.sidebar-content details[open] > summary .large {
+  color: var(--sl-color-white);
+}
+.sidebar-content ul ul li {
+  border-inline-start-color: var(--tori-hair);
+  padding-inline-start: 0;
+}
+/* Rows start on the rail, not beside it, so the selection bar covers the line and reads as it thickening. */
+.sidebar-content ul ul a {
+  margin-inline-start: -1px;
+  padding-inline-start: calc(var(--sl-sidebar-item-padding-inline) * 2);
+  border-radius: 0 8px 8px 0;
+}
+.sidebar-content a {
+  transition:
+    background-color 0.2s var(--tori-ease),
+    color 0.2s var(--tori-ease);
+}
+.sidebar-content a:not([aria-current="page"]):hover {
+  background: var(--tori-glass);
+  color: var(--sl-color-white);
+}
+.sidebar-content a[aria-current="page"],
+.sidebar-content a[aria-current="page"]:hover,
+.sidebar-content a[aria-current="page"]:focus {
+  font-weight: 600;
+  color: var(--sl-color-white);
+  background:
+    linear-gradient(var(--tori-brand-bar), var(--tori-brand-bar)) left center / 2px 100% no-repeat,
+    linear-gradient(to right, var(--tori-brand-subtle), transparent);
+}
+
+/* Content */
+.sl-markdown-content :is(h2, h3) {
+  letter-spacing: -0.03em;
+  font-weight: 650;
+}
+.sl-markdown-content h2::before {
+  content: "";
+  display: inline-block;
+  vertical-align: 0.18em;
+  margin-inline-end: 0.5em;
+  width: 0.34em;
+  height: 0.34em;
+  border-radius: 50%;
+  background: var(--sl-color-accent);
+  box-shadow: 0 0 12px var(--sl-color-accent);
+}
+.sl-markdown-content a:not(:where(.not-content *)) {
+  color: var(--sl-color-text-accent);
+  text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+  text-underline-offset: 3px;
+  transition: text-decoration-color 0.2s;
+}
+.sl-markdown-content a:not(:where(.not-content *)):hover {
+  text-decoration-color: currentColor;
+}
+.sl-markdown-content :not(pre) > code {
+  padding: 0.12em 0.4em;
+  border-radius: 6px;
+  background: var(--tori-glass);
+  box-shadow: inset 0 0 0 1px var(--tori-hair);
+}
+.sl-markdown-content strong {
+  color: var(--sl-color-white);
+}
+
+/* The frame draws the one border, so the header and pre borders would double up at the rounded corners. */
+.expressive-code .frame {
+  overflow: hidden;
+  border: 1px solid var(--tori-hair);
+  border-radius: 12px;
+}
+.expressive-code .frame :is(pre, .header) {
+  border: 0;
+  border-radius: 0;
+}
+
+/* Asides, as the app's status cards: note is working, tip is done, caution needs you. */
+.starlight-aside {
+  --tone: var(--sl-color-accent);
+  position: relative;
+  overflow: hidden;
+  padding: 1rem 1.1rem 1rem 1.25rem;
+  border: 0;
+  border-radius: 14px;
+  background:
+    radial-gradient(260px 120px at 0 0, color-mix(in srgb, var(--tone) 16%, transparent), transparent 70%),
+    var(--tori-glass);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tone) 28%, transparent);
+}
+.starlight-aside::before {
+  content: "";
+  position: absolute;
+  inset: 12px auto 12px 0;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--tone);
+  box-shadow: 0 0 12px var(--tone);
+}
+.starlight-aside--note {
+  --tone: var(--tori-work);
+}
+.starlight-aside--tip {
+  --tone: var(--tori-done);
+}
+.starlight-aside--caution {
+  --tone: var(--sl-color-accent);
+}
+.starlight-aside--danger {
+  --tone: var(--tori-need);
+}
+.starlight-aside__title {
+  font-family: var(--sl-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--tone);
+}
+.starlight-aside__content a {
+  color: var(--tone);
+}
+
+/* Steps, as a rail of numbered stops. */
+.sl-steps > li::before {
+  font-family: var(--sl-font-mono);
+  color: var(--sl-color-accent-high);
+  background: var(--sl-color-accent-low);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--sl-color-accent) 45%, transparent),
+    0 0 0 4px var(--sl-color-bg);
+}
+.sl-steps > li::after {
+  width: 2px;
+  background: linear-gradient(var(--sl-color-accent), transparent);
+  opacity: 0.35;
+}
+
+/* Pagination, as cards that lean toward where they go. */
+.pagination-links a {
+  position: relative;
+  overflow: hidden;
+  border: 0;
+  border-radius: 16px;
+  padding: 1.1rem 1.25rem;
+  background: var(--tori-glass);
+  box-shadow: inset 0 0 0 1px var(--tori-hair);
+  font-family: var(--sl-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--sl-color-gray-3);
+  transition:
+    transform 0.3s var(--tori-ease),
+    box-shadow 0.3s var(--tori-ease),
+    background-color 0.3s var(--tori-ease);
+}
+.pagination-links a:hover {
+  background: color-mix(in srgb, var(--sl-color-accent-low) 55%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--sl-color-accent) 45%, transparent);
+}
+.pagination-links a[rel="next"]:hover {
+  transform: translateX(3px);
+}
+.pagination-links a[rel="prev"]:hover {
+  transform: translateX(-3px);
+}
+.pagination-links a svg {
+  color: var(--sl-color-accent);
+  transition: transform 0.3s var(--tori-ease);
+}
+.pagination-links a[rel="next"]:hover svg {
+  transform: translateX(3px);
+}
+.pagination-links a[rel="prev"]:hover svg {
+  transform: translateX(-3px);
+}
+.pagination-links .link-title {
+  display: inline-block;
+  margin-top: 4px;
+  font-family: var(--sl-font);
+  font-size: var(--sl-text-xl);
+  font-weight: 650;
+  letter-spacing: -0.03em;
+  text-transform: none;
+  color: var(--sl-color-white);
+}
+
+/* On this page */
+starlight-toc a[aria-current="true"] {
+  color: var(--sl-color-accent-high);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-content a,
+  .pagination-links a,
+  .pagination-links a svg {
+    transition: none;
+  }
 }

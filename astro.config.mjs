@@ -8,7 +8,13 @@ export default defineConfig({
       title: "Tori",
       logo: { src: "./src/assets/app-icon.png" },
       favicon: "/favicon.png",
-      customCss: ["@fontsource-variable/geist", "@fontsource-variable/geist-mono", "./src/styles/starlight.css"],
+      customCss: [
+        "@fontsource-variable/geist",
+        "@fontsource-variable/geist-mono",
+        "@fontsource/instrument-serif/400-italic.css",
+        "./src/styles/starlight.css",
+      ],
+      components: { PageTitle: "./src/components/docs/PageTitle.astro" },
       social: [{ icon: "github", label: "GitHub", href: "https://github.com/gettori/releases" }],
       sidebar: [
         {
