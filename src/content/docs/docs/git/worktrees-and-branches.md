@@ -1,0 +1,61 @@
+---
+title: Worktrees and branches
+description: Creating, switching and cleaning up worktrees and branches.
+---
+
+## Creating a worktree
+
+**Add worktree**, on a worktree container, figures out where a branch should
+start: an existing branch reuses its own worktree, a brand new one starts
+from a base you name, or falls back to the matching remote branch, then the
+default branch, then whatever HEAD happens to be. The folder is named after
+the branch's last path segment (`bug/critical` becomes `critical`), falling
+back to a full slug only on a collision.
+
+Starting a worktree from a pull request pins it to that PR's exact head
+commit; if a worktree or branch with that name already exists at a different
+commit, Tori refuses rather than resetting it out from under you.
+
+## Removing a worktree or branch
+
+Before it asks you to confirm, Tori checks whether the folder is dirty, has
+unpushed commits, and how many terminal or chat tabs are still open under
+it, and shows all three. Confirming closes those tabs and tears down their
+processes first, then removes the worktree or branch. Deleting the remote
+branch too is a separate option; if that fails, the local removal still
+happens, it is reported rather than aborted.
+
+**Prune worktrees**, on a container, drops git's own bookkeeping for
+worktree folders that got deleted from outside Tori.
+
+## The branch graph
+
+A unit's context menu **Graph** opens a commit lane view for that branch,
+each commit expandable to its changed files. The same view opens from the
+Changes panel's history tabs.
+
+## Blame
+
+Turn blame on from the editor's own button, or **Git blame** in Settings >
+Editor; the two stay in sync. Each line's gutter shows who last touched it
+and how long ago, shaded by age.
+
+## Resolving conflicts
+
+An unresolved merge, rebase, cherry-pick or revert shows a three way view per
+conflicted file, built from the index's own base, ours and theirs stages.
+The Changes panel's operation bar offers Continue (disabled until every
+conflict is resolved), Skip where it applies, and Abort.
+
+## Fan out and Topics
+
+See [Spaces, projects and branches](/docs/workspace/spaces) for fan out
+(trying several branches from one goal) and Topics (one branch checked out
+across several repos at once); both build on the same worktree machinery
+described here.
+
+## Keeping repos fresh
+
+Settings > Integrations > Git has **Fetch every**, how often every open repo
+is fetched in the background, off included. A repo whose remote needs a
+password for that fetch is simply left alone rather than prompted.

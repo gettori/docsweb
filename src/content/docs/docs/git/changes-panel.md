@@ -1,0 +1,54 @@
+---
+title: The Changes panel
+description: Staging, committing, stashing and reviewing your own edits.
+---
+
+The Changes panel is the right panel's source control view: conflicts,
+staged changes, and unstaged changes, each file expandable to its hunks.
+
+## Staging and committing
+
+Stage or unstage a whole file, a single hunk, or just the selected lines. A
+commit message box sends `Enter` to commit and `Shift+Enter` to add a
+newline, same as the chat composer. **AI Draft** asks the currently selected
+agent session to write the commit message from what is staged. The split
+commit button's chevron offers amend, commit and push together, or amend and
+push; amending a commit that looks already pushed asks you to confirm first,
+since that check is only as fresh as the last fetch.
+
+Working inside a Topic, the composer shows a chip per repo with staged
+changes, so one commit message can go out across every repo at once, or you
+can pick which ones to include.
+
+## Per hunk actions
+
+Each hunk offers stage, unstage, and **throw away this hunk**; an inline box
+lets you send a comment straight to the active agent session, quoting the
+exact lines. A conflicted file's equivalent action asks the session to
+resolve the conflict.
+
+## Everything at once
+
+The overflow menu (`...`) has stage all, unstage all, discard all (which
+snapshots first, so it can be undone from history even though it feels
+final), fetch, pull, pull with rebase, push, a rebase submenu, and stash all.
+Destructive whole tree actions are blocked, or at least flagged, while
+another session is actively working in that folder.
+
+## History
+
+Below the file list, three tabs: **Graph** (the commit lane view), **Stashes**
+(open, apply, pop, or drop, dropping is the one truly irreversible action,
+since a stash never lived in the working tree to snapshot), and
+**Checkpoints**, Tori's own per-prompt snapshots.
+
+## Checkpoints
+
+With **Snapshot on each prompt** on in Settings > Chat (on by default), every
+prompt you send an agent gets a git snapshot, shown here as a horizontal
+strip of turns. Pick a turn to see just its diff, or widen to see everything
+since then. **Revert tree to here** restores the whole working tree to that
+point, taking its own backstop snapshot first so the revert itself is
+undoable. This is a plain working tree revert; for reverting inside a live
+chat session and forking its conversation too, see
+[Rewind](/docs/agents/chat/#rewind).

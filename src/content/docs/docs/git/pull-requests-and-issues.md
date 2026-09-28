@@ -1,0 +1,46 @@
+---
+title: Pull requests and issues
+description: GitHub and GitLab accounts, PR status, review, and starting a branch from an issue.
+---
+
+## Signing in
+
+Settings > Integrations > Hosts holds your GitHub and GitLab accounts,
+including self-hosted instances of either. GitHub signs in through the `gh`
+CLI if it is installed, or a pasted personal access token. GitLab signs in
+through an OAuth device flow: a short code and a URL, which Tori polls until
+you approve it.
+
+A repository whose host has more than one signed-in account shows an account
+picker; a repository can also use the signed-in account as its git push and
+pull credential, per-repo or for every repo at once. The whole integration
+has one kill switch that stops polling while leaving your sign-in in place.
+
+## Status at a glance
+
+A branch row's status chip shows whether it has an open pull request, its
+checks (passing, failing, running), and its review verdict, with a separate
+glyph family for each so the two can never be confused at a glance. A second
+chip shows how the branch stands against its upstream and its base: ahead,
+behind, diverged, or conflicting, silent when there is nothing to report.
+Clicking it fetches and switches you to the Changes panel.
+
+## The pull request panel
+
+Shows the one pull request for whichever branch is in front: title, files,
+three verdict lines (mergeable state, checks, review decision), and tabs for
+the overview, checks, review, and merge. From here you can push and open a
+pull request, or push only, review all files in one tab, or jump to the full
+listing of every open pull request in the repo.
+
+Review posts a batch: any inline comments you left, plus one verdict, Comment,
+Approve, or Request changes, all together in one action rather than one call
+per comment. Merging lives only here, deliberately, so there is exactly one
+place a stale verdict could let a merge through, not two.
+
+## Starting from an issue
+
+Adding a branch offers an Issue mode: pick from your assigned issues, or
+type a number, and Tori creates the branch, optionally linking it to the
+issue on the host so the two show up connected there too. The new branch
+opens with a session whose first message is drafted from the issue.
