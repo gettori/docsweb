@@ -1,12 +1,10 @@
 import { createMemo, createSignal, For, onCleanup, Show } from "solid-js";
-import { ChevronRight, Ellipsis, GitBranch, GitPullRequest, Minus, Plus, RefreshCw, RotateCcw, Sparkles, Undo2 } from "lucide";
-import "@fontsource-variable/inter";
-import "../../app/css/tokens.css";
+import { Ellipsis, GitBranch, GitPullRequest, Minus, Plus, RefreshCw, RotateCcw, Sparkles, Undo2 } from "lucide";
 import { Icon } from "../../app/kit";
 import w from "../../app/window.module.css";
 import review from "../../app/css/ReviewPanel.module.css";
-import toolbar from "../../app/css/Toolbar.module.css";
 import btn from "../../app/css/Button.module.css";
+import DemoWindow, { useToast } from "./DemoWindow";
 import s from "./ChangesDemo.module.css";
 
 type Line = [old: string, now: string, kind: " " | "+" | "-", text: string];
@@ -115,13 +113,9 @@ export default function ChangesDemo() {
   const [sel, setSel] = createSignal<{ name: string; staged: boolean }>({ name: "server.ts", staged: false });
   const [msg, setMsg] = createSignal("");
   const [ahead, setAhead] = createSignal(1);
-  const [toast, setToast] = createSignal<{ text: string; undo?: () => void } | null>(null);
+  const { toast, say, clear } = useToast();
   let drafting: number | undefined;
-  let toastTimer: number | undefined;
-  onCleanup(() => {
-    clearInterval(drafting);
-    clearTimeout(toastTimer);
-  });
+  onCleanup(() => clearInterval(drafting));
 
   const side = (staged: boolean) => files().filter((f) => f.hunks.some((h) => h.staged === staged));
   const stagedCount = () => side(true).length;
@@ -130,12 +124,6 @@ export default function ChangesDemo() {
     const hunks = f?.hunks.filter((h) => h.staged === sel().staged) ?? [];
     return f && hunks.length ? { file: f, hunks } : null;
   });
-
-  const say = (text: string, undo?: () => void) => {
-    clearTimeout(toastTimer);
-    setToast({ text, undo });
-    toastTimer = window.setTimeout(() => setToast(null), 4200);
-  };
 
   // After a move, keep showing the same file if it still has hunks on the side
   // being shown, else follow it to the other side, else fall back to anything left.
@@ -170,7 +158,7 @@ export default function ChangesDemo() {
     say("Hunk discarded. Tori snapshots first, so it can come back.", () => {
       setFiles(before);
       setSel(was);
-      setToast(null);
+      clear();
     });
   };
 
@@ -203,7 +191,7 @@ export default function ChangesDemo() {
     setSel({ name: "server.ts", staged: false });
     setMsg("");
     setAhead(1);
-    setToast(null);
+    clear();
   };
 
   const Row = (props: { f: File; staged: boolean }) => (
@@ -232,24 +220,7 @@ export default function ChangesDemo() {
   );
 
   return (
-    <div class={s.win} style={{ "--tint": "217 164 104" }}>
-      <div class={w.wash} />
-      <header class={`${w.topbar} ${s.topbar}`}>
-        <div class={w.lights}>
-          <span style={{ background: "#ff5f57" }} />
-          <span style={{ background: "#febc2e" }} />
-          <span style={{ background: "#28c840" }} />
-        </div>
-        <nav class={`${toolbar.tbCrumb} ${s.crumbs}`}>
-          <span class={`${toolbar.crumb ?? ""} dim`}>hooli</span>
-          <Icon icon={ChevronRight} class={`${toolbar.crumbSep ?? ""} dim`} size={12} />
-          <span class={`${toolbar.crumb ?? ""} dim`}>hooli-search</span>
-          <Icon icon={ChevronRight} class={`${toolbar.crumbSep ?? ""} dim`} size={12} />
-          <span class={`${toolbar.crumb ?? ""} ${toolbar.leaf ?? ""}`}>fix/search-ranking</span>
-        </nav>
-      </header>
-
-      <div class={s.body}>
+    <DemoWindow crumbs={["hooli", "hooli-search", "fix/search-ranking"]} toast={toast()}>
         <section class={`${w.card} ${s.diffCard}`}>
           <Show
             when={current()}
@@ -386,20 +357,6 @@ export default function ChangesDemo() {
             </Show>
           </div>
         </aside>
-      </div>
-
-      <Show when={toast()}>
-        {(t) => (
-          <div class={s.toast} role="status">
-            <span>{t().text}</span>
-            <Show when={t().undo}>
-              <button type="button" class={`${btn.btn} ${btn.default} ${btn.xs}`} onClick={() => t().undo?.()}>
-                <span class={btn.label}>Undo</span>
-              </button>
-            </Show>
-          </div>
-        )}
-      </Show>
-    </div>
+    </DemoWindow>
   );
 }

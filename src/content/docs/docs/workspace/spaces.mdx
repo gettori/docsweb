@@ -3,8 +3,15 @@ title: Spaces, projects and branches
 description: How the sidebar tree is organized.
 ---
 
+import Demo from "../../../../components/docs/Demo.astro";
+import SpacesDemo from "../../../../islands/docs/SpacesDemo";
+
 The sidebar is a tree: spaces at the top, projects inside a space, and one
 row per branch you have checked out.
+
+<Demo caption="Richard's three spaces. Switch spaces from the tiles, collapse a project to see its dots roll up, and click a branch to focus its session. The one that needs you is waiting for an answer.">
+  <SpacesDemo client:visible />
+</Demo>
 
 ## Spaces
 

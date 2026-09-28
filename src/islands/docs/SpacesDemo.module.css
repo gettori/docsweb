@@ -1,0 +1,69 @@
+/* Doubled to beat LeftSidebar's height: 100%, which would stop the column
+   stretching and leave the space tiles floating halfway up. */
+.tree.tree {
+  flex: none;
+  width: 262px;
+  height: auto;
+  font-size: 13px;
+}
+.treeScroll {
+  flex: 1;
+}
+.tileBtn {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+}
+
+.pane {
+  min-width: 0;
+}
+/* The chat column and its transcript default to min-width: auto, so one
+   long tool row would widen the pane past its card. */
+.chat,
+.chat > * {
+  min-width: 0;
+}
+.who {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.where {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.again {
+  align-self: flex-start;
+}
+
+.empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--fg-muted);
+}
+.empty b {
+  color: var(--fg-default);
+  font-weight: 600;
+}
+.empty button {
+  margin-top: 6px;
+}
+
+/* Doubled so it outranks the card's own display: flex whichever loads last. */
+@container (max-width: 600px) {
+  .pane.pane {
+    display: none;
+  }
+  .tree.tree {
+    flex: 1;
+    width: auto;
+  }
+}
