@@ -3,8 +3,15 @@ title: Chat
 description: The composer, models and modes, questions, and rewinding a turn.
 ---
 
+import Demo from "../../../../components/docs/Demo.astro";
+import ChatDemo from "../../../../islands/docs/ChatDemo";
+
 A chat tab starts as a draft, just the composer, and becomes a live session
 on the first message.
+
+<Demo caption="Claude on pied-piper's feat/middle-out. Send a message and answer its permission prompt, type @ or / for the menus, switch model or mode from the pills, send again mid-turn to steer, or hover a past prompt to rewind to it.">
+  <ChatDemo client:visible />
+</Demo>
 
 ## Composer
 
