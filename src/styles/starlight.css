@@ -3,6 +3,22 @@
   --sl-font-mono: "Geist Mono Variable", ui-monospace, monospace;
   --tori-gold: #f3d3a4;
   --tori-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --tori-toc-width: 16rem;
+  --sl-content-width: 48rem;
+}
+
+/* Starlight centres the text on the whole viewport and gives the table of
+   contents half of the spare width, so on wide screens the text hugs the
+   contents column. A fixed contents column and a centred text column keep
+   both gutters equal. */
+@media (min-width: 72rem) {
+  .right-sidebar-container {
+    width: var(--tori-toc-width);
+  }
+  :root[data-has-sidebar][data-has-toc] .main-pane {
+    --sl-content-margin-inline: auto;
+    width: calc(100% - var(--tori-toc-width));
+  }
 }
 
 /* Starlight's own theme rules sit in a cascade layer, so a bare :root here would beat its light theme. */
