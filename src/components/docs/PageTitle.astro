@@ -1,6 +1,6 @@
 ---
 const { entry, sidebar } = Astro.locals.starlightRoute;
-const title = entry.data.title;
+const { title, description } = entry.data;
 
 type Entry = (typeof sidebar)[number];
 const hasCurrent = (e: Entry): boolean => (e.type === "link" ? e.isCurrent : e.entries.some(hasCurrent));
@@ -12,13 +12,26 @@ const last = cut > 0 ? title.slice(cut + 1) : title;
 ---
 
 <div class="title">
+  <div class="dots" aria-hidden="true"></div>
   <span class="eyebrow"><i></i>{group}</span>
   <h1 id="_top">{lead}{lead ? <span class="accent-word">{last}</span> : last}</h1>
+  {description && <p class="lede">{description}</p>}
 </div>
 
 <style>
   .title {
-    margin-top: 1.25rem;
+    position: relative;
+    isolation: isolate;
+    padding: clamp(1.5rem, 4vw, 3rem) 0 0.5rem;
+  }
+  .dots {
+    position: absolute;
+    inset: -2rem -40vw -1rem -3rem;
+    z-index: -1;
+    pointer-events: none;
+    background-image: radial-gradient(var(--tori-dot) 1px, transparent 1px);
+    background-size: 24px 24px;
+    mask-image: radial-gradient(45% 70% at 25% 40%, #000, transparent);
   }
   .eyebrow {
     display: inline-flex;
@@ -44,12 +57,21 @@ const last = cut > 0 ? title.slice(cut + 1) : title;
   }
   h1 {
     margin: 14px 0 0;
-    font-size: clamp(34px, 4.6vw, 52px);
-    line-height: 1;
+    font-size: clamp(38px, 5.4vw, 64px);
+    line-height: 0.98;
     letter-spacing: -0.045em;
     font-weight: 700;
     color: var(--sl-color-white);
     text-wrap: balance;
+  }
+  .lede {
+    max-width: 34em;
+    margin: 18px 0 0;
+    font-size: clamp(17px, 1.6vw, 20px);
+    line-height: 1.45;
+    letter-spacing: -0.01em;
+    color: var(--sl-color-gray-2);
+    text-wrap: pretty;
   }
   .accent-word {
     font-family: "Instrument Serif", Georgia, serif;

@@ -14,7 +14,10 @@ export default defineConfig({
         "@fontsource/instrument-serif/400-italic.css",
         "./src/styles/starlight.css",
       ],
-      components: { PageTitle: "./src/components/docs/PageTitle.astro" },
+      components: {
+        Header: "./src/components/docs/Header.astro",
+        PageTitle: "./src/components/docs/PageTitle.astro",
+      },
       social: [{ icon: "github", label: "GitHub", href: "https://github.com/gettori/releases" }],
       sidebar: [
         {

@@ -21,6 +21,8 @@
   --tori-glow: rgba(217, 164, 104, 0.16);
   --tori-brand-bar: #d9a468;
   --tori-brand-subtle: rgba(201, 150, 83, 0.16);
+  --tori-dot: rgba(255, 255, 255, 0.08);
+  --tori-glow-2: rgba(192, 132, 252, 0.07);
 }
 
 :root[data-theme="light"] {
@@ -35,6 +37,8 @@
   --tori-glow: rgba(176, 111, 34, 0.12);
   --tori-brand-bar: #7e5e2f;
   --tori-brand-subtle: rgba(138, 103, 51, 0.14);
+  --tori-dot: rgba(20, 22, 30, 0.1);
+  --tori-glow-2: rgba(124, 58, 237, 0.05);
 }
 
 ::selection {
@@ -52,9 +56,23 @@
 }
 
 .main-frame {
+  overflow-x: clip;
   background:
-    radial-gradient(900px 380px at 70% -120px, var(--tori-glow), transparent 70%),
+    radial-gradient(900px 420px at 75% -140px, var(--tori-glow), transparent 70%),
+    radial-gradient(700px 500px at -10% 30%, var(--tori-glow-2), transparent 70%),
     var(--sl-color-bg);
+}
+
+/* The landing hero's film grain, laid over the whole page so every panel shares it. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0.14;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 /* Sidebar, drawn like the app's session tree. */
@@ -103,7 +121,7 @@
   letter-spacing: -0.03em;
   font-weight: 650;
 }
-.sl-markdown-content h2::before {
+.sl-markdown-content h2:not(:where(.not-content *))::before {
   content: "";
   display: inline-block;
   vertical-align: 0.18em;

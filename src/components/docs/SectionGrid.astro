@@ -1,0 +1,175 @@
+---
+import { BookOpen, Bot, Code, GitPullRequest, LayoutPanelLeft, Rocket, Smartphone, Workflow, type IconNode } from "lucide";
+
+const GOLD = "217,164,104";
+const WORK = "192,132,252";
+const NEED = "251,113,133";
+const DONE = "45,212,191";
+
+// Keyed by sidebar group label, so a group added to the config without an entry here is left off the grid.
+const SECTIONS: Record<string, { icon: IconNode; spot: string; blurb: string; wide?: boolean }> = {
+  "Getting started": { icon: Rocket, spot: GOLD, blurb: "Install the app, get past Gatekeeper, and walk through setup.", wide: true },
+  Workspace: { icon: LayoutPanelLeft, spot: WORK, blurb: "Spaces, projects and branches, the panes they open in, and how to jump around." },
+  "Agents and chat": { icon: Bot, spot: NEED, blurb: "The seven agent CLIs Tori drives, the chat view, and accounts." },
+  "Git and review": { icon: GitPullRequest, spot: DONE, blurb: "Worktrees, the Changes panel, and pull requests from the window." },
+  "Editor and tools": { icon: Code, spot: GOLD, blurb: "An editor with language servers, a real terminal, themes and fonts." },
+  Automation: { icon: Workflow, spot: WORK, blurb: "Autopilot, Tori's own MCP server, and the tori CLI." },
+  "Phone app": { icon: Smartphone, spot: NEED, blurb: "Pair a phone and follow your sessions from anywhere." },
+  Reference: { icon: BookOpen, spot: DONE, blurb: "Every setting, and every file Tori writes to disk.", wide: true },
+};
+
+const groups = Astro.locals.starlightRoute.sidebar.flatMap((e) =>
+  e.type === "group" && SECTIONS[e.label] ? [{ ...SECTIONS[e.label], label: e.label, links: e.entries.filter((l) => l.type === "link") }] : [],
+);
+---
+
+<div class="grid not-content">
+  {
+    groups.map((g) => (
+      <section class:list={["tile", g.wide && "wide"]} data-spot style={`--spot:${g.spot}`}>
+        <div class="head">
+          <span class="icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              {g.icon.map(([Tag, attrs]) => (
+                <Tag {...attrs} />
+              ))}
+            </svg>
+          </span>
+          <h3>{g.label}</h3>
+        </div>
+        <p>{g.blurb}</p>
+        <ul>
+          {g.links.map((l) => (
+            <li>
+              <a href={l.href}>
+                {l.label}
+                <span aria-hidden="true">-&gt;</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+</div>
+
+<script>
+  for (const el of document.querySelectorAll<HTMLElement>("[data-spot]")) {
+    el.addEventListener("mousemove", (ev) => {
+      const r = el.getBoundingClientRect();
+      el.style.setProperty("--x", `${ev.clientX - r.left}px`);
+      el.style.setProperty("--y", `${ev.clientY - r.top}px`);
+    });
+  }
+</script>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-block: 2rem 1rem;
+  }
+  .tile {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 22px;
+    border-radius: 22px;
+    background:
+      radial-gradient(360px circle at var(--x, 0%) var(--y, 0%), rgba(var(--spot), 0.13), transparent 55%),
+      var(--tori-glass);
+    box-shadow: inset 0 0 0 1px var(--tori-hair);
+    transition: box-shadow 0.3s var(--tori-ease);
+  }
+  .tile:hover {
+    box-shadow: inset 0 0 0 1px rgba(var(--spot), 0.35);
+  }
+  .wide {
+    grid-column: span 2;
+  }
+  .head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .icon {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+    color: rgb(var(--spot));
+    background: rgba(var(--spot), 0.12);
+    box-shadow: inset 0 0 0 1px rgba(var(--spot), 0.25);
+  }
+  h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--sl-color-white);
+  }
+  p {
+    margin: 0;
+    font-size: 14.5px;
+    line-height: 1.5;
+    color: var(--sl-color-gray-3);
+  }
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 8px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 11px;
+    border-radius: 999px;
+    font-size: 13px;
+    color: var(--sl-color-gray-2);
+    text-decoration: none;
+    background: var(--tori-glass);
+    box-shadow: inset 0 0 0 1px var(--tori-hair);
+    transition:
+      color 0.2s,
+      background 0.2s,
+      box-shadow 0.2s;
+  }
+  a span {
+    font-family: var(--sl-font-mono);
+    font-size: 11px;
+    opacity: 0;
+    margin-inline-start: -14px;
+    transition:
+      opacity 0.2s,
+      margin 0.2s var(--tori-ease);
+  }
+  a:hover {
+    color: var(--sl-color-white);
+    background: rgba(var(--spot), 0.12);
+    box-shadow: inset 0 0 0 1px rgba(var(--spot), 0.4);
+  }
+  a:hover span {
+    opacity: 1;
+    margin-inline-start: 0;
+  }
+  @media (max-width: 40rem) {
+    .grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .wide {
+      grid-column: auto;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    a span {
+      transition: none;
+    }
+  }
+</style>

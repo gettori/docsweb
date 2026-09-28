@@ -1,0 +1,131 @@
+---
+import Search from "@astrojs/starlight/components/Search.astro";
+import { SITE } from "../../config";
+---
+
+<div class="bar">
+  <a href="/" class="brand">
+    <img src="/app-icon.png" alt="" width="36" height="36" />
+    <span>Tori <span class="docs">docs</span></span>
+  </a>
+  <div class="search print:hidden">
+    <Search />
+  </div>
+  <div class="right print:hidden">
+    <a href={SITE.github} class="link">GitHub</a>
+    <button type="button" class="theme" data-docs-theme aria-label="Switch between light and dark">
+      <svg class="sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+        ><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg
+      >
+      <svg class="moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+        ><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg
+      >
+    </button>
+    <a href={SITE.download} class="download">Download</a>
+  </div>
+</div>
+
+<script>
+  document.querySelector("[data-docs-theme]")?.addEventListener("click", () => {
+    const next = document.documentElement.dataset.theme === "light" ? "dark" : "light";
+    localStorage.setItem("starlight-theme", next);
+    document.documentElement.dataset.theme = next;
+  });
+</script>
+
+<style>
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: 100%;
+  }
+  .brand {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 10px;
+    color: var(--sl-color-white);
+    font-weight: 700;
+    font-size: 23px;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+  }
+  .docs {
+    font-family: "Instrument Serif", Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 28px;
+    color: var(--sl-color-accent);
+  }
+  .search {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    min-width: 0;
+  }
+  .right {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 4px;
+  }
+  .link,
+  .theme {
+    border-radius: 999px;
+    color: var(--sl-color-gray-3);
+    font-size: 13.5px;
+    text-decoration: none;
+    transition:
+      color 0.2s,
+      background 0.2s;
+  }
+  .link {
+    padding: 6px 12px;
+  }
+  .link:hover,
+  .theme:hover {
+    color: var(--sl-color-white);
+    background: var(--tori-glass);
+  }
+  .theme {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+  }
+  :global([data-theme="light"]) .sun,
+  :global(:root:not([data-theme="light"])) .moon {
+    display: none;
+  }
+  .download {
+    display: flex;
+    align-items: center;
+    height: 32px;
+    padding: 0 14px;
+    border-radius: 999px;
+    background: var(--tori-gold);
+    color: #2a1d0c;
+    font-weight: 600;
+    font-size: 13.5px;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .download:hover {
+    background: #fff1d9;
+    color: #2a1d0c;
+  }
+  @media (max-width: 50rem) {
+    .right {
+      display: none;
+    }
+    .brand span .docs {
+      display: none;
+    }
+  }
+</style>
