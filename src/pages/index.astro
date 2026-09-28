@@ -10,6 +10,7 @@ import Footer from "../components/home/Footer.astro";
 import SixPlaces from "../islands/SixPlaces";
 import Story from "../islands/Story";
 import CaptainGame from "../islands/CaptainGame";
+import Spaces from "../islands/Spaces";
 ---
 
 <Base>
@@ -26,6 +27,9 @@ import CaptainGame from "../islands/CaptainGame";
     </div>
     <section class="section">
       <CaptainGame client:visible />
+    </section>
+    <section class="section">
+      <Spaces client:visible />
     </section>
     <Bento />
     <Closing />

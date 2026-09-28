@@ -1,0 +1,246 @@
+.wrap {
+  --ui-scale: 1;
+  max-width: 1320px;
+  margin: 0 auto;
+}
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px 48px;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+.h2 {
+  margin: 0;
+  max-width: 12ch;
+  font-size: clamp(38px, 5.4vw, 80px);
+  line-height: 0.98;
+  letter-spacing: -0.05em;
+  font-weight: 700;
+}
+.accent {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: rgb(var(--hue));
+  transition: color 0.6s;
+}
+.headRight {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 440px;
+}
+.headRight p {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.segs {
+  align-self: flex-start;
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 999px;
+  background: var(--glass);
+  border: 1px solid var(--hair);
+}
+.seg {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 34px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font: 600 13.5px var(--sans);
+  cursor: pointer;
+  transition: all 0.4s var(--ease);
+}
+
+.stage {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+  gap: 12px;
+  margin-top: 40px;
+}
+.panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 380px;
+  padding: 28px 20px;
+  border-radius: 24px;
+  background: radial-gradient(120% 90% at 50% 0%, rgb(var(--hue) / 0.14), transparent 60%), var(--card);
+  border: 1px solid var(--hair);
+  transition: background 0.6s;
+}
+
+.tree {
+  width: 100%;
+  max-width: 340px;
+  height: 300px;
+  flex: none;
+  padding: 0 0 8px;
+  border-radius: 14px;
+  background: var(--canvas-default);
+  border: 1px solid var(--hair);
+  font-family: "Inter Variable", system-ui, sans-serif;
+  color: var(--fg-default);
+  font-size: 13px;
+  overflow: hidden;
+}
+
+.dialog {
+  width: 100%;
+  max-width: 340px;
+  padding: 16px;
+  border-radius: 14px;
+  background: var(--canvas-default);
+  border: 1px solid var(--hair);
+  box-shadow: 0 14px 40px light-dark(rgba(40, 36, 70, 0.1), rgba(0, 0, 0, 0.4));
+  font-family: "Inter Variable", system-ui, sans-serif;
+  font-size: 13px;
+  color: var(--fg-default);
+}
+.title {
+  font-weight: 600;
+  font-size: 14px;
+}
+.mode {
+  display: flex;
+  gap: 2px;
+  margin-top: 12px;
+  padding: 2px;
+  border-radius: 8px;
+  background: var(--glass);
+  border: 1px solid var(--hair);
+}
+.mode span {
+  flex: 1;
+  padding: 5px 0;
+  border-radius: 6px;
+  text-align: center;
+  color: var(--muted);
+  transition: all 0.4s var(--ease);
+}
+.mode .modeOn {
+  background: var(--glass-hi);
+  color: var(--strong);
+}
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 10px;
+  transition: opacity 0.4s;
+}
+.idle {
+  opacity: 0.45;
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 7px;
+  color: var(--muted);
+  transition: all 0.4s var(--ease);
+}
+.rowOn {
+  background: rgb(var(--hue) / 0.12);
+  color: var(--strong);
+}
+.box {
+  display: grid;
+  place-items: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  border: 1px solid var(--line);
+  font-size: 10px;
+  line-height: 1;
+}
+.rowOn .box {
+  background: rgb(var(--hue));
+  border-color: transparent;
+  color: var(--on-accent);
+}
+.name {
+  flex: 1;
+}
+.account {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--faint);
+}
+.foot {
+  margin-top: 10px;
+  text-align: right;
+  font-size: 12px;
+  color: var(--faint);
+}
+
+/* Two lines reserved, so switching to the longer open note does not resize the section. */
+.verdict {
+  display: flex;
+  align-items: center;
+  min-height: calc(2 * 1.4em + 18px);
+  width: 100%;
+  max-width: 340px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+.refused {
+  background: rgba(251, 113, 133, 0.12);
+  color: var(--need-hi);
+}
+.open {
+  background: rgba(45, 212, 191, 0.12);
+  color: var(--done-hi);
+}
+.host {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 340px;
+  padding: 0 4px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--soft);
+}
+.host span {
+  color: var(--faint);
+}
+
+.beats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: 24px 40px;
+  margin-top: 36px;
+}
+.beats b {
+  color: var(--strong);
+  font-size: 16px;
+}
+.beats p {
+  margin: 6px 0 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.more {
+  display: inline-block;
+  margin-top: 28px;
+  font-family: var(--mono);
+  font-size: 13px;
+}

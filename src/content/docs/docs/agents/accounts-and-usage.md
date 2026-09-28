@@ -17,6 +17,26 @@ The account you never explicitly set up, your existing login from before
 Tori, always stays available too; Tori never copies or stores its
 credentials.
 
+## Limiting agents per project
+
+A project can be limited to the agents and accounts you pick, so a client's
+repo only ever runs on that client's login. Right click the project in the
+sidebar and choose **Agents**, switch from **Every agent** to **Only
+selected**, and tick the agent and account pairs it may use, for example
+Claude on your work account and nothing else. The item only shows up once
+you have more than one agent or account to choose between.
+
+Any other agent or account is refused before a session starts or resumes,
+with a note saying which pair is not allowed in this project. The rule
+follows the folder, so every worktree Tori makes under the repo inherits it,
+and a repo nested inside another project uses its own rule. A project with
+no rule allows every agent you have configured.
+
+Put your client projects in their own spaces (see
+[Spaces](/docs/workspace/spaces/)) and keep a personal space whose projects
+have no rules. The git host side is picked per repo too: see
+[Pull requests and issues](/docs/git/pull-requests-and-issues/).
+
 ## Usage and quota windows
 
 Where an agent can report it, a titlebar strip shows a live bar per account:
