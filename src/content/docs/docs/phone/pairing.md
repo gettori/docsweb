@@ -1,0 +1,48 @@
+---
+title: Pairing and remote access
+description: Connecting the phone app to a running Tori.
+---
+
+The phone app talks to a running Tori over the network, it is not a
+standalone app, and it never uses anything but that connection: no shared
+process, no iCloud sync, just a WebSocket to the Mac you paired it with.
+
+## Turning it on
+
+Settings > Remote > **Remote access**. Pick a **Listen on** address: a LAN
+interface (same Wi-Fi only), Tailscale (reachable from anywhere both devices
+are signed into the same Tailscale account), or this Mac only, which is
+really "off" for anything but local testing. Tori never listens on more
+than one address at once.
+
+While remote access is on, the Mac is kept from idle sleeping so the
+connection holds; this costs battery on a laptop, which is why remote access
+defaults off.
+
+## Pairing a phone
+
+**Pair a device** shows a QR code and a typed code as a fallback, both live
+for five minutes and the code works once. Scan it, or open the phone app and
+type the address and code by hand, along with a name for the phone. Five
+wrong tries burns the code early.
+
+Paired devices are listed in Settings > Remote, each with a **Revoke**
+button; revoking closes its connection immediately and it has to pair again
+to reconnect. Re-pairing the same phone replaces its old entry rather than
+adding a second one.
+
+## What a paired phone can do
+
+A paired device reads sessions, transcripts, the project tree and budgets
+the same as sitting at the Mac; it can steer or interrupt a live chat and
+answer any session's pending question, permission prompt, or approval as a
+real user, not just a bystander. It can start a new plain chat in a folder
+it names, but not attach files, start a new worktree, or run anything in the
+background. It cannot turn autopilot on or off, or mint another device's
+pairing credential; those stay Mac-side, in person.
+
+## Titlebar indicator
+
+A phone icon in the title bar lights up when at least one paired device is
+connected, and its popover shows connected and offline state per device with
+a quick Revoke, without opening Settings.
