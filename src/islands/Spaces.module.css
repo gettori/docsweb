@@ -58,6 +58,7 @@
   background: transparent;
   color: var(--muted);
   font: 600 13.5px var(--sans);
+  text-transform: capitalize;
   cursor: pointer;
   transition: all 0.4s var(--ease);
 }
