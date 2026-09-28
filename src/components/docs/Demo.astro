@@ -1,0 +1,83 @@
+---
+interface Props {
+  caption?: string;
+}
+
+const { caption } = Astro.props;
+---
+
+<figure class="demo not-content">
+  <div class="stage">
+    <span class="try"><i></i>Try it</span>
+    <slot />
+  </div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .demo {
+    margin-block: 1.75rem;
+  }
+  .stage {
+    position: relative;
+    isolation: isolate;
+    padding: clamp(12px, 2.6vw, 26px);
+    padding-top: clamp(34px, 4vw, 42px);
+    border-radius: 20px;
+    background:
+      radial-gradient(70% 90% at 85% 0%, var(--tori-glow), transparent 70%),
+      radial-gradient(60% 80% at 0% 100%, var(--tori-glow-2), transparent 70%),
+      var(--tori-glass);
+    box-shadow: inset 0 0 0 1px var(--tori-hair);
+  }
+  .stage::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background-image: radial-gradient(var(--tori-dot) 1px, transparent 1px);
+    background-size: 20px 20px;
+    mask-image: radial-gradient(80% 80% at 50% 50%, #000, transparent);
+  }
+  .stage > :global(*:not(.try)) {
+    box-shadow: 0 24px 50px -20px rgba(8, 6, 20, 0.45);
+  }
+  .try {
+    position: absolute;
+    top: 10px;
+    left: clamp(12px, 2.6vw, 26px);
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: var(--sl-font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--sl-color-accent);
+  }
+  .try i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--tori-need);
+    animation: try-blink 1.2s ease-in-out infinite;
+  }
+  figcaption {
+    margin-top: 10px;
+    padding-inline: 4px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--sl-color-gray-3);
+  }
+  @keyframes try-blink {
+    50% {
+      opacity: 0.3;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .try i {
+      animation: none;
+    }
+  }
+</style>

@@ -3,8 +3,15 @@ title: The Changes panel
 description: Staging, committing, stashing and reviewing your own edits.
 ---
 
+import Demo from "../../../../components/docs/Demo.astro";
+import ChangesDemo from "../../../../islands/docs/ChangesDemo";
+
 The Changes panel is the right panel's source control view: conflicts,
 staged changes, and unstaged changes, each file expandable to its hunks.
+
+<Demo caption="Richard's uncommitted work on hooli-search. Stage a file or a single hunk, write a message or let AI Draft write one, and commit.">
+  <ChangesDemo client:visible />
+</Demo>
 
 ## Staging and committing
 

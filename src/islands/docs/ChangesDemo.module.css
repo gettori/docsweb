@@ -1,0 +1,181 @@
+/* The landing window's base (window.module.css .win) minus its button reset,
+   which outranks Button.module.css and would strip every real button here. */
+.win {
+  --ui-scale: 1;
+  --tori-font-ui: "Inter Variable", "Inter", -apple-system, "SF Pro Text", system-ui, sans-serif;
+  --tori-font-mono: "SF Mono", ui-monospace, SFMono-Regular, Menlo, "Geist Mono Variable", monospace;
+  position: relative;
+  width: 100%;
+  min-height: 460px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid light-dark(rgba(23, 23, 23, 0.13), rgba(200, 215, 255, 0.1));
+  border-radius: 12px;
+  background: var(--canvas-default);
+  color: var(--fg-default);
+  font-family: var(--tori-font-ui);
+  font-size: var(--tori-text-md);
+  line-height: 1.5;
+  text-align: left;
+  letter-spacing: normal;
+  -webkit-font-smoothing: antialiased;
+  container-type: inline-size;
+}
+.win * {
+  box-sizing: border-box;
+}
+.win :global(.dim) {
+  color: var(--fg-subtle);
+}
+.win button:disabled {
+  cursor: default;
+}
+
+.topbar {
+  height: 38px;
+}
+.crumbs {
+  padding-left: 84px;
+}
+
+.body {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  gap: 8px;
+  padding: 0 8px 8px;
+}
+.diffCard {
+  min-width: 0;
+}
+/* Without this the column grows to its longest line and pushes the hunk
+   buttons out past the card's clipped edge. */
+.diff {
+  min-width: 0;
+  font-size: 11.5px;
+}
+/* Long lines wrap rather than scroll: a few pixels of sideways overflow is
+   enough for macOS to draw a horizontal scrollbar, and that one forces a
+   vertical one too. */
+.diff [data-k] {
+  height: auto;
+  min-height: 22px;
+  align-items: flex-start;
+  line-height: 22px;
+}
+.diff [data-k] > span:last-child {
+  flex: 1;
+  min-width: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.diff [data-k] > span:nth-child(-n + 2) {
+  width: 28px;
+}
+.diff [data-k] > span:nth-child(3) {
+  width: 16px;
+}
+.scroll {
+  flex: 1;
+}
+.hunkEnd {
+  margin-left: auto;
+  display: flex;
+  gap: 2px;
+}
+.hunkBtn {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+}
+.hunkBtn:hover {
+  background: var(--neutral-hover);
+  color: var(--fg-default);
+}
+
+.panel {
+  flex: none;
+  width: 244px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-radius: var(--tori-radius-xl);
+  border: 1px solid var(--border-default);
+  background: var(--canvas-card);
+  overflow: hidden;
+}
+.input {
+  field-sizing: content;
+  min-height: 3lh;
+  max-height: 8lh;
+  font-size: var(--tori-text-md);
+}
+.lists {
+  flex: 1;
+  padding-bottom: 8px;
+}
+
+.empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--fg-muted);
+}
+.empty b {
+  color: var(--fg-default);
+  font-weight: 600;
+}
+.empty button {
+  margin-top: 6px;
+}
+
+.toast {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px 8px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border-default);
+  background: var(--canvas-overlay, var(--canvas-card));
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+  color: var(--fg-default);
+  white-space: nowrap;
+  transform: translateX(-50%);
+  animation: toast-in 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+  }
+}
+
+/* The docs column, not the viewport, decides the room, so this keys off the window's own width. */
+@container (max-width: 600px) {
+  .diffCard {
+    display: none;
+  }
+  .panel {
+    flex: 1;
+    width: auto;
+  }
+  .crumbs {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    animation: none;
+  }
+}
