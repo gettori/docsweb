@@ -1,0 +1,79 @@
+---
+title: Spaces, projects and branches
+description: How the sidebar tree is organized.
+---
+
+The sidebar is a tree: spaces at the top, projects inside a space, and one
+row per branch you have checked out.
+
+## Spaces
+
+A space is a top level grouping of projects, shown as an icon strip at the
+bottom of the sidebar. Only one space is active at a time, and its tree is
+what the sidebar shows. Click a tile to switch spaces; right click a tile,
+or the empty tree area, for **New space**, **Edit space** or **Delete
+space**. Drag tiles to reorder them.
+
+## Projects and branches
+
+A project is a folder, and Tori treats it differently depending on what is
+in it:
+
+- **Plain folder**, no git. New session, or turn it into a repo with
+  **Initialize git**.
+- **Plain repo**, one branch checked out at a time, the ordinary git layout.
+  **Add branch** switches or creates one.
+- **Worktree container**, one bare repo with each branch checked out as its
+  own sibling folder, so several agents can work on different branches at
+  once without stepping on each other. **Add worktree** adds another branch
+  alongside the existing ones.
+
+Right clicking a branch row offers **New session**, **Graph** (the commit
+graph for that branch), and, when a worktree or branch is done with, either
+**Remove worktree** or **Checkout and remove branch**.
+
+## Fan out
+
+Fan out creates two, three or four worktrees at once from one stated goal,
+each on its own branch, for trying a few approaches in parallel. It groups
+under one header row in the tree. Once you know which one you want,
+**Promote this attempt** keeps that worktree and deletes the others, branch,
+sessions, checkpoints and all. Promoting cannot be undone.
+
+Reached from a project's context menu, **Fan out**.
+
+## Topics
+
+A Topic checks the same branch name out across several repositories at once,
+useful when a change spans more than one repo. Switch the sidebar to Topics
+mode to see them: each Topic lists its member repos, and each member shows
+whether its worktree is ready, missing, or failed, with a one-click repair
+action for whichever state it is in. A Topic needs at least one member; the
+last one cannot be removed on its own, delete the Topic instead.
+
+Click a member chip anywhere in the app (the sidebar row, the Changes panel,
+the file tree) to switch what a shared panel is showing.
+
+## Working from another worktree
+
+**Shared in worktrees** lets you keep a folder of files that every worktree
+in a container should have, without committing them: put them in a project's
+`.shared/` folder and each new worktree gets them symlinked in automatically.
+The sidebar flags a worktree that has drifted from what is currently in
+`.shared/`.
+
+## Status dots
+
+Every session row carries a dot: **working**, **needs you**, or **done**
+(shown as a solid or hollow mark depending on what Tori can confirm).
+Collapse a project or a space and its row rolls its children's dots up into
+one badge, waiting sessions always counted first. A pull request that failed
+its checks also raises its branch to needs you.
+
+## Finding things
+
+**Filter the sidebar** (`Cmd+Shift+E`) searches project names, or Topic and
+member names in Topics mode. It does not search sessions themselves; for
+that, open a workspace folder's **Session history** dropdown from the
+terminal tab strip, which lists every session ever run against that folder,
+open ones first, then bucketed by when they last ran.

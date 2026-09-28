@@ -1,0 +1,57 @@
+---
+title: Panes, tabs and layout
+description: Splitting the window and where new tabs land.
+---
+
+Each workspace, a branch or a Topic, keeps its own layout: up to four panes,
+split at most two levels deep. A pane holds no name of its own; tabs land in
+one by a pin rule, or by you dragging them there.
+
+## Splitting
+
+**Split the pane to the right** and **Split the pane below** are in the
+command palette, and on a tab's own context menu; neither has a default
+key, since splitting is a decision made once and then lived with rather than
+something you reach for constantly. You can also drop a tab on the edge of a
+pane to split it that way.
+
+Closing a pane merges its tabs into a neighbor (the one to the right first);
+the last pane cannot be closed. A pane that never held a tab, or is emptied
+out, closes itself automatically.
+
+## Where a new tab opens
+
+Settings > Panes has one setting per tab family: **Terminals open in**,
+**Chats open in**, **Files open in**, each set to leftmost or rightmost.
+Terminals and chats default to the leftmost pane, files to the rightmost.
+This only decides where a *new* tab lands; tabs already open stay put.
+
+## The tab strip
+
+The strip never scrolls. Once tabs stop fitting, the rest fold into a `+N`
+dropdown rather than becoming scrollable. Right clicking a tab offers moving
+it to another pane, pinning a pane to only accept one kind of tab, splitting,
+closing others, closing to the right, and file specific actions like
+revealing it in Finder or opening its local or file history.
+
+`Ctrl+Tab` cycles the focused pane's tabs, `Cmd+1` through `Cmd+9` jump to a
+specific tab in it.
+
+## The dock
+
+A second strip at the bottom of the window, separate from the pane tree, for
+one-off command tabs: clones, bootstraps, installs, sign-ins. `Cmd+Ctrl+J`
+shows or hides it.
+
+## Closing and reopening
+
+Closing Tori with unsaved editor buffers does not prompt you to save or
+discard; it stashes them, undo history included, and restores them on next
+launch. Turn this off with **Keep unsaved edits across a quit**, in Settings
+> Editor.
+
+## Dragging things around
+
+Drag a project, branch or space row from the sidebar onto a terminal to
+insert its path as a mention. Drag a file in from outside Tori (from Finder)
+onto a pane's tab strip to open it.
