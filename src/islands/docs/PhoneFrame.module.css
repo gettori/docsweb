@@ -1,0 +1,63 @@
+.phone {
+  flex: none;
+  padding: 5px;
+  border-radius: 36px;
+  background: var(--border-strong);
+  box-shadow: var(--shadow-lg);
+}
+.screen {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 381px;
+  overflow: hidden;
+  border-radius: 58px;
+  background: var(--canvas-default);
+  color: var(--fg-default);
+  font-family: "Inter Variable", "Inter", -apple-system, system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.4;
+  --m-surface: color-mix(in srgb, var(--fg-default) 3.5%, transparent);
+  --m-line: color-mix(in srgb, var(--fg-default) 6%, transparent);
+  --m-separator: color-mix(in srgb, var(--fg-default) 5.5%, transparent);
+  --m-chip: color-mix(in srgb, var(--fg-default) 6%, transparent);
+  --m-chevron: color-mix(in srgb, var(--fg-subtle) 70%, transparent);
+}
+/* A phone draws its scrollbars only mid-scroll, so the frame never shows one. */
+.screen * {
+  scrollbar-width: none;
+}
+.screen button {
+  cursor: pointer;
+}
+.statusBar {
+  position: relative;
+  flex: none;
+  display: flex;
+  align-items: center;
+  height: 50px;
+  padding: 0 34px;
+  font-size: 16px;
+  font-weight: 600;
+}
+.island {
+  position: absolute;
+  left: 50%;
+  top: 12px;
+  width: 110px;
+  height: 32px;
+  border-radius: 999px;
+  background: var(--border-strong);
+  transform: translateX(-50%);
+}
+.app {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.app > * {
+  flex: 1;
+  min-height: 0;
+}

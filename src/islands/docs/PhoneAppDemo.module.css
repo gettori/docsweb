@@ -1,0 +1,89 @@
+.outer {
+  container-type: inline-size;
+}
+.root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+}
+.guide {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 280px;
+}
+.step {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 14px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  background: none;
+  color: var(--sl-color-gray-3);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
+}
+.step:hover {
+  background: var(--tori-glass);
+}
+.step[aria-current="true"] {
+  border-color: var(--tori-hair);
+  background: var(--tori-glass);
+}
+.stepLabel {
+  color: var(--sl-color-white);
+  font-size: 15px;
+  font-weight: 600;
+}
+.step[aria-current="true"] .stepLabel {
+  color: var(--sl-color-accent-high);
+}
+.stepBlurb {
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.wheel {
+  color: var(--fg-muted);
+}
+.bigTile {
+  width: 52px;
+  height: 52px;
+  font-size: 22px;
+}
+.horizon :global(svg) {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.transcript {
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 4px 16px 12px;
+  overflow-y: auto;
+  font-size: 15px;
+  line-height: 1.5;
+}
+.transcript > :first-child {
+  margin-top: auto;
+}
+.user {
+  align-self: flex-end;
+  max-width: 85%;
+  font-size: 15px;
+}
+.prose {
+  font-size: 15px;
+}
+
+@container (max-width: 600px) {
+  .guide {
+    display: none;
+  }
+}

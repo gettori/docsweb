@@ -1,0 +1,123 @@
+.transcript {
+  --chat-measure: 768px;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.rowMeta {
+  font-size: 12px;
+  color: var(--fg-muted);
+}
+
+.error {
+  margin: 0;
+  padding: 8px 16px;
+  color: var(--attention-fg);
+}
+
+.pending {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 55dvh;
+  overflow-y: auto;
+  padding: 8px 12px 0;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  border-radius: 22px;
+  background: linear-gradient(160deg, color-mix(in srgb, var(--status-needs-you) 10%, transparent), var(--canvas-card) 60%);
+  border: 1px solid color-mix(in srgb, var(--status-needs-you) 30%, transparent);
+}
+
+.question {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.choice {
+  min-height: 36px;
+  padding: 0 14px;
+  color: var(--fg-default);
+  background: color-mix(in srgb, var(--fg-default) 6%, transparent);
+  border: 1px solid transparent;
+  border-radius: 18px;
+  font: inherit;
+}
+
+.choice[aria-pressed="true"] {
+  color: var(--brand-on);
+  background: var(--brand-default);
+}
+
+.detail {
+  margin: 0;
+  max-height: 30dvh;
+  overflow: auto;
+  font-size: 12px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--fg-muted);
+}
+
+.cardActions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  min-height: 40px;
+  padding: 8px 12px;
+  color: var(--fg-default);
+  background: var(--canvas-input);
+  border: 1px solid color-mix(in srgb, var(--fg-default) 9%, transparent);
+  border-radius: 14px;
+  font: inherit;
+  font-size: 16px;
+  resize: none;
+}
+
+.primarySmall,
+.secondary {
+  flex: none;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 14px;
+  font: inherit;
+  font-weight: 600;
+}
+
+.primarySmall {
+  color: var(--brand-on);
+  background: var(--brand-default);
+  border: none;
+}
+
+.secondary {
+  color: var(--fg-default);
+  background: color-mix(in srgb, var(--fg-default) 7%, transparent);
+  border: none;
+}
+
+.primarySmall:disabled,
+.secondary:disabled {
+  opacity: 0.5;
+}
+
