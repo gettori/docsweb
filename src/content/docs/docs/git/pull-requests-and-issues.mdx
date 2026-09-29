@@ -3,6 +3,9 @@ title: Pull requests and issues
 description: GitHub and GitLab accounts, PR status, review, and starting a branch from an issue.
 ---
 
+import Demo from "../../../../components/docs/Demo.astro";
+import PullRequestDemo from "../../../../islands/docs/PullRequestDemo";
+
 ## Signing in
 
 Settings > Integrations > Hosts holds your GitHub and GitLab accounts,
@@ -26,6 +29,10 @@ behind, diverged, or conflicting, silent when there is nothing to report.
 Clicking it fetches and switches you to the Changes panel.
 
 ## The pull request panel
+
+<Demo caption="Dinesh's PR #52 on hooli-search, reviewed from your side. Hover a diff line and press + to leave a comment, tick files as viewed, then submit the batch from the Review tab. The repo needs every check and one approval to merge, so watch the tests finish, approve, and merge from the Merge tab.">
+  <PullRequestDemo client:visible />
+</Demo>
 
 Shows the one pull request for whichever branch is in front: title, files,
 three verdict lines (mergeable state, checks, review decision), and tabs for
