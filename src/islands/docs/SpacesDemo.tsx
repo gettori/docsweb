@@ -354,12 +354,12 @@ export default function SpacesDemo() {
                 <span class={w.stateDot} />
                 {x()!.state === "work" ? "Working" : x()!.state === "need" ? "Needs you" : "Done"}
               </span>
-              <span class={w.sep}>{"·"}</span>
+              <span class={w.sep}>{"\u00b7"}</span>
               <span class={s.who}>
                 <AgentMark agent={x()!.agent} size={12} breathe={x()!.state === "work"} />
                 {AGENT_NAME[x()!.agent]}
               </span>
-              <span class={w.sep}>{"·"}</span>
+              <span class={w.sep}>{"\u00b7"}</span>
               <span class={s.where}>
                 {picked().project.name} / {b().name}
               </span>
@@ -431,7 +431,7 @@ export default function SpacesDemo() {
             <span class={sidebar.headStrut} />
             <div class={sidebar.spaceHeader}>
               <span class={sidebar.spaceHeaderName}>{space().name}</span>
-              <span class={sidebar.spaceHeaderKind}>{"· Spaces"}</span>
+              <span class={sidebar.spaceHeaderKind}>{"\u00b7 Spaces"}</span>
             </div>
           </div>
           <div class={`${sidebar.treeScroll} ${s.treeScroll}`}>

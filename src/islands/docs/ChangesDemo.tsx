@@ -199,7 +199,7 @@ export default function ChangesDemo() {
       class={`${review.reviewRow} ${sel().name === props.f.name && sel().staged === props.staged ? review.active : ""}`}
       onClick={() => setSel({ name: props.f.name, staged: props.staged })}
     >
-      <span class={w.fileGlyph}>{props.f.name.endsWith(".md") ? "M↓" : "TS"}</span>
+      <span class={w.fileGlyph}>{props.f.name.endsWith(".md") ? "M\u2193" : "TS"}</span>
       <span class={review.reviewName}>{props.f.name}</span>
       <span class={review.reviewDir}>{props.f.dir}</span>
       <span class={review.rowEnd}>
@@ -309,7 +309,7 @@ export default function ChangesDemo() {
             <span class={review.branchName}>fix/search-ranking</span>
             <span class={review.spacer} />
             <span class={review.aheadPill}>
-              {"↑"}
+              {"\u2191"}
               {ahead()}
             </span>
             <span class={`${btn.btn} ${btn.ghost} ${btn.sm} ${btn.iconOnly}`}>

@@ -587,7 +587,7 @@ export default function AutopilotDemo() {
               <span class={sp.composerHints}>
                 <span class={sp.keyHints}>
                   <span class={sp.keyHint}>
-                    <kbd class={sp.kbd}>{"⌘⇧J"}</kbd>workspace
+                    <kbd class={sp.kbd}>{"\u2318\u21e7J"}</kbd>workspace
                   </span>
                   <Show when={calls().length}>
                     <span class={sp.keyHint}>

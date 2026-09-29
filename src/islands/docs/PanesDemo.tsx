@@ -391,7 +391,7 @@ export default function PanesDemo() {
               </button>
               <Show when={settings()}>
                 <div class={s.settings} onClick={(e) => e.stopPropagation()}>
-                  <div class={s.settingsHead}>Settings {"›"} Panes</div>
+                  <div class={s.settingsHead}>Settings {"\u203a"} Panes</div>
                   <For each={["terminal", "chat", "file"] as Kind[]}>
                     {(k) => (
                       <div class={s.setting}>

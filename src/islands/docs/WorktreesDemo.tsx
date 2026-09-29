@@ -58,9 +58,9 @@ const START = (): Unit[] => [
   { name: "spike/old-index", folder: "old-index", own: [], hasRemote: false, unpushed: 0, dirty: false, tabs: 0, stale: true },
 ];
 const ROOT = "~/Projects/hooli-search";
-const UP = "↑";
-const DOWN = "↓";
-const quote = (t: string) => `“${t}”`;
+const UP = "\u2191";
+const DOWN = "\u2193";
+const quote = (t: string) => `\u201c${t}\u201d`;
 
 function folderFor(branch: string, taken: string[]) {
   const last = branch.split("/").filter(Boolean).pop() ?? branch;
@@ -459,7 +459,7 @@ export default function WorktreesDemo() {
             <span class={sidebar.headStrut} />
             <div class={sidebar.spaceHeader}>
               <span class={sidebar.spaceHeaderName}>hooli</span>
-              <span class={sidebar.spaceHeaderKind}>{"· Spaces"}</span>
+              <span class={sidebar.spaceHeaderKind}>{"\u00b7 Spaces"}</span>
             </div>
           </div>
           <div class={`${sidebar.treeScroll} ${s.treeScroll}`}>

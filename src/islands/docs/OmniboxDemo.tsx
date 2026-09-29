@@ -5,11 +5,11 @@ import w from "../../app/window.module.css";
 import DemoWindow, { useToast } from "./DemoWindow";
 import s from "./OmniboxDemo.module.css";
 
-const CMD = "⌘";
-const SHIFT = "⇧";
-const OPT = "⌥";
-const CTRL = "⌃";
-const MINUS = "−";
+const CMD = "\u2318";
+const SHIFT = "\u21e7";
+const OPT = "\u2325";
+const CTRL = "\u2303";
+const MINUS = "\u2212";
 
 // hooli-search on fix/search-ranking, the same worktree the Changes page uses.
 const FILES: Record<string, string[]> = {
