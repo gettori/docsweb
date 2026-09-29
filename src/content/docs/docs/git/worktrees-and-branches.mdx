@@ -3,6 +3,13 @@ title: Worktrees and branches
 description: Creating, switching and cleaning up worktrees and branches.
 ---
 
+import Demo from "../../../../components/docs/Demo.astro";
+import WorktreesDemo from "../../../../islands/docs/WorktreesDemo";
+
+<Demo caption="hooli-search with three worktrees and one whose folder was deleted outside Tori. Click a worktree for its graph and a commit for its files. Use + to add a worktree (try bug/search-ranking to see the folder name fall back to a full slug), or the ... menu to remove one or prune.">
+  <WorktreesDemo client:visible />
+</Demo>
+
 ## Creating a worktree
 
 **Add worktree**, on a worktree container, figures out where a branch should
