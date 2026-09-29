@@ -3,6 +3,7 @@ import starlight from "@astrojs/starlight";
 import solid from "@astrojs/solid-js";
 
 export default defineConfig({
+  prefetch: { prefetchAll: true, defaultStrategy: "hover" },
   integrations: [
     starlight({
       title: "Tori",
