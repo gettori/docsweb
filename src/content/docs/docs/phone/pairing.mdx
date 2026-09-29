@@ -3,6 +3,9 @@ title: Pairing and remote access
 description: Connecting the phone app to a running Tori.
 ---
 
+import Demo from "../../../../components/docs/Demo.astro";
+import PairingDemo from "../../../../islands/docs/PairingDemo";
+
 The phone app talks to a running Tori over the network, it is not a
 standalone app, and it never uses anything but that connection: no shared
 process, no iCloud sync, just a WebSocket to the Mac you paired it with.
@@ -20,6 +23,10 @@ connection holds; this costs battery on a laptop, which is why remote access
 defaults off.
 
 ## Pairing a phone
+
+<Demo caption="Settings > Remote on the Mac beside the phone app. Press Pair a device, then tap Scan the code on the phone, or type the address and code by hand (wrong codes count down to five). Once paired, open hooli-search on the phone and answer the waiting permission, or turn remote access off, change the address, or Revoke the phone from the Mac.">
+  <PairingDemo client:visible />
+</Demo>
 
 **Pair a device** shows a QR code and a typed code as a fallback, both live
 for five minutes and the code works once. Scan it, or open the phone app and
