@@ -3,9 +3,16 @@ title: Panes, tabs and layout
 description: Splitting the window and where new tabs land.
 ---
 
+import Demo from "../../../../components/docs/Demo.astro";
+import PanesDemo from "../../../../islands/docs/PanesDemo";
+
 Each workspace, a branch or a Topic, keeps its own layout: up to four panes,
 split at most two levels deep. A pane holds no name of its own; tabs land in
 one by a pin rule, or by you dragging them there.
+
+<Demo caption="Two panes on hooli-search. Drag a tab to another strip to move it, or onto the right or bottom edge of a pane to split. Right click a tab for the rest. The buttons top right open new tabs by the rules in the gear's Settings, and toggle the dock. Close tabs until a pane empties to watch it close itself.">
+  <PanesDemo client:visible />
+</Demo>
 
 ## Splitting
 
