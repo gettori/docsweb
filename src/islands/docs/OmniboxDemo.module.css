@@ -1,0 +1,274 @@
+.editor {
+  position: relative;
+  flex-direction: column;
+  min-width: 0;
+}
+.glyph {
+  font-family: var(--tori-font-ui);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.bar {
+  gap: 4px;
+  color: var(--fg-default);
+}
+.pos {
+  margin-left: 8px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Scrolled by the demo when a pick lands off screen, never by the reader: the
+   files are short, and a bar here would be one more scroller on the page. */
+.code {
+  flex: 1;
+  min-height: 0;
+  padding: 8px 0;
+  overflow: hidden;
+  font-family: var(--tori-font-mono);
+  font-size: 12.5px;
+  line-height: 20px;
+  outline: none;
+}
+.line {
+  display: flex;
+  height: 20px;
+  white-space: pre;
+}
+.line[data-cursor] {
+  background: var(--brand-subtle);
+}
+.ln {
+  flex: none;
+  width: 44px;
+  padding-right: 16px;
+  text-align: right;
+  color: var(--fg-subtle);
+}
+.line[data-cursor] .ln {
+  color: var(--fg-default);
+}
+.text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cm {
+  color: var(--syntax-comment);
+}
+.num {
+  color: var(--syntax-number);
+}
+.ty {
+  color: var(--syntax-type);
+}
+
+.hint {
+  margin-left: auto;
+  display: flex;
+  gap: 4px;
+}
+.hintBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 22px;
+  padding: 0 8px 0 2px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: none;
+  color: var(--fg-muted);
+  font: inherit;
+  font-size: var(--tori-text-sm);
+  white-space: nowrap;
+  transition:
+    color 0.2s,
+    border-color 0.2s;
+}
+.hintBtn .key {
+  padding: 0 4px;
+  font-size: var(--tori-text-xs);
+}
+.hintBtn span {
+  margin-left: 4px;
+}
+.hintBtn:hover {
+  color: var(--fg-default);
+  border-color: var(--brand-default);
+}
+
+/* Dialog's backdrop and panel, held inside the demo window instead of fixed
+   to the page. The scrim reaches up over the title bar, as a modal does. */
+.scrim {
+  position: absolute;
+  inset: -38px 0 0;
+  z-index: 1;
+  background: var(--scrim-default);
+  animation: fade var(--tori-duration-med, 0.2s) ease;
+}
+.panel {
+  position: absolute;
+  top: 28px;
+  left: 50%;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: min(420px, calc(100% - 24px));
+  max-height: calc(100% - 44px);
+  padding: 16px 16px 12px;
+  background: var(--canvas-card);
+  border: 1px solid var(--border-default);
+  border-radius: var(--tori-radius-xl);
+  box-shadow: var(--shadow-lg);
+  transform: translateX(-50%);
+  animation: pop var(--tori-duration-med, 0.2s) ease;
+}
+.title {
+  margin-bottom: 6px;
+  font-size: var(--tori-text-3xl);
+  line-height: var(--tori-line-tight);
+  font-weight: 600;
+  color: var(--fg-default);
+}
+.control {
+  flex: none;
+  display: flex;
+  align-items: center;
+  height: var(--control-height);
+  padding: 0 6px 0 8px;
+  background: var(--canvas-input);
+  border: 1px solid var(--border-default);
+  border-radius: var(--tori-radius-md);
+  transition: border-color var(--tori-duration-fast) ease;
+}
+.control:has(.input:focus-visible) {
+  border-color: var(--brand-default);
+}
+.input {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+  background: none;
+  color: var(--fg-default);
+  font-family: inherit;
+  font-size: var(--tori-text-lg);
+  line-height: 1.4;
+}
+.input::placeholder {
+  color: var(--fg-watermark);
+}
+
+/* The one list here that can outgrow the window, so it is the one scroller. */
+.list {
+  position: relative;
+  min-height: 0;
+  margin-top: 6px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+.item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  font-size: var(--tori-text-lg);
+  color: var(--fg-default);
+  white-space: nowrap;
+  border-radius: var(--tori-radius-md);
+  cursor: pointer;
+  transition: background var(--tori-duration-fast) ease;
+}
+.item[data-highlighted] {
+  background: var(--neutral-hover);
+}
+.item[data-disabled] {
+  color: var(--fg-muted);
+  cursor: default;
+}
+.section {
+  padding: 4px 8px;
+  font-size: var(--tori-text-sm);
+  color: var(--fg-subtle);
+}
+.empty {
+  padding: 6px 8px;
+  font-size: var(--tori-text-md);
+  color: var(--fg-subtle);
+}
+.itemIcon {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  color: var(--fg-muted);
+}
+.itemLabel {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Gives up room long before the label does, so a narrow palette keeps the name. */
+.itemSub {
+  flex: 0 1000 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--fg-muted);
+  font-size: var(--tori-text-md);
+}
+.itemMeta {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-align: right;
+  text-overflow: ellipsis;
+  color: var(--fg-muted);
+  font-size: var(--tori-text-sm);
+}
+.itemKeys {
+  display: flex;
+  flex: none;
+  gap: 2px;
+  margin-left: auto;
+}
+.key {
+  min-width: 18px;
+  padding: 1px 5px;
+  font-family: var(--tori-font-ui);
+  font-size: var(--tori-text-md);
+  line-height: 1.5;
+  text-align: center;
+  color: var(--fg-muted);
+  background: var(--canvas-input);
+  border: 1px solid var(--border-default);
+  border-radius: var(--tori-radius-sm);
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.96);
+  }
+}
+
+@container (max-width: 600px) {
+  .itemKeys,
+  .hintBtn span {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scrim,
+  .panel {
+    animation: none;
+  }
+}

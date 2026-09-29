@@ -320,6 +320,67 @@ starlight-toc a[aria-current="true"] {
   }
 }
 
+/* A two-column table of short pairs, laid out as cards across the column
+   instead of a narrow strip down its left edge. The table stays the source,
+   so the page still reads as a table in the markdown and to a screen reader. */
+.key-grid table {
+  display: block;
+  overflow: visible;
+}
+.key-grid thead {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.key-grid tbody {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: 0.5rem;
+}
+.key-grid tr {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0.6rem 0.7rem;
+  border-radius: 12px;
+  background: var(--tori-glass);
+  box-shadow: inset 0 0 0 1px var(--tori-hair);
+  transition: box-shadow 0.2s;
+}
+.key-grid tr:hover {
+  box-shadow: inset 0 0 0 1px var(--sl-color-accent);
+}
+.key-grid td {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  line-height: 1.35;
+}
+.key-grid td:first-child {
+  flex: none;
+  width: 2.4rem;
+  color: var(--sl-color-gray-3);
+  font-size: var(--sl-text-xs);
+}
+.key-grid td:first-child code {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.9rem;
+  height: 1.9rem;
+  padding: 0 0.4rem;
+  border-radius: 8px;
+  color: var(--sl-color-accent-high);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.key-grid td:last-child {
+  color: var(--sl-color-white);
+  font-size: var(--sl-text-sm);
+}
+
 /* Cross-document view transitions: the header and sidebar hold still while the page underneath swaps. */
 @view-transition {
   navigation: auto;

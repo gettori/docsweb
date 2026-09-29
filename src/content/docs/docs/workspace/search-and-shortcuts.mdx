@@ -3,11 +3,16 @@ title: Search, the omnibox and shortcuts
 description: Finding files, running commands, and every default keyboard shortcut.
 ---
 
+import Demo from "../../../../components/docs/Demo.astro";
+import OmniboxDemo from "../../../../islands/docs/OmniboxDemo";
+
 ## The omnibox
 
 One dialog, opened with `Cmd+P` (starts empty) or `Cmd+K` (starts in command
 mode), that switches what it searches by a prefix you type into the same
 box:
+
+<div class="key-grid">
 
 | Prefix | Searches |
 | --- | --- |
@@ -17,6 +22,12 @@ box:
 | `#` | Symbols across the project |
 | `:` | A line number to jump to |
 | `?` | What the other prefixes do |
+
+</div>
+
+<Demo caption="The omnibox over hooli-search's fix/search-ranking. Type a prefix to switch what it searches, use the arrow keys and Enter to pick, and press Escape to close it. Cmd+P or Cmd+K brings it back. Commit and push stay disabled, with the reason, until you stage a file.">
+  <OmniboxDemo client:visible />
+</Demo>
 
 File mode leads with recently visited files, then recent files, ranked by
 how often and how recently you open them, before the rest of the project.
