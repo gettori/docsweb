@@ -3,6 +3,13 @@ title: Accounts and usage
 description: Signing in to more than one account per agent, and watching your quota.
 ---
 
+import Demo from "../../../../components/docs/Demo.astro";
+import AccountsDemo from "../../../../islands/docs/AccountsDemo";
+
+<Demo caption="Claude signed in twice (your own login and a Raviga account Tori created) plus Codex, with the usage strip in the title bar. Click a strip or a meter for the usage card. Start sessions to spend quota and cross the warn threshold, try Claude on pied-piper to hit its project rule, and add or remove an account.">
+  <AccountsDemo client:visible />
+</Demo>
+
 ## More than one account
 
 An agent that supports it (Claude, Codex, Copilot, OpenCode) can have more

@@ -1,0 +1,171 @@
+/* The strip's card. Popover owns the surface (background, border, shadow,
+   z-index); this owns what sits on it.
+
+   Names read, numbers scan: the window names are the UI font and every figure
+   beside them is monospaced and tabular, so a column of levels lines up and a
+   countdown does not shuffle sideways every minute. */
+@layer components {
+  .card {
+    width: calc(400px * var(--ui-scale));
+    padding: var(--tori-space-6);
+    font-size: var(--tori-text-md);
+    color: var(--fg-default);
+  }
+
+  .head {
+    display: flex;
+    align-items: center;
+    gap: var(--tori-space-3);
+  }
+  .who {
+    font-size: var(--tori-text-2xl);
+    font-weight: 600;
+  }
+  /* Freshness, once, for the whole card: what a reader is checking is whether
+     the numbers are current, not which rung fetched each one. */
+  .ago {
+    display: flex;
+    align-items: center;
+    gap: var(--tori-space-2);
+    margin-left: auto;
+    font-family: var(--tori-font-mono);
+    color: var(--fg-muted);
+  }
+
+  .accounts {
+    display: flex;
+    align-items: center;
+    gap: var(--tori-space-3);
+    margin-top: var(--tori-space-6);
+    font-size: var(--tori-text-sm);
+  }
+
+  .tab {
+    padding: 0;
+    border: none;
+    background: none;
+    font: inherit;
+    font-family: var(--tori-font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--fg-subtle);
+    cursor: pointer;
+  }
+  .tab:hover {
+    color: var(--fg-muted);
+  }
+  .tabOn {
+    color: var(--fg-default);
+  }
+  .tabOn:hover {
+    color: var(--fg-default);
+  }
+  .tab + .tab {
+    padding-left: var(--tori-space-3);
+    border-left: var(--tori-border-thin) solid var(--border-default);
+  }
+  /* Between the last account and the plan. A rule rather than a gap, so the two
+     halves of the row read as two different kinds of fact. */
+  .rule {
+    flex: 1;
+    height: var(--tori-border-thin);
+    background: var(--border-default);
+  }
+
+  .email,
+  .plan {
+    font-family: var(--tori-font-mono);
+    color: var(--fg-muted);
+    white-space: nowrap;
+  }
+
+  .windows {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tori-space-6);
+    margin: var(--tori-space-6) 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .window {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    align-items: baseline;
+    gap: var(--tori-space-3) var(--tori-space-3);
+  }
+  .kind {
+    font-weight: 500;
+  }
+  .level {
+    font-family: var(--tori-font-mono);
+    font-variant-numeric: tabular-nums;
+    color: var(--fg-default);
+  }
+  .when {
+    justify-self: end;
+    font-family: var(--tori-font-mono);
+    color: var(--fg-muted);
+  }
+
+  /* The same three bands the strip paints, so a reader crossing from one to
+     the other sees one scale. Green is the bar alone; warm and hot take the
+     figure with them. */
+  .window[data-band="warm"] .level,
+  .window[data-band="warm"] .fill {
+    color: var(--attention-fg);
+  }
+  .window[data-band="hot"] .level,
+  .window[data-band="hot"] .fill {
+    color: var(--danger-fg);
+  }
+  .window[data-band="none"] .level {
+    color: var(--fg-muted);
+  }
+  .window[data-temporal="stale"] {
+    opacity: 0.7;
+  }
+
+  .track {
+    grid-column: 1 / -1;
+    height: calc(6px * var(--ui-scale));
+    border-radius: var(--tori-radius-pill);
+    background: var(--neutral-subtle);
+    overflow: hidden;
+  }
+  .fill {
+    display: block;
+    height: 100%;
+    border-radius: var(--tori-radius-pill);
+    background: currentColor;
+    color: var(--success-fg);
+  }
+
+  /* The projection, boxed: it is the one line on the card that is Tori's own
+     arithmetic rather than a number some source reported. */
+  .pace {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--tori-space-3);
+    margin: 0;
+    padding: var(--tori-space-5);
+    border: var(--tori-border-thin) solid var(--border-default);
+    border-radius: var(--tori-radius-md);
+    color: var(--fg-muted);
+    line-height: 1.5;
+  }
+  .pace svg {
+    flex: none;
+    margin-top: calc(2px * var(--ui-scale));
+  }
+
+  .empty {
+    margin: var(--tori-space-6) 0;
+    color: var(--fg-muted);
+  }
+
+  .trouble {
+    margin: var(--tori-space-5) 0 0;
+    color: var(--attention-fg);
+  }
+}

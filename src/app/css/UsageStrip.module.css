@@ -1,0 +1,127 @@
+/* The topbar's quota strip. One surface between the toolbar and the update
+   notice, holding every account that has something to say, and staying quiet at
+   ok: a bar that shouts while nothing is wrong is a bar nobody reads by the time
+   something is.
+
+   Monospaced, and figures before names in the visual weight. The strip is
+   scanned rather than read: what a glance is after is a number, and tabular
+   digits keep it from shifting under the eye every time it moves.
+
+   Colour is the attention and danger roles, never --blocking-*. That tier says
+   "this stopped the turn" and check 10 in scripts/check-tokens.mjs holds it to
+   the permission prompt and the question card; a strip bar makes the same claim
+   the chat's reached banner does, so it wears the same role that does. */
+@layer components {
+  /* One chip for every account. Each account inside is still its own button
+     with its own card. */
+  .strip {
+    flex: 0 1 auto;
+    min-width: 0;
+    align-self: center;
+    display: flex;
+    align-items: center;
+    gap: var(--tori-space-2);
+    margin-right: var(--tori-space-4);
+    padding: var(--tori-space-1);
+    border-radius: var(--tori-radius-lg);
+    background: var(--neutral-subtle);
+    font-family: var(--tori-font-mono);
+    overflow: hidden;
+  }
+
+  .cluster {
+    flex: 0 1 auto;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--tori-space-4);
+    height: var(--control-height-sm);
+    padding: 0 var(--tori-space-4);
+    border: none;
+    border-radius: var(--tori-radius-md);
+    background: none;
+    font: inherit;
+    font-size: var(--tori-text-sm);
+    color: var(--fg-muted);
+    cursor: pointer;
+  }
+  .cluster:hover {
+    background: var(--neutral-hover);
+  }
+  .tight {
+    gap: var(--tori-space-3);
+    padding: 0 var(--tori-space-2);
+  }
+
+  /* Between every two rows. Not a border on the cluster: that would also draw
+     at the ends of the strip, where the surface's own edge already is. A thin
+     one between two logins of one agent; where the next agent starts it is
+     taller and stronger, so the glyph after it reads as a new group. */
+  .divider {
+    flex: none;
+    width: var(--tori-border-thin);
+    height: calc(14px * var(--ui-scale));
+    background: var(--border-default);
+  }
+  .agentDivider {
+    height: calc(20px * var(--ui-scale));
+    background: var(--border-strong);
+  }
+
+  .name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: var(--tori-space-2);
+    white-space: nowrap;
+  }
+
+  /* The window's own name, carried on every bar so two bars in one cluster are
+     telling the reader about two different windows rather than one number
+     twice. */
+  .kind {
+    font-size: var(--tori-text-sm);
+    color: var(--fg-muted);
+  }
+
+  /* The one thing the strip exists to carry, so it is the one thing with weight
+     on it. */
+  .figure {
+    font-size: var(--tori-text-md);
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--fg-default);
+  }
+
+  .warm .kind,
+  .warm .figure {
+    color: var(--attention-fg);
+  }
+  .hot .kind,
+  .hot .figure {
+    color: var(--danger-fg);
+  }
+
+  /* Old but not wrong. Dimmed rather than relabelled: the number is still the
+     last thing any source said, and the cluster's name carries how long ago
+     that was. */
+  .stale {
+    opacity: 0.55;
+  }
+
+  /* Wrong rather than old, so it loses its colour and reads as the 0% a fresh
+     window starts at. */
+  .expired {
+    color: var(--fg-muted);
+  }
+  .expired .figure {
+    font-weight: 400;
+    color: var(--fg-muted);
+  }
+}
