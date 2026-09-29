@@ -1,0 +1,284 @@
+.root {
+  color: var(--fg-default);
+}
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: var(--fg-muted);
+}
+.toggle:hover {
+  background: var(--neutral-hover);
+  color: var(--fg-default);
+}
+
+.layout {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  gap: 8px;
+}
+/* Zoomed as one block, the way Cmd+= scales chrome, editor and terminal
+   together. The settings column stays put so its controls do not run away. */
+.preview {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: hidden;
+}
+.editor.editor {
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+.glyph {
+  color: #519aba;
+  font-family: var(--tori-font-ui);
+  font-size: 9.5px;
+  font-weight: 700;
+}
+.code {
+  flex: 1;
+  min-height: 0;
+  padding: 8px 0;
+  overflow: hidden;
+  white-space: pre;
+}
+.line {
+  display: flex;
+}
+.line[data-cursor] {
+  background: var(--brand-subtle);
+}
+.ln {
+  flex: none;
+  width: 40px;
+  padding-right: 14px;
+  color: var(--fg-subtle);
+  text-align: right;
+}
+.term.term {
+  flex: none;
+  flex-direction: column;
+  padding: 8px 12px;
+  background: var(--canvas-default);
+  color: var(--ansi-white, var(--fg-default));
+  white-space: pre;
+  overflow: hidden;
+}
+.status {
+  flex: none;
+  gap: 8px;
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid var(--border-default);
+  border-radius: 10px;
+  background: var(--canvas-card);
+  color: var(--fg-muted);
+  font-size: var(--tori-text-sm);
+}
+.statusNote {
+  margin-left: auto;
+  color: var(--fg-subtle);
+  font-size: var(--tori-text-xs);
+}
+
+.settings.settings {
+  flex: none;
+  flex-direction: column;
+  width: 270px;
+  padding: 12px 14px;
+  gap: 8px;
+  overflow: hidden;
+  font-size: var(--tori-text-md);
+}
+.settingsHead {
+  color: var(--fg-subtle);
+  font-size: var(--tori-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.group {
+  margin-top: 2px;
+  color: var(--fg-default);
+  font-weight: 600;
+}
+.swatches {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+.swatch {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 5px;
+  border: 1px solid var(--border-default);
+  border-radius: 10px;
+  background: none;
+  color: var(--fg-muted);
+  font: inherit;
+  font-size: var(--tori-text-xs);
+  text-align: left;
+}
+.swatch:hover {
+  border-color: var(--border-strong);
+}
+.swatch[aria-pressed="true"] {
+  border-color: var(--brand-default);
+  color: var(--fg-default);
+  box-shadow: 0 0 0 1px var(--brand-default);
+}
+.chip {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  height: 34px;
+  padding: 5px;
+  border: 1px solid;
+  border-radius: 6px;
+}
+.chipCard {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 58%;
+  padding: 4px;
+  border-radius: 4px;
+}
+.chipCard span {
+  height: 3px;
+  border-radius: 2px;
+}
+.chipDots {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  display: flex;
+  gap: 3px;
+}
+.chipDots i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.swatchLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.drops {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.dropsLabel {
+  width: 100%;
+  color: var(--fg-subtle);
+  font-family: var(--tori-font-mono);
+  font-size: var(--tori-text-2xs);
+}
+.drop {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+  padding: 0 9px;
+  border: 1px dashed var(--border-strong);
+  border-radius: 999px;
+  background: none;
+  color: var(--fg-muted);
+  font: inherit;
+  font-size: var(--tori-text-sm);
+}
+.drop:hover {
+  border-color: var(--brand-default);
+  color: var(--fg-default);
+}
+.drop[data-added] {
+  border-style: solid;
+}
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.field {
+  display: grid;
+  grid-template-columns: 1fr 120px;
+  align-items: center;
+  gap: 8px;
+  color: var(--fg-muted);
+  font-size: var(--tori-text-sm);
+}
+.field select {
+  height: 24px;
+  padding: 0 4px;
+  border: 1px solid var(--border-default);
+  border-radius: 6px;
+  background: var(--canvas-input);
+  color: var(--fg-default);
+  font: inherit;
+}
+.field input[type="range"] {
+  width: 100%;
+  accent-color: var(--brand-default);
+}
+.zoomRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 2px;
+  color: var(--fg-muted);
+  font-size: var(--tori-text-sm);
+}
+.zoom {
+  display: inline-flex;
+  border: 1px solid var(--border-default);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.zoom button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 24px;
+  padding: 0 6px;
+  border: 0;
+  background: none;
+  color: var(--fg-muted);
+  font: inherit;
+  font-size: var(--tori-text-sm);
+  font-variant-numeric: tabular-nums;
+}
+.zoom button:hover {
+  background: var(--neutral-hover);
+  color: var(--fg-default);
+}
+.zoomValue {
+  min-width: 48px;
+}
+
+@container (max-width: 640px) {
+  .layout {
+    flex-direction: column;
+  }
+  .preview {
+    flex: none;
+    height: 330px;
+  }
+  .settings.settings {
+    width: auto;
+  }
+}

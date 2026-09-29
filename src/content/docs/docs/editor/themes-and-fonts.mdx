@@ -3,6 +3,13 @@ title: Themes and fonts
 description: Dark and light themes, custom palettes, and typography settings.
 ---
 
+import Demo from "../../../../components/docs/Demo.astro";
+import ThemesDemo from "../../../../islands/docs/ThemesDemo";
+
+<Demo caption="The app's own theme engine, running on this page. Pick a bundled theme, or drop in hooli.json (it passes the legibility check and joins the picker) or gavin.json (it fails, and the window keeps its theme). Change the fonts and sizes, and zoom with the buttons or Cmd+= and Cmd+- once you have clicked into the demo.">
+  <ThemesDemo client:visible />
+</Demo>
+
 ## Themes
 
 Five bundled themes: Tori Dark (default), Tori Light, Catppuccin Mocha,
