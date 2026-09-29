@@ -25,7 +25,7 @@ export function useToast() {
 
 // The cropped Tori window every docs mockup sits in: traffic lights, a
 // breadcrumb, then whatever the demo draws.
-export default function DemoWindow(props: { crumbs: string[]; toast?: Toast | null; minHeight?: number; children: JSX.Element }) {
+export default function DemoWindow(props: { crumbs: string[]; end?: JSX.Element; toast?: Toast | null; minHeight?: number; children: JSX.Element }) {
   return (
     <div class={s.win} style={{ "--tint": "217 164 104", "min-height": `${props.minHeight ?? 460}px` }}>
       <div class={w.wash} />
@@ -47,6 +47,7 @@ export default function DemoWindow(props: { crumbs: string[]; toast?: Toast | nu
             )}
           </For>
         </nav>
+        <div class={s.end}>{props.end}</div>
       </header>
       <div class={s.body}>{props.children}</div>
       <Show when={props.toast}>

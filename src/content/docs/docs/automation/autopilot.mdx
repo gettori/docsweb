@@ -3,6 +3,9 @@ title: Autopilot
 description: Hand a queue of work to Tori and it starts, watches and reports on workers.
 ---
 
+import Demo from "../../../../components/docs/Demo.astro";
+import AutopilotDemo from "../../../../islands/docs/AutopilotDemo";
+
 Autopilot runs as an ordinary Tori chat session that reads a queue of work,
 issues to ship, pull requests to review, and starts a worker session per
 item. It never edits code itself, and nothing it does leaves your machine
@@ -34,6 +37,10 @@ you can hand it one directly. Every item you see in the Cockpit, in flight,
 waiting, done, or failed, is one of these.
 
 ## The Cockpit
+
+<Demo caption="The Cockpit with two workers on deck, one in hooli-search and one in pied-piper. Approve, edit, reply to or dismiss the calls (A and R work too), drop anchor, queue more work from the composer (try: work on #60), or Watch a worker to see the session the autopilot is driving.">
+  <AutopilotDemo client:visible />
+</Demo>
 
 The full view shows crew on deck (workers currently running, each with a
 Watch button to open its session), what is waiting at the dock, a Ship's

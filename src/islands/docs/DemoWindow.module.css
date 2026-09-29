@@ -40,6 +40,12 @@
 .crumbs {
   padding-left: 84px;
 }
+.end {
+  margin-left: auto;
+  padding-right: 10px;
+  display: flex;
+  align-items: center;
+}
 
 .body {
   position: relative;

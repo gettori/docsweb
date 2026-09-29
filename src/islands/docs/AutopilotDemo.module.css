@@ -1,0 +1,191 @@
+/* The app's cockpit is three columns across a full window. A docs column has
+   room for two, so the Ship's log goes and the crew column narrows. */
+/* A fixed height, so a long thread scrolls inside the cockpit rather than
+   stretching the window down the page. */
+.view {
+  flex: 1;
+  grid-template-columns: 264px minmax(0, 1fr);
+  height: 590px;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--border-default);
+  border-radius: var(--tori-radius-xl);
+}
+.workers {
+  gap: 10px;
+  padding: 16px 14px;
+  scrollbar-width: thin;
+}
+.log {
+  padding: 6px 10px;
+  font-size: var(--tori-text-sm);
+  line-height: 1.6;
+  min-height: calc(2 * 1.6em + 12px);
+}
+.none {
+  padding: 4px 2px;
+  font-size: var(--tori-text-md);
+  color: var(--fg-subtle);
+}
+
+/* Its own container, so the helm button folds to an icon when the centre
+   column is narrow, whatever the window is. */
+.center {
+  container-type: inline-size;
+}
+.hero {
+  height: 140px;
+}
+.heroRow {
+  top: 18px;
+  left: 22px;
+  right: 18px;
+}
+.heroTitle {
+  font-size: 24px;
+}
+.heroBody {
+  font-size: var(--tori-text-md);
+}
+.column {
+  gap: 12px;
+  padding: 12px 16px 14px;
+}
+.scroll {
+  scrollbar-width: thin;
+}
+.thread {
+  gap: 12px;
+  font-size: var(--tori-text-lg);
+}
+.in {
+  animation: rise 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.call {
+  flex: none;
+}
+.call p {
+  white-space: normal;
+}
+.call > :last-child {
+  flex-wrap: wrap;
+}
+.edit {
+  field-sizing: content;
+  width: 100%;
+  min-height: 2lh;
+  margin: 0;
+  padding: 6px 8px;
+  border: 1px solid var(--brand-default);
+  border-radius: var(--tori-radius-md);
+  background: var(--canvas-input);
+  color: var(--fg-default);
+  font: inherit;
+  font-size: var(--tori-text-md);
+  line-height: 1.5;
+  resize: none;
+  outline: none;
+}
+
+.composer {
+  flex: none;
+  min-height: 52px;
+  padding-left: 16px;
+}
+.composer:focus-within {
+  border-color: var(--status-progress);
+}
+.input {
+  width: 100%;
+  font-size: var(--tori-text-lg);
+}
+.send {
+  width: 34px;
+  height: 34px;
+}
+.send:disabled {
+  opacity: 0.45;
+}
+
+/* Doubled to outrank the card's own row layout. */
+.session.session {
+  flex-direction: column;
+  height: 590px;
+  min-width: 0;
+}
+.session[data-driving="true"] {
+  border-color: var(--progress-border);
+}
+.transcript {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px;
+  overflow: hidden;
+}
+.bubble {
+  font-size: var(--tori-text-md);
+}
+.tools {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-family: var(--tori-font-mono);
+  font-size: var(--tori-text-sm);
+}
+.cmd {
+  color: var(--fg-default);
+}
+.out {
+  padding-left: 14px;
+  color: var(--fg-muted);
+}
+.waiting {
+  font-size: var(--tori-text-md);
+  color: var(--needs-you-on-subtle);
+}
+.locked {
+  flex: none;
+  margin: 0 12px 12px;
+}
+.session .composer {
+  margin: 0 12px 12px;
+}
+
+@container (max-width: 520px) {
+  .helmLabel {
+    display: none;
+  }
+}
+@container (max-width: 440px) {
+  .heroBody {
+    display: none;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@container (max-width: 600px) {
+  .view {
+    grid-template-columns: minmax(0, 1fr);
+    height: 630px;
+  }
+  .workers,
+  .helmLabel,
+  .back {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .in {
+    animation: none;
+  }
+}
