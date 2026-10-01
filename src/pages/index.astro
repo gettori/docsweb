@@ -11,6 +11,7 @@ import SixPlaces from "../islands/SixPlaces";
 import Story from "../islands/Story";
 import CaptainGame from "../islands/CaptainGame";
 import Spaces from "../islands/Spaces";
+import Autopilot from "../islands/Autopilot";
 ---
 
 <Base>
@@ -30,6 +31,9 @@ import Spaces from "../islands/Spaces";
     </section>
     <section class="section">
       <Spaces client:visible />
+    </section>
+    <section class="section">
+      <Autopilot client:only="solid-js" />
     </section>
     <Bento />
     <Closing />

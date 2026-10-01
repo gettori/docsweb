@@ -1,0 +1,13 @@
+.frame {
+  margin-top: 40px;
+  padding: 1px;
+  border-radius: 16px;
+  background: linear-gradient(140deg, rgb(var(--hue) / 0.55), var(--glass-hi) 40%, var(--glass));
+  box-shadow:
+    0 50px 140px light-dark(rgba(40, 36, 70, 0.22), rgba(0, 0, 0, 0.65)),
+    0 0 100px rgb(var(--hue) / 0.16);
+}
+.clip {
+  border-radius: 15px;
+  overflow: hidden;
+}

@@ -10,12 +10,15 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronUp,
+  CircleCheck,
+  CircleDashed,
   Copy,
   Ellipsis,
   Eye,
   FileCode,
   Files,
   GitBranch,
+  GitMerge,
   GitPullRequest,
   Globe,
   History,
@@ -32,6 +35,7 @@ import {
   SquareTerminal,
   Tags,
   Undo2,
+  UserCheck,
   Workflow,
 } from "lucide";
 import "../app/css/tokens.css";
@@ -66,12 +70,14 @@ import av from "../app/css/AutopilotView.module.css";
 import sp from "../app/css/ShellParts.module.css";
 import dc from "../app/css/DecisionCard.module.css";
 import hz from "../app/css/Horizon.module.css";
+import btn from "../app/css/Button.module.css";
+import pr from "./docs/PullRequestDemo.module.css";
 
-export type Mode = "loop" | "undo" | "review" | "cockpit";
+export type Mode = "loop" | "undo" | "pr" | "review" | "cockpit";
 type Session = "work" | "need" | "done";
 
-const LOOP: Record<Mode, number> = { loop: 24, undo: 14, review: 14, cockpit: 16 };
-const STILL: Record<Mode, number> = { loop: 16.4, undo: 9, review: 10.4, cockpit: 8 };
+const LOOP: Record<Mode, number> = { loop: 24, undo: 14, pr: 13, review: 14, cockpit: 16 };
+const STILL: Record<Mode, number> = { loop: 16.4, undo: 9, pr: 7, review: 10.4, cockpit: 8 };
 const AMBER = "217 164 104";
 const EASE = "cubic-bezier(.2,.8,.2,1)";
 
@@ -220,6 +226,7 @@ export default function ToriWindow(props: {
   const scale = () => Math.min(props.maxScale ?? 1.6, cw() / region()[2]);
   const isLoop = () => mode() === "loop";
   const isUndo = () => mode() === "undo";
+  const isPr = () => mode() === "pr";
   const isReview = () => mode() === "review";
   const isCockpit = () => mode() === "cockpit";
   const at = (a: number, b = Infinity) => t() >= a && t() < b;
@@ -297,6 +304,12 @@ export default function ToriWindow(props: {
   /* ---- tab strip ---- */
   const tabs = createMemo(() => {
     type T = { key: string; label: string; agent?: Agent; status?: TabStatus; file?: string; diff?: boolean; selected: boolean };
+    if (isPr()) {
+      return [
+        { key: "d", label: "sign.ts (PR #482)", diff: true, selected: true },
+        { key: "c", label: "Sign webhook payloads", agent: "claude", status: "idle", selected: false },
+      ] as T[];
+    }
     if (isReview()) {
       const onChat = at(5.2, 9.2);
       return [
@@ -555,75 +568,79 @@ export default function ToriWindow(props: {
         <span class={w.modeBtn}>
           <Icon icon={Search} size={16} />
         </span>
-        <span class={w.modeBtn} data-on="true">
+        <span class={w.modeBtn} data-on={isPr() ? "false" : "true"}>
           <Icon icon={GitBranch} size={16} />
-          <span class={w.modeCount}>{changeFiles().length}</span>
+          <Show when={!isPr()}>
+            <span class={w.modeCount}>{changeFiles().length}</span>
+          </Show>
         </span>
-        <span class={w.modeBtn}>
+        <span class={w.modeBtn} data-on={isPr() ? "true" : "false"}>
           <Icon icon={GitPullRequest} size={16} />
         </span>
       </div>
-      <div class={`${review.reviewPanel} ${w.reviewWrap}`}>
-        <div class={review.topBar}>
-          <span class={review.title}>Source Control</span>
-          <span class={review.spacer} />
-          <Button size="sm" variant="ghost" icon={<Icon icon={RefreshCw} />} />
-          <Button size="sm" variant="ghost" icon={<Icon icon={Ellipsis} />} />
-        </div>
-        <div class={review.branchBar}>
-          <Icon icon={GitBranch} />
-          <span class={review.branchName}>{onWebhooks() ? "feat/webhooks" : "fix/rate-limit"}</span>
-          <span class={review.spacer} />
-          <span class={review.aheadPill}>{"\u2191"}2</span>
-          <Button size="sm" variant="ghost" icon={<Icon icon={GitPullRequest} />} />
-        </div>
-        <Show when={isReview()}>
-          <div class={review.commitCard}>
-            <div class={review.commitInput} style={{ "min-height": "20px" }}>
-              <Show when={commitMsg()} fallback={<span class={w.placeholder}>Message</span>}>
-                {commitMsg()}
-                <Show when={commitTyping()}>
-                  <span class={w.caretBlink} />
+      <Show when={!isPr()} fallback={<PrPanel />}>
+        <div class={`${review.reviewPanel} ${w.reviewWrap}`}>
+          <div class={review.topBar}>
+            <span class={review.title}>Source Control</span>
+            <span class={review.spacer} />
+            <Button size="sm" variant="ghost" icon={<Icon icon={RefreshCw} />} />
+            <Button size="sm" variant="ghost" icon={<Icon icon={Ellipsis} />} />
+          </div>
+          <div class={review.branchBar}>
+            <Icon icon={GitBranch} />
+            <span class={review.branchName}>{onWebhooks() ? "feat/webhooks" : "fix/rate-limit"}</span>
+            <span class={review.spacer} />
+            <span class={review.aheadPill}>{"\u2191"}2</span>
+            <Button size="sm" variant="ghost" icon={<Icon icon={GitPullRequest} />} />
+          </div>
+          <Show when={isReview()}>
+            <div class={review.commitCard}>
+              <div class={review.commitInput} style={{ "min-height": "20px" }}>
+                <Show when={commitMsg()} fallback={<span class={w.placeholder}>Message</span>}>
+                  {commitMsg()}
+                  <Show when={commitTyping()}>
+                    <span class={w.caretBlink} />
+                  </Show>
                 </Show>
-              </Show>
-            </div>
-            <div class={review.commitFooter}>
-              <span class={review.commitStats}>5 files</span>
-              <div class={review.commitActions}>
-                <Button size="sm" variant="ghost" pressed={at(9.6, 9.9)}>
-                  AI Draft
-                </Button>
-                <span class={review.splitButton}>
-                  <Button size="sm" variant="primary" class={review.commitButton}>
-                    Commit
+              </div>
+              <div class={review.commitFooter}>
+                <span class={review.commitStats}>5 files</span>
+                <div class={review.commitActions}>
+                  <Button size="sm" variant="ghost" pressed={at(9.6, 9.9)}>
+                    AI Draft
                   </Button>
-                </span>
+                  <span class={review.splitButton}>
+                    <Button size="sm" variant="primary" class={review.commitButton}>
+                      Commit
+                    </Button>
+                  </span>
+                </div>
               </div>
             </div>
+          </Show>
+          <div class={review.changesBody} style={{ flex: "1", "min-height": "0", display: "flex", "flex-direction": "column" }}>
+            <div style={{ flex: isUndo() ? "0 0 auto" : "1", "min-height": "0", overflow: "hidden" }}>
+              <Show when={isReview()}>
+                <div class={review.groupHeader}>Changes</div>
+              </Show>
+              <Index each={changeFiles()}>
+                {(f) => (
+                  <div
+                    class={`${review.reviewRow} ${isLoop() && f().from != null && t() < f().from! + 1.6 ? w.fileRowPulse : ""}`}
+                    style={{ opacity: reverted() && (f().turn ?? 0) > 3 ? 0.25 : 1, transition: "opacity .42s" }}
+                  >
+                    <FileGlyph />
+                    <span class={review.reviewName}>{f().name}</span>
+                    <span class={review.reviewDir}>{f().dir}</span>
+                    <span class={`${review.reviewStatus} ${f().st === "A" ? review.added ?? "" : review.modified ?? ""}`}>{f().st}</span>
+                  </div>
+                )}
+              </Index>
+            </div>
+            <HistorySection />
           </div>
-        </Show>
-        <div class={review.changesBody} style={{ flex: "1", "min-height": "0", display: "flex", "flex-direction": "column" }}>
-          <div style={{ flex: isUndo() ? "0 0 auto" : "1", "min-height": "0", overflow: "hidden" }}>
-            <Show when={isReview()}>
-              <div class={review.groupHeader}>Changes</div>
-            </Show>
-            <Index each={changeFiles()}>
-              {(f) => (
-                <div
-                  class={`${review.reviewRow} ${isLoop() && f().from != null && t() < f().from! + 1.6 ? w.fileRowPulse : ""}`}
-                  style={{ opacity: reverted() && (f().turn ?? 0) > 3 ? 0.25 : 1, transition: "opacity .42s" }}
-                >
-                  <FileGlyph />
-                  <span class={review.reviewName}>{f().name}</span>
-                  <span class={review.reviewDir}>{f().dir}</span>
-                  <span class={`${review.reviewStatus} ${f().st === "A" ? review.added ?? "" : review.modified ?? ""}`}>{f().st}</span>
-                </div>
-              )}
-            </Index>
-          </div>
-          <HistorySection />
         </div>
-      </div>
+      </Show>
     </div>
   );
 
@@ -801,6 +818,211 @@ export default function ToriWindow(props: {
         </For>
       </div>
       <Composer placeholder={"Reply, or @ a file \u00b7 / for commands"} running={false} agent="claude" />
+    </div>
+  );
+
+  /* ---- pull request: the diff under review and its panel ---- */
+  const SIGN_SRC = [
+    'import { createHmac } from "node:crypto";',
+    "",
+    'const HEADER = "X-Tori-Signature";',
+    "",
+    "export function sign(body: string, secret: string) {",
+    '  const mac = createHmac("sha256", secret);',
+    '  return mac.update(body).digest("hex");',
+    "}",
+    "",
+    "export function header(body: string, secret: string) {",
+    "  return { [HEADER]: `sha256=${sign(body, secret)}` };",
+    "}",
+    "",
+    "export function signed(req: Delivery, secret: string) {",
+    "  const body = JSON.stringify(req.payload);",
+    "  const h = { ...req.headers, ...header(body, secret) };",
+    "  return { ...req, body, headers: h };",
+    "}",
+  ];
+  const THREAD_LINE = 7;
+  const PR_CHECKS = ["build", "typecheck", "lint", "test"];
+  const prResolved = () => t() >= 2.6;
+  const prChecked = () => t() >= 4.6;
+  const prOnMerge = () => t() >= 5.8;
+  const prMerged = () => t() >= 9;
+  const prTotal = SINCE_FILES.reduce((a, f) => ({ add: a.add + f[3], del: a.del + f[4] }), { add: 0, del: 0 });
+
+  const PrDiff = () => (
+    <div class={w.diff} style={{ overflow: "hidden" }}>
+      <div class={w.fileBar}>
+        <span style={{ color: "var(--diff-added)", "font-weight": 700 }}>A</span>
+        <span style={{ "font-weight": 600 }}>sign.ts</span>
+        <span class="dim">src/webhooks</span>
+        <span class={w.tag}>PR #482</span>
+        <span class={w.fileBarIcons}>
+          <Icon icon={Copy} size={14} />
+          <Icon icon={Eye} size={14} />
+        </span>
+      </div>
+      <div class={w.hunk}>
+        <span class={w.hunkHead}>@@ -0,0 +1,46 @@</span>
+      </div>
+      <For each={SIGN_SRC}>
+        {(text, i) => (
+          <>
+            <div class={w.diffLine} data-k="+">
+              <span class={w.ln} />
+              <span class={w.ln}>{i() + 1}</span>
+              <span class={w.sign}>+</span>
+              <span>{text}</span>
+            </div>
+            <Show when={i() + 1 === THREAD_LINE && !prResolved()}>
+              <div class={pr.thread} style={{ position: "relative", animation: "none" }}>
+                <div class={pr.threadHead}>
+                  <b>Bertram Gilfoyle</b>
+                  <span class={pr.dim}>1 hour ago</span>
+                  <span class={pr.spacer} />
+                  <span class={pr.linkBtn} style={{ "text-decoration": at(1.6, 2.6) ? "underline" : undefined }}>
+                    Resolve
+                  </span>
+                </div>
+                <div class={pr.threadBody}>Hex over base64, fine by me. Nothing else on this file.</div>
+                <Show when={at(0.8, 2.6)}>
+                  <Cursor x={t() >= 1.2 ? 492 : 380} y={t() >= 1.2 ? 12 : 74} down={at(2.3, 2.6)} />
+                </Show>
+              </div>
+            </Show>
+          </>
+        )}
+      </For>
+      <div class={w.fold}>{"\u22ef"} 28 more lines</div>
+    </div>
+  );
+
+  const PrPanel = () => (
+    <div class={w.reviewWrap} style={{ "font-size": "var(--tori-text-lg)" }}>
+      <div class={review.topBar}>
+        <span class={review.title}>Pull request</span>
+        <span class={review.spacer} />
+        <Button size="sm" variant="ghost" icon={<Icon icon={RefreshCw} />} />
+        <Button size="sm" variant="ghost" icon={<Icon icon={Ellipsis} />} />
+      </div>
+      <div class={pr.identity}>
+        <div class={pr.identityTop}>
+          <span class={pr.pill} data-pr-state={prMerged() ? "merged" : "open"}>
+            {prMerged() ? "merged" : "open"}
+          </span>
+          <span class={pr.subject}>Sign webhook payloads</span>
+          <span class={pr.number}>#482</span>
+        </div>
+        <div class={pr.meta}>You {"·"} opened 2 hours ago</div>
+        <div class={pr.branches}>
+          <span class={pr.headRef}>feat/webhooks</span>
+          <span class={pr.into}>{"\u2192"}</span>
+          <span>main</span>
+        </div>
+      </div>
+      <div class={pr.rollup}>
+        <div class={pr.verdictRow} data-tone={prChecked() ? "good" : "busy"}>
+          <Icon icon={prChecked() ? CircleCheck : CircleDashed} size={14} />
+          <span class={pr.verdictText}>{prChecked() ? "4 checks passed" : "1 of 4 checks running"}</span>
+        </div>
+        <div class={pr.verdictRow} data-decision="approved">
+          <Icon icon={UserCheck} size={14} />
+          <span class={pr.verdictText}>1 approval</span>
+        </div>
+        <div class={pr.verdictRow} data-tone={prChecked() ? "good" : "blank"}>
+          <Icon icon={GitMerge} size={14} />
+          <span class={pr.verdictText}>
+            {prMerged() ? "Merged into main." : prChecked() ? "Ready to merge." : "A rule on the base branch is holding this merge."}
+          </span>
+        </div>
+      </div>
+      <div class={pr.filesHead}>
+        <span class={pr.filesTitle}>Files</span>
+        <span class={pr.fileCount}>{SINCE_FILES.length}</span>
+        <span class={pr.spacer} />
+        <span class={pr.counts}>
+          <span class={pr.added}>+{prTotal.add}</span>
+          <span class={pr.removed}>-{prTotal.del}</span>
+        </span>
+      </div>
+      <For each={SINCE_FILES}>
+        {(f, i) => (
+          <div class={pr.fileRow} data-open={i() === 0 ? "" : undefined}>
+            <span class={pr.name}>{f[1]}</span>
+            <Show when={i() === 0 && !prResolved()}>
+              <span class={pr.unresolved}>
+                <Icon icon={MessageSquare} size={12} />1
+              </span>
+            </Show>
+            <span class={pr.status} data-file-status={f[0] === "A" ? "added" : "modified"}>
+              {f[0]}
+            </span>
+          </div>
+        )}
+      </For>
+      <div class={pr.views}>
+        <div class={pr.tabStrip}>
+          <For each={["Checks", "Review", "Merge"]}>
+            {(label) => (
+              <span class={pr.tab} aria-selected={label === (prOnMerge() ? "Merge" : "Checks")}>
+                {label}
+              </span>
+            )}
+          </For>
+        </div>
+        <div class={pr.tabPanel} style={{ overflow: "hidden" }}>
+          <Show
+            when={prOnMerge()}
+            fallback={
+              <For each={(["pending", "success"] as const).filter((st) => st === "success" || !prChecked())}>
+                {(st) => {
+                  const names = () => (prChecked() ? PR_CHECKS : st === "pending" ? PR_CHECKS.slice(3) : PR_CHECKS.slice(0, 3));
+                  return (
+                    <>
+                      <div class={pr.checkHead} data-check-state={st}>
+                        <Icon icon={st === "success" ? CircleCheck : CircleDashed} size={13} />
+                        {names().length} {names().length === 1 ? "check" : "checks"} {st === "success" ? "passed" : "running"}
+                      </div>
+                      <For each={names()}>
+                        {(name) => (
+                          <div class={pr.context}>
+                            <span>{name}</span>
+                            <span class={pr.dim}>Details</span>
+                          </div>
+                        )}
+                      </For>
+                    </>
+                  );
+                }}
+              </For>
+            }
+          >
+            <div class={`${pr.mergeBar} ${w.in}`}>
+              <div class={pr.mergeRow} style={{ position: "relative" }}>
+                <Show
+                  when={!prMerged()}
+                  fallback={
+                    <>
+                      <span class={pr.dim}>Merged.</span>
+                      <Button size="sm" variant="ghost">
+                        Delete branch...
+                      </Button>
+                    </>
+                  }
+                >
+                  <Button size="sm" pressed={at(8.6, 9)} class={`${btn.success} ${pr.mergeBtn}`}>
+                    Squash and merge
+                  </Button>
+                  <Button size="sm" icon={<Icon icon={ChevronDown} />} />
+                </Show>
+                <Show when={at(7, 9.4)}>
+                  <Cursor x={t() >= 7.6 ? 96 : 210} y={t() >= 7.6 ? 16 : 96} down={at(8.6, 9)} />
+                </Show>
+              </div>
+            </div>
+          </Show>
+        </div>
+      </div>
     </div>
   );
 
@@ -1315,6 +1537,9 @@ export default function ToriWindow(props: {
                         </Match>
                         <Match when={isUndo()}>
                           <UndoChat />
+                        </Match>
+                        <Match when={isPr()}>
+                          <PrDiff />
                         </Match>
                         <Match when={isReview() && at(5.2, 9.2)}>
                           <ReviewChat />

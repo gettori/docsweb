@@ -14,7 +14,7 @@ type Step = {
   region: string;
 };
 
-// Undo and Review crop to the work card: the sidebar has nothing to add there.
+// Undo, Pull request and Review crop to the work card: the sidebar has nothing to add there.
 const CARD = "280,44,920,696";
 const STEPS: Step[] = [
   {
@@ -40,26 +40,26 @@ const STEPS: Step[] = [
     region: CARD,
   },
   {
+    bar: "Pull request",
+    color: "var(--work-hi)",
+    glow: "rgba(192,132,252,.55)",
+    soft: "rgba(192,132,252,.16)",
+    title: "Take the pull request to merged.",
+    body: "Checks, the review verdict and the merge button sit beside the diff. Resolve a thread, watch the tests finish, and merge without opening a browser.",
+    facts: ["GitHub and GitLab", "Line comments as one review", "Squash, merge or rebase"],
+    mode: "pr",
+    region: CARD,
+  },
+  {
     bar: "Review",
     color: "var(--done-hi)",
     glow: "rgba(45,212,191,.5)",
     soft: "rgba(45,212,191,.14)",
     title: "Comment on a hunk. Watch it get fixed.",
     body: "A real editor and a Changes panel that stages, commits and opens the PR. A hunk comment lands in the session's composer with the lines attached.",
-    facts: ["Stage by hunk or line", "GitHub and GitLab review", "Three pane merge"],
+    facts: ["Stage by hunk or line", "AI drafted commit message", "Three pane merge"],
     mode: "review",
     region: CARD,
-  },
-  {
-    bar: "Autopilot",
-    color: "var(--work-hi)",
-    glow: "rgba(192,132,252,.55)",
-    soft: "rgba(192,132,252,.16)",
-    title: "Hand the queue to Autopilot.",
-    body: "Point it at an issue. It makes the worktree, starts a worker, and brings you a pull request to approve.",
-    facts: ["Nothing leaves without approval", "Zero tokens while waiting", "Off by default"],
-    mode: "cockpit",
-    region: "0,0,1200,740",
   },
 ];
 
