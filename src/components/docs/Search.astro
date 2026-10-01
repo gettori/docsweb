@@ -1,0 +1,183 @@
+<button type="button" class="open" data-search-open aria-keyshortcuts="Control+K Meta+K">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"
+    ><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg
+  >
+  <span class="label">Search</span>
+  <kbd class="keys" data-search-keys>Ctrl K</kbd>
+</button>
+
+<dialog class="dialog" data-search-dialog aria-label="Search the docs">
+  <div class="panel">
+    <div class="top">
+      <div class="host" data-search-host></div>
+      <button type="button" class="close" data-search-close>Cancel</button>
+    </div>
+    <p class="note" data-search-note hidden>Search is built with the site, so it only works on a built copy (pnpm build, then pnpm preview).</p>
+  </div>
+</dialog>
+
+<script>
+  // Pagefind's own UI, loaded the first time the dialog opens so pages that
+  // never search never pay for it. The header persists, so this runs once.
+  const open = document.querySelector<HTMLButtonElement>("[data-search-open]")!;
+  const dialog = document.querySelector<HTMLDialogElement>("[data-search-dialog]")!;
+  const host = document.querySelector<HTMLElement>("[data-search-host]")!;
+  const note = document.querySelector<HTMLElement>("[data-search-note]")!;
+  const keys = document.querySelector<HTMLElement>("[data-search-keys]")!;
+  if (/Mac|iPhone|iPad/.test(navigator.platform)) keys.textContent = "\u2318 K";
+
+  let ready: Promise<void> | null = null;
+  const load = () =>
+    (ready ??= new Promise<void>((resolve) => {
+      const css = document.createElement("link");
+      css.rel = "stylesheet";
+      css.href = "/pagefind/pagefind-ui.css";
+      document.head.append(css);
+      const js = document.createElement("script");
+      js.src = "/pagefind/pagefind-ui.js";
+      js.onload = () => {
+        const PagefindUI = (window as unknown as { PagefindUI: new (o: object) => unknown }).PagefindUI;
+        new PagefindUI({ element: host, showSubResults: true, showImages: false, resetStyles: false, autofocus: true });
+        resolve();
+      };
+      js.onerror = () => {
+        note.hidden = false;
+        resolve();
+      };
+      document.head.append(js);
+    }));
+
+  const show = async () => {
+    dialog.showModal();
+    await load();
+    host.querySelector<HTMLInputElement>("input")?.focus();
+  };
+  open.addEventListener("click", show);
+  document.querySelector("[data-search-close]")!.addEventListener("click", () => dialog.close());
+  dialog.addEventListener("click", (e) => e.target === dialog && dialog.close());
+  document.addEventListener("keydown", (e) => {
+    const typing = (e.target as HTMLElement).closest("input, textarea, select, [contenteditable]");
+    if ((e.key === "k" && (e.metaKey || e.ctrlKey)) || (e.key === "/" && !typing)) {
+      e.preventDefault();
+      dialog.open ? dialog.close() : show();
+    }
+  });
+  document.addEventListener("astro:before-preparation", () => dialog.open && dialog.close());
+</script>
+
+<style>
+  .open {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 22rem;
+    height: 38px;
+    padding: 0 6px 0 14px;
+    border: 1px solid var(--d-line);
+    border-radius: 999px;
+    background: var(--tori-glass);
+    color: var(--d-muted);
+    font-size: 14px;
+    cursor: pointer;
+    transition:
+      color 0.2s,
+      border-color 0.2s;
+  }
+  .open:hover {
+    color: var(--d-accent);
+    border-color: color-mix(in srgb, var(--d-accent) 55%, transparent);
+  }
+  .label {
+    flex: 1;
+    text-align: left;
+  }
+  .keys {
+    padding: 2px 8px;
+    border: 1px solid var(--d-line);
+    border-radius: 999px;
+    font-family: var(--d-sans);
+    font-size: 12px;
+  }
+  .dialog {
+    width: min(42rem, calc(100vw - 2rem));
+    max-height: calc(100vh - 8rem);
+    margin: 5rem auto auto;
+    padding: 0;
+    border: 1px solid var(--tori-hair);
+    border-radius: 18px;
+    background: var(--d-nav);
+    color: var(--d-text);
+    box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.6);
+  }
+  .dialog::backdrop {
+    background: rgba(5, 6, 9, 0.55);
+    backdrop-filter: blur(3px);
+  }
+  .panel {
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 8rem);
+    padding: 1rem;
+  }
+  .top {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    min-height: 0;
+    overflow-y: auto;
+  }
+  .host {
+    flex: 1;
+    min-width: 0;
+    --pagefind-ui-scale: 0.85;
+    --pagefind-ui-primary: var(--d-accent);
+    --pagefind-ui-text: var(--d-text);
+    --pagefind-ui-background: var(--d-bg);
+    --pagefind-ui-border: var(--d-line);
+    --pagefind-ui-tag: var(--tori-glass);
+    --pagefind-ui-border-width: 1px;
+    --pagefind-ui-border-radius: 12px;
+    --pagefind-ui-font: var(--d-sans);
+  }
+  .host :global(.pagefind-ui__result-link) {
+    color: var(--d-strong);
+  }
+  .host :global(mark) {
+    background: var(--d-accent-low);
+    color: var(--d-accent-high);
+  }
+  .close {
+    flex: none;
+    height: 38px;
+    padding: 0 10px;
+    border: 0;
+    border-radius: 10px;
+    background: none;
+    color: var(--d-muted);
+    cursor: pointer;
+  }
+  .close:hover {
+    color: var(--d-strong);
+  }
+  .note {
+    margin: 0.5rem 0 0;
+    color: var(--d-muted);
+    font-size: 14px;
+  }
+  @media (max-width: 50rem) {
+    .open {
+      width: 38px;
+      padding: 0;
+      justify-content: center;
+    }
+    .label,
+    .keys {
+      display: none;
+    }
+    .dialog {
+      margin-top: 1rem;
+      max-height: calc(100vh - 2rem);
+    }
+  }
+</style>

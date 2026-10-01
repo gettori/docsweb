@@ -1,0 +1,60 @@
+<div class="steps"><slot /></div>
+
+<style>
+  /* A rail of numbered stops down an ordered list. */
+  .steps :global(> ol) {
+    counter-reset: step;
+    margin: 1.5rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .steps :global(> ol > li) {
+    position: relative;
+    counter-increment: step;
+    padding: 0 0 1.75rem 2.75rem;
+    margin: 0;
+  }
+  .steps :global(> ol > li::before) {
+    content: counter(step);
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: grid;
+    place-items: center;
+    width: 1.9rem;
+    height: 1.9rem;
+    border-radius: 50%;
+    background: var(--d-accent-low);
+    box-shadow:
+      inset 0 0 0 1px color-mix(in srgb, var(--d-accent) 45%, transparent),
+      0 0 0 4px var(--d-bg);
+    color: var(--d-accent-high);
+    font-family: var(--d-mono);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1;
+  }
+  .steps :global(> ol > li::after) {
+    content: "";
+    position: absolute;
+    top: 2.35rem;
+    bottom: 0.45rem;
+    left: calc(0.95rem - 1px);
+    width: 2px;
+    border-radius: 2px;
+    background: linear-gradient(var(--d-accent), transparent);
+    opacity: 0.35;
+  }
+  .steps :global(> ol > li:last-child) {
+    padding-bottom: 0;
+  }
+  .steps :global(> ol > li:last-child::after) {
+    display: none;
+  }
+  .steps :global(> ol > li > :first-child) {
+    margin-top: 0;
+  }
+  .steps :global(> ol > li > * + *) {
+    margin-top: 0.75rem;
+  }
+</style>

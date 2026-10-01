@@ -1,0 +1,97 @@
+---
+import { ClientRouter } from "astro:transitions";
+import type { MarkdownHeading } from "astro";
+import "@fontsource-variable/geist";
+import "@fontsource-variable/geist-mono";
+import "@fontsource/instrument-serif/400-italic.css";
+import "../styles/docs.css";
+import Header from "../components/docs/Header.astro";
+import Sidebar from "../components/docs/Sidebar.astro";
+import PageTitle from "../components/docs/PageTitle.astro";
+import Toc from "../components/docs/Toc.astro";
+import Pagination from "../components/docs/Pagination.astro";
+
+interface Props {
+  title: string;
+  description?: string;
+  headings?: MarkdownHeading[];
+}
+
+const { title, description, headings = [] } = Astro.props;
+const docTitle = Astro.url.pathname.replace(/\/?$/, "/") === "/docs/" ? "Tori docs" : `${title} | Tori docs`;
+const toc = headings.some((h) => h.depth === 2 || h.depth === 3);
+
+// Only the page column cross-fades. The header and sidebar are carried over
+// as they are, so a click never redraws them.
+const swap = {
+  forwards: { old: { name: "astroFadeOut", duration: "110ms", easing: "ease-out" }, new: { name: "astroFadeIn", duration: "170ms", easing: "ease-out" } },
+  backwards: { old: { name: "astroFadeOut", duration: "110ms", easing: "ease-out" }, new: { name: "astroFadeIn", duration: "170ms", easing: "ease-out" } },
+};
+---
+
+<!doctype html>
+<html lang="en" transition:animate="none">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{docTitle}</title>
+    {description && <meta name="description" content={description} />}
+    <meta property="og:title" content={docTitle} />
+    {description && <meta property="og:description" content={description} />}
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <script is:inline>
+      // One stored choice for the docs and the home page. Applied to the next
+      // page before it is swapped in, so a navigation never flashes the other theme.
+      (() => {
+        if (window.__toriTheme) return;
+        const q = matchMedia("(prefers-color-scheme: light)");
+        const pick = () => {
+          const saved = localStorage.getItem("starlight-theme");
+          return saved === "light" || saved === "dark" ? saved : q.matches ? "light" : "dark";
+        };
+        window.__toriTheme = (doc) => (doc.documentElement.dataset.theme = pick());
+        window.__toriTheme(document);
+        q.addEventListener("change", () => window.__toriTheme(document));
+        document.addEventListener("astro:before-swap", (e) => window.__toriTheme(e.newDocument));
+      })();
+    </script>
+    <ClientRouter />
+  </head>
+  <body>
+    <a class="skip" href="#content">Skip to content</a>
+    <header class="d-header" transition:persist="d-header" transition:animate="none">
+      <Header />
+    </header>
+    <div class="d-scrim" aria-hidden="true"></div>
+    <aside class="d-sidebar" transition:persist="d-sidebar" transition:animate="none">
+      <Sidebar />
+    </aside>
+    <main class="d-main" id="content" transition:animate={swap}>
+      <div class="d-columns">
+        <div class="d-page" data-pagefind-body>
+          {toc && <Toc headings={headings} mobile />}
+          <header class="d-hero">
+            <div class="d-page-inner">
+              <PageTitle title={title} description={description} />
+            </div>
+          </header>
+          <div class="d-page-inner">
+            <article class="prose">
+              <slot />
+            </article>
+            <div data-pagefind-ignore>
+              <Pagination />
+            </div>
+          </div>
+        </div>
+        {
+          toc && (
+            <aside class="d-toc">
+              <Toc headings={headings} />
+            </aside>
+          )
+        }
+      </div>
+    </main>
+  </body>
+</html>

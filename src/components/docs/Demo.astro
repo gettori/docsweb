@@ -6,7 +6,7 @@ interface Props {
 const { caption } = Astro.props;
 ---
 
-<figure class="demo not-content">
+<figure class="demo not-content" data-pagefind-ignore>
   <div class="stage">
     <span class="try"><i></i>Try it</span>
     <slot />
@@ -50,11 +50,11 @@ const { caption } = Astro.props;
     display: inline-flex;
     align-items: center;
     gap: 7px;
-    font-family: var(--sl-font-mono);
+    font-family: var(--d-mono);
     font-size: 10.5px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--sl-color-accent);
+    color: var(--d-accent);
   }
   .try i {
     width: 6px;
@@ -68,7 +68,7 @@ const { caption } = Astro.props;
     padding-inline: 4px;
     font-size: 14px;
     line-height: 1.5;
-    color: var(--sl-color-gray-3);
+    color: var(--d-muted);
   }
   @keyframes try-blink {
     50% {

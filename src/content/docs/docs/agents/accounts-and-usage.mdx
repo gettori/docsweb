@@ -3,6 +3,7 @@ title: Accounts and usage
 description: Signing in to more than one account per agent, and watching your quota.
 ---
 
+import Aside from "../../../../components/docs/Aside.astro";
 import Demo from "../../../../components/docs/Demo.astro";
 import AccountsDemo from "../../../../islands/docs/AccountsDemo";
 
@@ -18,11 +19,13 @@ logins never collide. Add one from that agent's detail page in Settings >
 Agents: a name, an optional folder, and a real terminal tab running the
 vendor's own sign-in.
 
-:::caution[Removing an account]
+<Aside type="caution" title="Removing an account">
+
 Removing an account you asked Tori to create deletes its sessions along with
 it; removing one you pointed at a folder you already had only forgets it, the
 folder and its login stay exactly as they were.
-:::
+
+</Aside>
 
 The account you never explicitly set up, your existing login from before
 Tori, always stays available too; Tori never copies or stores its

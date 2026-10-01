@@ -1,5 +1,6 @@
 ---
 import { BookOpen, Bot, Code, GitPullRequest, LayoutPanelLeft, Rocket, Smartphone, Workflow, type IconNode } from "lucide";
+import { NAV } from "../../docs/nav";
 
 const GOLD = "217,164,104";
 const WORK = "192,132,252";
@@ -18,9 +19,7 @@ const SECTIONS: Record<string, { icon: IconNode; spot: string; blurb: string; wi
   Reference: { icon: BookOpen, spot: DONE, blurb: "Every setting, and every file Tori writes to disk.", wide: true },
 };
 
-const groups = Astro.locals.starlightRoute.sidebar.flatMap((e) =>
-  e.type === "group" && SECTIONS[e.label] ? [{ ...SECTIONS[e.label], label: e.label, links: e.entries.filter((l) => l.type === "link") }] : [],
-);
+const groups = NAV.flatMap((g) => (SECTIONS[g.label] ? [{ ...SECTIONS[g.label]!, label: g.label, links: g.items }] : []));
 ---
 
 <div class="grid not-content">
@@ -54,13 +53,16 @@ const groups = Astro.locals.starlightRoute.sidebar.flatMap((e) =>
 </div>
 
 <script>
-  for (const el of document.querySelectorAll<HTMLElement>("[data-spot]")) {
-    el.addEventListener("mousemove", (ev) => {
-      const r = el.getBoundingClientRect();
-      el.style.setProperty("--x", `${ev.clientX - r.left}px`);
-      el.style.setProperty("--y", `${ev.clientY - r.top}px`);
-    });
-  }
+  // Module scripts run once per visit, so the tiles on each newly swapped-in page bind here.
+  document.addEventListener("astro:page-load", () => {
+    for (const el of document.querySelectorAll<HTMLElement>("[data-spot]")) {
+      el.addEventListener("mousemove", (ev) => {
+        const r = el.getBoundingClientRect();
+        el.style.setProperty("--x", `${ev.clientX - r.left}px`);
+        el.style.setProperty("--y", `${ev.clientY - r.top}px`);
+      });
+    }
+  });
 </script>
 
 <style>
@@ -109,13 +111,13 @@ const groups = Astro.locals.starlightRoute.sidebar.flatMap((e) =>
     font-size: 20px;
     font-weight: 700;
     letter-spacing: -0.03em;
-    color: var(--sl-color-white);
+    color: var(--d-strong);
   }
   p {
     margin: 0;
     font-size: 14.5px;
     line-height: 1.5;
-    color: var(--sl-color-gray-3);
+    color: var(--d-muted);
   }
   ul {
     display: flex;
@@ -132,7 +134,7 @@ const groups = Astro.locals.starlightRoute.sidebar.flatMap((e) =>
     padding: 5px 11px;
     border-radius: 999px;
     font-size: 13px;
-    color: var(--sl-color-gray-2);
+    color: var(--d-text);
     text-decoration: none;
     background: var(--tori-glass);
     box-shadow: inset 0 0 0 1px var(--tori-hair);
@@ -142,7 +144,7 @@ const groups = Astro.locals.starlightRoute.sidebar.flatMap((e) =>
       box-shadow 0.2s;
   }
   a span {
-    font-family: var(--sl-font-mono);
+    font-family: var(--d-mono);
     font-size: 11px;
     opacity: 0;
     margin-inline-start: -14px;
@@ -151,7 +153,7 @@ const groups = Astro.locals.starlightRoute.sidebar.flatMap((e) =>
       margin 0.2s var(--tori-ease);
   }
   a:hover {
-    color: var(--sl-color-white);
+    color: var(--d-strong);
     background: rgba(var(--spot), 0.12);
     box-shadow: inset 0 0 0 1px rgba(var(--spot), 0.4);
   }

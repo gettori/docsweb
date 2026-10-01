@@ -1,0 +1,112 @@
+---
+import { neighbours } from "../../docs/nav";
+
+const { prev, next } = neighbours(Astro.url.pathname);
+---
+
+{
+  (prev || next) && (
+    <nav class="pager" aria-label="Previous and next page">
+      {prev ? (
+        <a href={prev.href} rel="prev">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M19 12H5m6 6-6-6 6-6" />
+          </svg>
+          <span>
+            Previous
+            <br />
+            <span class="title">{prev.label}</span>
+          </span>
+        </a>
+      ) : (
+        <span />
+      )}
+      {next && (
+        <a href={next.href} rel="next">
+          <span>
+            Next
+            <br />
+            <span class="title">{next.label}</span>
+          </span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M5 12h14m-6-6 6 6-6 6" />
+          </svg>
+        </a>
+      )}
+    </nav>
+  )
+}
+
+<style>
+  .pager {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 3rem;
+  }
+  a {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    overflow: hidden;
+    padding: 1.1rem 1.25rem;
+    border-radius: 16px;
+    background: var(--tori-glass);
+    box-shadow: inset 0 0 0 1px var(--tori-hair);
+    font-family: var(--d-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    line-height: 1.5;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--d-muted);
+    transition:
+      transform 0.3s var(--d-ease),
+      box-shadow 0.3s var(--d-ease),
+      background-color 0.3s var(--d-ease);
+  }
+  a[rel="next"] {
+    justify-content: space-between;
+    grid-column: 2;
+    text-align: right;
+  }
+  a:hover {
+    background: color-mix(in srgb, var(--d-accent-low) 55%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--d-accent) 45%, transparent);
+  }
+  a[rel="next"]:hover {
+    transform: translateX(3px);
+  }
+  a[rel="prev"]:hover {
+    transform: translateX(-3px);
+  }
+  svg {
+    flex: none;
+    color: var(--d-accent);
+  }
+  .title {
+    display: inline-block;
+    margin-top: 4px;
+    font-family: var(--d-sans);
+    font-size: var(--d-text-xl);
+    font-weight: 650;
+    letter-spacing: -0.03em;
+    line-height: 1.25;
+    text-transform: none;
+    color: var(--d-strong);
+  }
+  @media (max-width: 36rem) {
+    .pager {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    a[rel="next"] {
+      grid-column: 1;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    a {
+      transition: none;
+    }
+  }
+</style>

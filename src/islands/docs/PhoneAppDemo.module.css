@@ -21,7 +21,7 @@
   border: 1px solid transparent;
   border-radius: 14px;
   background: none;
-  color: var(--sl-color-gray-3);
+  color: var(--d-muted);
   font: inherit;
   text-align: left;
   cursor: pointer;
@@ -37,12 +37,12 @@
   background: var(--tori-glass);
 }
 .stepLabel {
-  color: var(--sl-color-white);
+  color: var(--d-strong);
   font-size: 15px;
   font-weight: 600;
 }
 .step[aria-current="true"] .stepLabel {
-  color: var(--sl-color-accent-high);
+  color: var(--d-accent-high);
 }
 .stepBlurb {
   font-size: 13px;

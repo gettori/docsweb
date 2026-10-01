@@ -3,7 +3,8 @@ title: Install
 description: Install Tori on macOS.
 ---
 
-import { Steps } from "@astrojs/starlight/components";
+import Aside from "../../../components/docs/Aside.astro";
+import Steps from "../../../components/docs/Steps.astro";
 
 Tori is macOS only, and ships as an unsigned universal app (Apple Silicon and
 Intel). Unsigned means macOS will refuse to open it on the first try. That is
@@ -19,11 +20,13 @@ installing it.
 brew install --cask gettori/tap/tori
 ```
 
-:::tip[No Gatekeeper dance]
+<Aside type="tip" title="No Gatekeeper dance">
+
 The cask clears the quarantine flag for you, so the Gatekeeper steps below
 are only for a DMG you downloaded yourself. The rest of this page is that
 route.
-:::
+
+</Aside>
 
 ## Install from the DMG
 
@@ -46,16 +49,20 @@ route.
 
 </Steps>
 
-:::note[No Open Anyway button?]
+<Aside type="note" title="No Open Anyway button?">
+
 It only appears after you have tried to open the app at least once. If you do
 not see it, go back and double click Tori first.
-:::
 
-:::caution[The right click trick is gone]
+</Aside>
+
+<Aside type="caution" title="The right click trick is gone">
+
 The "right click and choose Open" trick no longer works. It was the standard
 advice for years, and it was removed in macOS 15 (Sequoia). If you find that
 suggestion elsewhere, it is out of date, use **Open Anyway** above.
-:::
+
+</Aside>
 
 ### Or, from the terminal
 

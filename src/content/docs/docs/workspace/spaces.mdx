@@ -3,6 +3,7 @@ title: Spaces, projects and branches
 description: How the sidebar tree is organized.
 ---
 
+import Aside from "../../../../components/docs/Aside.astro";
 import Demo from "../../../../components/docs/Demo.astro";
 import SpacesDemo from "../../../../islands/docs/SpacesDemo";
 
@@ -46,9 +47,11 @@ each on its own branch, for trying a few approaches in parallel. It groups
 under one header row in the tree. Once you know which one you want,
 **Promote this attempt** keeps that worktree.
 
-:::danger[Promoting cannot be undone]
+<Aside type="danger" title="Promoting cannot be undone">
+
 It deletes the other attempts, branch, sessions, checkpoints and all.
-:::
+
+</Aside>
 
 Reached from a project's context menu, **Fan out**.
 

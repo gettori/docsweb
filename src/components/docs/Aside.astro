@@ -1,0 +1,95 @@
+---
+import { Info, OctagonAlert, Rocket, TriangleAlert, type IconNode } from "lucide";
+
+interface Props {
+  type?: "note" | "tip" | "caution" | "danger";
+  title?: string;
+}
+
+const { type = "note", title } = Astro.props;
+const DEFAULTS: Record<string, [string, IconNode]> = {
+  note: ["Note", Info],
+  tip: ["Tip", Rocket],
+  caution: ["Caution", TriangleAlert],
+  danger: ["Danger", OctagonAlert],
+};
+const [fallback, icon] = DEFAULTS[type]!;
+---
+
+<aside class="aside not-content" data-type={type} aria-label={title ?? fallback}>
+  <p class="title">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      {icon.map(([Tag, attrs]) => <Tag {...attrs} />)}
+    </svg>
+    {title ?? fallback}
+  </p>
+  <div class="body"><slot /></div>
+</aside>
+
+<style>
+  /* The app's status cards: note is working, tip is done, caution is the brand, danger needs you. */
+  .aside {
+    --tone: var(--tori-work);
+    position: relative;
+    overflow: hidden;
+    margin-block: 1.5rem;
+    padding: 1rem 1.1rem 1rem 1.25rem;
+    border-radius: 14px;
+    background:
+      radial-gradient(260px 120px at 0 0, color-mix(in srgb, var(--tone) 16%, transparent), transparent 70%),
+      var(--tori-glass);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tone) 28%, transparent);
+  }
+  .aside::before {
+    content: "";
+    position: absolute;
+    inset: 12px auto 12px 0;
+    width: 3px;
+    border-radius: 0 3px 3px 0;
+    background: var(--tone);
+    box-shadow: 0 0 12px var(--tone);
+  }
+  .aside[data-type="tip"] {
+    --tone: var(--tori-done);
+  }
+  .aside[data-type="caution"] {
+    --tone: var(--d-accent);
+  }
+  .aside[data-type="danger"] {
+    --tone: var(--tori-need);
+  }
+  .title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 0.35rem;
+    font-family: var(--d-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--tone);
+  }
+  .body {
+    color: var(--d-soft);
+  }
+  .body > :global(* + *) {
+    margin-top: 0.75rem;
+  }
+  .body :global(p) {
+    margin: 0;
+  }
+  .body :global(a) {
+    color: var(--tone);
+  }
+  .body :global(code) {
+    padding: 0.1em 0.35em;
+    border-radius: 5px;
+    background: var(--tori-glass);
+    font-family: var(--d-mono);
+    font-size: 0.875em;
+  }
+  .body :global(strong) {
+    color: var(--d-strong);
+  }
+</style>

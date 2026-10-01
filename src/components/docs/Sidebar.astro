@@ -1,0 +1,159 @@
+---
+import { NAV } from "../../docs/nav";
+
+const here = Astro.url.pathname.replace(/\/?$/, "/");
+---
+
+<nav aria-label="Docs">
+  {
+    NAV.map((group) =>
+      group.items.length === 1 && group.items[0]!.label === group.label ? (
+        <a class="solo" href={group.items[0]!.href} aria-current={here === group.items[0]!.href ? "page" : undefined}>
+          {group.label}
+        </a>
+      ) : (
+        <details open>
+          <summary>
+            <span>{group.label}</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </summary>
+          <ul>
+            {group.items.map((item) => (
+              <li>
+                <a href={item.href} aria-current={here === item.href ? "page" : undefined}>
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </details>
+      ),
+    )
+  }
+</nav>
+
+<script>
+  // The sidebar persists across page swaps, so its highlight is moved here
+  // rather than re-rendered, which is what keeps its scroll position.
+  const mark = () => {
+    const here = location.pathname.replace(/\/?$/, "/");
+    let current: HTMLAnchorElement | null = null;
+    for (const a of document.querySelectorAll<HTMLAnchorElement>(".d-sidebar a")) {
+      const on = new URL(a.href).pathname === here;
+      a.toggleAttribute("aria-current", on);
+      if (on) {
+        a.setAttribute("aria-current", "page");
+        current = a;
+      }
+    }
+    if (!current) return;
+    const group = current.closest("details");
+    if (group) group.open = true;
+    const box = document.querySelector(".d-sidebar")!.getBoundingClientRect();
+    const r = current.getBoundingClientRect();
+    if (r.top < box.top + 8 || r.bottom > box.bottom - 8) current.scrollIntoView({ block: "center" });
+  };
+  document.addEventListener("astro:page-load", mark);
+
+  // Carrying the sidebar into the next page moves it in the DOM, which drops
+  // its scroll offset, so it is read before the swap and put back after.
+  let kept = 0;
+  document.addEventListener("astro:before-swap", () => {
+    kept = document.querySelector(".d-sidebar")?.scrollTop ?? 0;
+  });
+  document.addEventListener("astro:after-swap", () => {
+    const side = document.querySelector(".d-sidebar");
+    if (side) side.scrollTop = kept;
+  });
+</script>
+
+<style>
+  details + details,
+  details + .solo {
+    margin-top: 1rem;
+  }
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 0.4rem 0;
+    list-style: none;
+    font-family: var(--d-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--d-muted);
+    cursor: pointer;
+    user-select: none;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  details[open] > summary {
+    color: var(--d-strong);
+  }
+  summary svg {
+    flex: none;
+    transform: rotate(-90deg);
+    transition: transform 0.2s var(--d-ease);
+  }
+  details[open] > summary svg {
+    transform: none;
+  }
+  ul {
+    margin: 0.25rem 0 0;
+    padding: 0;
+    list-style: none;
+    border-left: 1px solid var(--tori-hair);
+  }
+  /* Rows start on the rail, not beside it, so the selection bar covers the line and reads as it thickening. */
+  li a,
+  .solo {
+    display: block;
+    margin-left: -1px;
+    padding: 0.3rem 0.75rem 0.3rem 1rem;
+    border-radius: 0 8px 8px 0;
+    color: var(--d-text);
+    font-size: 14.5px;
+    line-height: 1.45;
+    text-decoration: none;
+    transition:
+      background-color 0.2s var(--d-ease),
+      color 0.2s var(--d-ease);
+  }
+  .solo {
+    margin: 1rem 0 0;
+    padding-left: 0;
+    border-radius: 8px;
+    font-family: var(--d-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--d-muted);
+  }
+  a:not([aria-current]):hover {
+    background: var(--tori-glass);
+    color: var(--d-strong);
+  }
+  li a[aria-current] {
+    font-weight: 600;
+    color: var(--d-strong);
+    background:
+      linear-gradient(var(--tori-brand-bar), var(--tori-brand-bar)) left center / 2px 100% no-repeat,
+      linear-gradient(to right, var(--tori-brand-subtle), transparent);
+  }
+  .solo[aria-current] {
+    color: var(--d-strong);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    a,
+    summary svg {
+      transition: none;
+    }
+  }
+</style>

@@ -21,7 +21,7 @@ const description =
     <meta property="og:description" content={description} />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <script is:inline>
-      // Shares Starlight's storage key so the docs and the home page keep one choice.
+      // The same storage key the docs use, so both keep one choice.
       (() => {
         const q = matchMedia("(prefers-color-scheme: light)");
         const apply = () => {
