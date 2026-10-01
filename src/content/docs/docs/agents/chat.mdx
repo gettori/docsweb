@@ -76,10 +76,16 @@ files themselves are back to how they were.
 ## Watching what happened
 
 The status strip above the transcript shows what a session is doing, the
-number of files it has touched, and an overflow menu with:
+number of files it has touched, and the session's figures: the model, the
+prompts you sent, agent turns, tool calls, how many times the conversation
+compacted and roughly how many tokens that reclaimed, and context used
+against the model's window with a gauge. Hover any figure for its label.
+Context only shows when a source knows the window, and the percentage and
+gauge drop out if the usage contradicts it. The figures are read from the
+transcript on disk, so a resumed session counts its earlier turns too.
 
-- **Session stats**: model, prompt and turn counts, and a context gauge when
-  a source is available to compute one.
+The overflow menu at the end of the strip has:
+
 - **Show changes as a diff**: one diff per file across the whole session,
   instead of the turn by turn transcript.
 - **Usage**: last turn and session total tokens and cost.

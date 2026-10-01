@@ -1,5 +1,5 @@
 import { createEffect, createSignal, For, Index, Match, on, onCleanup, Show, Switch } from "solid-js";
-import { ArrowUp, Check, ChevronDown, ChevronRight, Ellipsis, History, Paperclip, Pencil, PenLine, RefreshCw, Wrench } from "lucide";
+import { ArrowDown, ArrowUp, Check, ChevronDown, ChevronRight, Ellipsis, FoldVertical, History, Paperclip, Pencil, PenLine, RefreshCw, Wrench } from "lucide";
 import { AgentMark, Icon } from "../../app/kit";
 import w from "../../app/window.module.css";
 import btn from "../../app/css/Button.module.css";
@@ -41,6 +41,12 @@ function replyFor(prompt: string, file: string) {
   return `Done. ${file} is updated and the 11 existing tests still pass.`;
 }
 
+function fmt(n: number) {
+  if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + "M";
+  if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, "") + "k";
+  return String(n);
+}
+
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 class Cancelled extends Error {}
 
@@ -59,6 +65,7 @@ export default function ChatDemo() {
   const [todos, setTodos] = createSignal<[string, boolean][] | null>(null);
   const [files, setFiles] = createSignal(new Set(["pied_piper/middle_out.py"]));
   const [ctx, setCtx] = createSignal(18);
+  const [folds, setFolds] = createSignal({ count: 0, reclaimed: 0 });
   const [started, setStarted] = createSignal(0);
   const [now, setNow] = createSignal(0);
   const clock = setInterval(() => running() && setNow(Date.now()), 1000);
@@ -185,10 +192,12 @@ export default function ChatDemo() {
       setTodos(null);
       setEntries([]);
       setCtx(4);
+      setFolds({ count: 0, reclaimed: 0 });
       return say("Conversation cleared.");
     }
     if (t === "/compact") {
       push({ kind: "note", text: `Conversation compacted. Context ${ctx()}% to 9%` });
+      setFolds((f) => ({ count: f.count + 1, reclaimed: f.reclaimed + Math.max(0, ctx() - 9) * 10_000 }));
       setCtx(9);
       return;
     }
@@ -307,8 +316,8 @@ export default function ChatDemo() {
   );
 
   const state = () => (asking() ? "need" : running() ? "work" : "idle");
-  const count = (what: "edit" | "turn" | "tool") =>
-    entries().filter((e) => (what === "turn" ? e.kind === "user" && !e.steer : e.kind === "tool" && (what === "tool" || e.edit))).length;
+  const count = (what: "prompt" | "turn" | "tool") =>
+    entries().filter((e) => (what === "prompt" ? e.kind === "user" : what === "turn" ? e.kind === "tool" || e.kind === "prose" : e.kind === "tool")).length;
   const elapsed = () => {
     const t = Math.max(0, Math.floor((now() - started()) / 1000));
     return t < 60 ? `${t}s` : `${Math.floor(t / 60)}m ${t % 60}s`;
@@ -338,29 +347,38 @@ export default function ChatDemo() {
               {files().size} file{files().size === 1 ? "" : "s"}
             </span>
             <span class={s.rule} />
-            <span class={s.stat}>
+            <span class={s.stat} title="Model">
               <AgentMark agent="claude" size={13} />
               {MODEL_ID[model()]}
             </span>
-            <span class={s.dot}>{"\u2022"}</span>
-            <span class={s.stat} title="Edits">
+            <span class={s.dot}>{"\u00b7"}</span>
+            <span class={s.stat} title="Prompts you sent">
               <Icon icon={Pencil} size={13} />
-              {count("edit")}
+              {count("prompt")}
             </span>
-            <span class={s.dot}>{"\u2022"}</span>
-            <span class={s.stat} title="Turns">
+            <span class={s.dot}>{"\u00b7"}</span>
+            <span class={s.stat} title="Agent turns">
               <Icon icon={RefreshCw} size={13} />
               {count("turn")}
             </span>
-            <span class={s.dot}>{"\u2022"}</span>
+            <span class={s.dot}>{"\u00b7"}</span>
             <span class={s.stat} title="Tool calls">
               <Icon icon={Wrench} size={13} />
               {count("tool")}
             </span>
-            <span class={s.dot}>{"\u2022"}</span>
-            <span class={s.stat} title="Context">
+            <span class={s.dot}>{"\u00b7"}</span>
+            <Show when={folds().count > 0}>
+              <span class={`${s.stat} ${s.fold}`} title={`${folds().count} compaction${folds().count === 1 ? "" : "s"}, ~${fmt(folds().reclaimed)} tokens reclaimed`}>
+                <Icon icon={FoldVertical} size={13} />
+                {folds().count}
+                <Icon icon={ArrowDown} size={13} />
+                {fmt(folds().reclaimed)}
+              </span>
+              <span class={`${s.dot} ${s.fold}`}>{"\u00b7"}</span>
+            </Show>
+            <span class={s.stat} title={`Context: ${ctx()}% of 1.0M`}>
               <span class={w.pie} style={{ "--p": ctx() }} />
-              {(ctx() * 10).toFixed(1)}k/1.0M ({ctx()}%)
+              {fmt(ctx() * 10_000)}/1.0M ({ctx()}%)
             </span>
             <span class={s.more}>
               <Icon icon={Ellipsis} size={15} />

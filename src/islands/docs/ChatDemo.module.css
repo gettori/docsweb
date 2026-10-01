@@ -310,9 +310,10 @@
   }
   .rewind,
   .attach,
-  .stat[title="Turns"],
+  .fold,
+  .stat[title="Agent turns"],
   .stat[title="Tool calls"],
-  .stat[title="Turns"] + .dot,
+  .stat[title="Agent turns"] + .dot,
   .stat[title="Tool calls"] + .dot {
     display: none;
   }
