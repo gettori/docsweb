@@ -19,6 +19,10 @@ default branch, then whatever HEAD happens to be. The folder is named after
 the branch's last path segment (`bug/critical` becomes `critical`), falling
 back to a full slug only on a collision.
 
+A new worktree has only what git tracks. To give every worktree the same
+`.env` or other untracked file, see
+[Shared in worktrees](/docs/git/shared-files).
+
 Starting a worktree from a pull request pins it to that PR's exact head
 commit; if a worktree or branch with that name already exists at a different
 commit, Tori refuses rather than resetting it out from under you.

@@ -30,6 +30,7 @@ export const NAV: NavGroup[] = [
     label: "Git and review",
     items: [
       page("Worktrees and branches", "git/worktrees-and-branches"),
+      page("Shared in worktrees", "git/shared-files"),
       page("The Changes panel", "git/changes-panel"),
       page("Pull requests and issues", "git/pull-requests-and-issues"),
     ],
