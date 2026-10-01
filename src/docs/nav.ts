@@ -38,7 +38,11 @@ export const NAV: NavGroup[] = [
     label: "Editor and tools",
     items: [
       page("Editor", "editor/editor"),
-      page("Language servers, debuggers and formatters", "editor/tooling"),
+      page("Language tooling", "editor/tooling"),
+      page("Language servers", "editor/language-servers"),
+      page("Linters", "editor/linters"),
+      page("Formatters", "editor/formatters"),
+      page("Debuggers", "editor/debuggers"),
       page("Terminal", "editor/terminal"),
       page("Themes and fonts", "editor/themes-and-fonts"),
     ],

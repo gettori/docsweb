@@ -105,7 +105,7 @@ Card grids, not fixed fields, one card per server, debugger, linter or
 formatter with an on or off switch and install controls where they apply.
 Projects lists which folders you have marked trusted, required for a server
 or debugger that runs project code. See
-[Language servers, debuggers and formatters](/docs/editor/tooling).
+[Language tooling](/docs/editor/tooling).
 
 ## Appearance
 

@@ -72,5 +72,5 @@ tag list is configurable per workspace in Settings > Editor.
 file's language, or opening a picker), `Shift+F5` stops, `F9` toggles a
 breakpoint. The debug panel shows an interleaved console, watch list,
 variables, stack, and the usual step controls. See
-[Language servers, debuggers and formatters](/docs/editor/tooling) for which
-languages are supported.
+[Debuggers](/docs/editor/debuggers) for which languages are supported and
+how to install each one.
