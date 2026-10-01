@@ -9,10 +9,13 @@ import { SITE } from "../../config";
       ><path d="M4 7h16M4 12h16M4 17h16"></path></svg
     >
   </button>
-  <a href="/" class="brand" data-astro-reload>
-    <img src="/app-icon.png" alt="" width="36" height="36" />
-    <span>Tori <span class="docs">docs</span></span>
-  </a>
+  <div class="brand">
+    <a href="/" class="home" data-astro-reload>
+      <img src="/app-icon.png" alt="" width="36" height="36" />
+      <span>Tori</span>
+    </a>
+    <a href="/docs/" class="docs">docs</a>
+  </div>
   <div class="search">
     <Search />
   </div>
@@ -76,12 +79,18 @@ import { SITE } from "../../config";
   .brand {
     display: flex;
     flex: none;
-    align-items: center;
-    gap: 10px;
-    color: var(--d-strong);
+    align-items: baseline;
+    gap: 0.28em;
     font-weight: 700;
     font-size: 23px;
     letter-spacing: -0.02em;
+  }
+  .home {
+    display: flex;
+    align-items: center;
+    align-self: center;
+    gap: 10px;
+    color: var(--d-strong);
     text-decoration: none;
   }
   .docs {
@@ -90,6 +99,46 @@ import { SITE } from "../../config";
     font-weight: 400;
     font-size: 28px;
     color: var(--d-accent);
+    text-decoration: none;
+  }
+  .home:hover {
+    color: var(--d-strong);
+  }
+  .docs:hover {
+    color: var(--d-accent);
+  }
+  .home span,
+  .docs {
+    position: relative;
+  }
+  /* A pen stroke under the word, drawn left to right. The path is a mask so
+     the stroke takes each word's own colour. */
+  .home span::after,
+  .docs::after {
+    content: "";
+    position: absolute;
+    left: -3px;
+    right: -5px;
+    bottom: -1px;
+    height: 9px;
+    background: currentColor;
+    mask: var(--scribble) center / 100% 100% no-repeat;
+    clip-path: inset(0 100% 0 0);
+    transition: clip-path 0.35s cubic-bezier(0.3, 0.7, 0.2, 1);
+    pointer-events: none;
+  }
+  .home span::after {
+    --scribble: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 12' preserveAspectRatio='none'%3E%3Cpath d='M2 8C9 2 13 11 21 6S33 4 40 8 52 9 60 4 73 5 79 8 90 9 98 3' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+  }
+  .docs::after {
+    bottom: 2px;
+    --scribble: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 12' preserveAspectRatio='none'%3E%3Cpath d='M2 5C10 10 16 2 25 7S37 10 45 5 58 3 66 8 80 10 88 5 95 2 98 7' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+  }
+  .home:hover span::after,
+  .docs:hover::after,
+  .home:focus-visible span::after,
+  .docs:focus-visible::after {
+    clip-path: inset(0 0 0 0);
   }
   .search {
     display: flex;
