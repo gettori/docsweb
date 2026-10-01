@@ -34,7 +34,7 @@ const STEPS: Step[] = [
     glow: "rgba(217,164,104,.55)",
     soft: "rgba(217,164,104,.14)",
     title: "Undo any turn.",
-    body: "Every prompt snapshots the whole tree, without making a commit. Pick a turn, see what it changed, put the tree back. The revert saves a backup first.",
+    body: "Every prompt snapshots the whole tree, without making a commit. Find a turn by its prompt, see what it changed, put the tree back. The revert saves a backup first.",
     facts: ["No commits made", "Rewind forks the chat", "Fan out N attempts"],
     mode: "undo",
     region: CARD,

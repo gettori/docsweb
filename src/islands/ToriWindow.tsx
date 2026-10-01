@@ -7,6 +7,7 @@ import {
   Bell,
   Brain,
   ChevronDown,
+  ChevronLeft,
   ChevronRight,
   ChevronUp,
   Copy,
@@ -60,6 +61,7 @@ import toolbar from "../app/css/Toolbar.module.css";
 import sw from "../app/css/AutopilotSwitch.module.css";
 import review from "../app/css/ReviewPanel.module.css";
 import cp from "../app/css/CheckpointTimeline.module.css";
+import seg from "../app/css/SegmentedControl.module.css";
 import av from "../app/css/AutopilotView.module.css";
 import sp from "../app/css/ShellParts.module.css";
 import dc from "../app/css/DecisionCard.module.css";
@@ -626,27 +628,130 @@ export default function ToriWindow(props: {
   );
 
   /* ---- Changes bottom section: Graph | Stashes | Checkpoints ---- */
-  const CHIPS_LOOP = [
-    ["10:16", "1"],
-    ["10:22", "3"],
-    ["10:28", "2"],
+  type Turn = [time: string, title: string, files: number];
+  const TURNS_LOOP: Turn[] = [
+    ["10:28", "Log each delivery attempt", 2],
+    ["10:22", "Retry failed deliveries with backoff", 3],
+    ["10:16", "Add a webhook delivery queue", 1],
   ];
-  const CHIPS_UNDO = [
-    ["10:22", "3"],
-    ["10:28", "1"],
-    ["10:34", "1"],
-    ["10:40", "1"],
-    ["10:46", "1"],
-    ["10:52", "2"],
+  const TURNS_UNDO: Turn[] = [
+    ["10:52", "rename the header to X-Tori-Signature", 1],
+    ["10:46", "add a test for a tampered payload", 1],
+    ["10:40", "send the signature in a header", 1],
+    ["10:34", "sign outgoing webhook payloads with HMAC", 1],
+    ["10:28", "Log each delivery attempt", 2],
+    ["10:22", "Retry failed deliveries with backoff", 3],
   ];
-  const picked = () => (isUndo() ? (t() < 2 ? 6 : t() < 3.5 ? 5 : t() < 5 ? 4 : 3) : -1);
-  const pickedChip = () => picked() - 1;
-  const UNDO_DIFF: Record<number, [string, string, string[]]> = {
-    6: ["M", "src/webhooks/types.ts", ["@@ -3,4 +3,4 @@", " export type Hook = { url: string }", "-export const SIG = 'X-Signature'", "+export const SIG = 'X-Tori-Signature'", " export const ALGO = 'sha256'"]],
-    5: ["A", "test/sign.test.ts", ["@@ -0,0 +1,52 @@", "+it('rejects a tampered payload', () => {", "+  const sig = sign(body, secret)", "+  const bad = body.replace('1', '2')", "+  expect(verify(bad, sig, secret)).toBe(false)"]],
-    4: ["M", "src/webhooks/deliver.ts", ["@@ -21,6 +21,9 @@", " const body = JSON.stringify(event)", "+const sig = sign(body, hook.secret)", "-headers: { type: JSON_TYPE },", "+headers: { type: JSON_TYPE, [SIG]: sig },"]],
-    3: ["A", "src/webhooks/sign.ts", ["@@ -0,0 +1,46 @@", "+import { createHmac } from 'node:crypto'", "+", "+export function sign(body, secret) {", "+  return createHmac('sha256', secret).update(body).digest('hex')"]],
-  };
+  const PICK = 3;
+  type CpFile = [st: "A" | "M", name: string, dir: string, add: number, del: number];
+  const SINCE_FILES: CpFile[] = [
+    ["A", "sign.ts", "src/webhooks/", 46, 0],
+    ["M", "deliver.ts", "src/webhooks/", 18, 6],
+    ["A", "sign.test.ts", "test/", 52, 0],
+    ["M", "types.ts", "src/webhooks/", 12, 5],
+  ];
+  const SIGN_DIFF = ["@@ -0,0 +1,46 @@", "+import { createHmac } from 'node:crypto'", "+", "+export function sign(body, secret) {", "+  return createHmac('sha256', secret).update(body).digest('hex')"];
+  const detailOpen = () => isUndo() && at(1.4, 7.5);
+  const sinceHere = () => t() >= 4;
+  const diffOpen = () => at(2.4, 4);
+  const cpFiles = () => (sinceHere() ? SINCE_FILES : SINCE_FILES.slice(0, 1));
+
+  const TurnRow = (props: { turn: Turn; active?: boolean; hover?: boolean; dim?: boolean; class?: string }) => (
+    <div
+      class={`${cp.row} ${props.active ? cp.active : ""} ${props.class ?? ""}`}
+      style={{ opacity: props.dim ? 0.4 : 1, background: props.hover ? "var(--tree-row-hover)" : undefined, transition: "opacity .42s" }}
+    >
+      <span class={cp.rowTime}>{props.turn[0]}</span>
+      <span class={cp.rowTitle}>{props.turn[1]}</span>
+      <span class={cp.rowCount}>{props.turn[2]}</span>
+      <Icon icon={ChevronRight} class={cp.rowChevron} />
+    </div>
+  );
+
+  const CheckpointList = () => (
+    <div class={cp.scroll}>
+      <div class={cp.groupHeader}>
+        <span class={cp.groupKind}>Chat</span>
+        <span class={cp.groupName}>Sign webhook payloads</span>
+      </div>
+      <Show when={isLoop() && t() >= 19.2}>
+        <TurnRow class={w.in} turn={["10:34", "Sign outgoing webhook payloads with HMAC-SHA256 and add a test for it.", 4]} />
+      </Show>
+      <For each={isUndo() ? TURNS_UNDO : TURNS_LOOP}>
+        {(turn, i) => <TurnRow turn={turn} active={reverted() && i() === PICK} hover={isUndo() && at(0.8, 1.4) && i() === PICK} dim={reverted() && i() < PICK} />}
+      </For>
+      <Show when={reverted()}>
+        <div class={`${cp.groupHeader} ${w.in}`}>
+          <span class={cp.groupKind}>Backstops</span>
+        </div>
+        <div class={`${cp.row} ${cp.backstop} ${w.in}`}>
+          <span class={cp.rowTime}>10:53</span>
+          <span class={cp.rowTitle}>Before revert to 10:34</span>
+          <span class={cp.ownerTag}>session</span>
+        </div>
+      </Show>
+    </div>
+  );
+
+  const CheckpointDetail = () => (
+    <>
+      <div class={cp.back}>
+        <Icon icon={ChevronLeft} />
+        Checkpoints
+      </div>
+      <div class={cp.scroll}>
+        <div class={cp.detailHead}>
+          <div class={cp.detailTitle}>{TURNS_UNDO[PICK][1]}</div>
+          <div class={cp.detailMeta}>10:34 {"·"} Chat {"·"} Sign webhook payloads</div>
+        </div>
+        <div class={`${seg.group} ${seg.sm} ${cp.range}`}>
+          <span class={seg.segment} style={{ flex: "1" }} data-pressed={sinceHere() ? undefined : ""}>
+            This turn {"·"} 1
+          </span>
+          <span class={seg.segment} style={{ flex: "1" }} data-pressed={sinceHere() ? "" : undefined}>
+            Since here {"·"} 4
+          </span>
+        </div>
+        <For each={cpFiles()}>
+          {(f) => (
+            <div class={cp.fileRow}>
+              <span class={cp.fileStatus} style={{ color: f[0] === "A" ? "var(--diff-added)" : undefined }}>{f[0]}</span>
+              <span class={cp.fileMain}>
+                <span class={cp.fileName}>{f[1]}</span>
+                <span class={cp.fileDir}>{f[2]}</span>
+              </span>
+              <span class={cp.added}>+{f[3]}</span>
+              <span class={cp.removed}>-{f[4]}</span>
+            </div>
+          )}
+        </For>
+        <Show when={diffOpen()}>
+          <div class={`${cp.fileDiff} ${w.in}`}>
+            <For each={SIGN_DIFF}>
+              {(line) => (
+                <div
+                  style={{
+                    padding: "0 12px",
+                    "white-space": "pre",
+                    color: line.startsWith("@@") ? "var(--accent-fg)" : "var(--diff-added)",
+                  }}
+                >
+                  {line}
+                </div>
+              )}
+            </For>
+          </div>
+        </Show>
+      </div>
+      <div class={cp.footer}>
+        <Button variant="primary" pressed={at(7.2, 7.5)} class={`${cp.action} ${at(6.2, 7.6) ? "is-hover" : ""}`}>
+          {at(7.2, 7.5) ? "Reverting..." : "Revert tree to 10:34"}
+        </Button>
+        <Button class={cp.action}>Rewind chat to here</Button>
+        <div class={cp.footNote}>Current state is saved as a backstop first.</div>
+      </div>
+    </>
+  );
 
   const HistorySection = () => (
     <section class={`${review.history} ${review.historyOpen}`} style={{ flex: isUndo() ? "1 1 auto" : "0 0 auto", "min-height": "0", display: "flex", "flex-direction": "column" }}>
@@ -665,78 +770,10 @@ export default function ToriWindow(props: {
           <Icon icon={ChevronUp} size={15} />
         </span>
       </div>
-      <div class={w.historyBody}>
-        <div class={cp.timeline}>
-          <div class={cp.timelineHeader}>
-            <span class={cp.timelineTitle}>Timeline</span>
-            <span class={cp.cumulativeToggle} style={{ display: "inline-flex", gap: "6px", "align-items": "center" }}>
-              <span class={w.miniSwitch} />
-              workspace since here
-            </span>
-          </div>
-          <div class={cp.strip}>
-            <For each={isUndo() ? CHIPS_UNDO : CHIPS_LOOP}>
-              {(c, i) => (
-                <span
-                  class={`${cp.turnChip} ${i() === pickedChip() ? cp.turnChipActive : ""}`}
-                  style={{ opacity: reverted() && i() > pickedChip() ? 0.4 : 1 }}
-                >
-                  <span class={cp.turnTime}>{c[0]}</span>
-                  <span class={cp.turnCount}>{c[1]}</span>
-                </span>
-              )}
-            </For>
-            <Show when={isLoop() && t() >= 19.2}>
-              <span class={`${cp.turnChip} ${w.in}`} style={{ "border-color": "var(--brand-default)" }}>
-                <span class={cp.turnTime}>10:34</span>
-                <span class={cp.turnCount}>4</span>
-              </span>
-            </Show>
-            <Show when={reverted()}>
-              <span class={`${cp.turnChip} ${cp.turnChipBackstop} ${w.in}`}>
-                <span class={cp.turnTime}>10:53</span>
-                <span class={cp.turnCount}>backstop</span>
-              </span>
-            </Show>
-          </div>
-          <Show when={isUndo()}>
-            <div class={cp.timelineActions}>
-              <Button size="sm" pressed={at(7.2, 7.5)} class={at(6.2, 7.6) ? "is-hover" : ""}>
-                {at(7.2, 7.5) ? "Reverting\u2026" : "Revert tree to here"}
-              </Button>
-            </div>
-            <div>
-              <div class={cp.timelineRow}>
-                <span class={`${cp.timelineStatus} ${UNDO_DIFF[picked()][0] === "A" ? cp.added ?? "" : cp.modified ?? ""}`}>
-                  {UNDO_DIFF[picked()][0]}
-                </span>
-                <span class={cp.timelineName}>{UNDO_DIFF[picked()][1]}</span>
-              </div>
-              <div class={cp.timelineDiff}>
-                <For each={UNDO_DIFF[picked()][2]}>
-                  {(line) => (
-                    <div
-                      class={`${cp.diffLine} ${line.startsWith("@@") ? cp.hunk ?? "" : line.startsWith("+") ? cp.add ?? "" : line.startsWith("-") ? cp.del ?? "" : ""}`}
-                      style={{
-                        color: line.startsWith("@@") ? "var(--accent-fg)" : line.startsWith("+") ? "var(--diff-added)" : line.startsWith("-") ? "var(--diff-deleted)" : undefined,
-                      }}
-                    >
-                      {line}
-                    </div>
-                  )}
-                </For>
-              </div>
-            </div>
-            <Show when={reverted()}>
-              <div class={`${cp.timelineHeader} ${w.in}`}>
-                <span class={cp.timelineTitle}>Undo history</span>
-              </div>
-              <div class={`${cp.backstopRow} ${w.in}`}>
-                <span class={cp.sharedMarker}>saved</span>
-                <span class={cp.timelineName}>Before reverting to 10:34</span>
-                <span class={cp.backstopTime}>10:53</span>
-              </div>
-            </Show>
+      <div class={w.historyBody} style={{ display: "flex", "flex-direction": "column" }}>
+        <div class={cp.panel} style={{ "padding-bottom": detailOpen() ? undefined : "6px" }}>
+          <Show when={detailOpen()} fallback={<CheckpointList />}>
+            <CheckpointDetail />
           </Show>
         </div>
       </div>
@@ -745,7 +782,7 @@ export default function ToriWindow(props: {
 
   /* ---- undo: chat of turns ---- */
   const TURNS: [number, string, string, string, number, number][] = [
-    [3, "10:34", "sign outgoing webhook payloads with HMAC", "src/webhooks/sign.ts", 46, 3],
+    [3, "10:34", "sign outgoing webhook payloads with HMAC", "src/webhooks/sign.ts", 46, 0],
     [4, "10:40", "send the signature in a header", "src/webhooks/deliver.ts", 18, 6],
     [5, "10:46", "add a test for a tampered payload", "test/sign.test.ts", 52, 0],
     [6, "10:52", "rename the header to X-Tori-Signature", "src/webhooks/types.ts", 12, 5],

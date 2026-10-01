@@ -47,15 +47,48 @@ another session is actively working in that folder.
 Below the file list, three tabs: **Graph** (the commit lane view), **Stashes**
 (open, apply, pop, or drop, dropping is the one truly irreversible action,
 since a stash never lived in the working tree to snapshot), and
-**Checkpoints**, Tori's own per-prompt snapshots.
+**Checkpoints**, Tori's own per-prompt snapshots, listed by session.
 
 ## Checkpoints
 
 With **Snapshot on each prompt** on in Settings > Chat (on by default), every
-prompt you send an agent gets a git snapshot, shown here as a horizontal
-strip of turns. Pick a turn to see just its diff, or widen to see everything
-since then. **Revert tree to here** restores the whole working tree to that
-point, taking its own backstop snapshot first so the revert itself is
-undoable. This is a plain working tree revert; for reverting inside a live
-chat session and forking its conversation too, see
-[Rewind](/docs/agents/chat/#rewind).
+prompt you send an agent gets a snapshot of the whole tree, without making a
+commit. The Checkpoints tab lists them for this worktree, grouped by the
+session that took them (a chat or a terminal session, the one you have
+selected first), newest turn on top. Each row shows the time, the prompt
+that started the turn, and how many files it changed. The tab's count is the
+number of turns.
+
+Click a row to open it. The detail shows the prompt, the time and the
+session, and a switch between two lists:
+
+- **This turn**: only the files that turn changed.
+- **Since here**: everything that has changed in the folder since that
+  point, including your own edits and other sessions' work.
+
+Each file shows its added and removed line counts. Click a file to expand
+its diff in place, or hover it for two buttons: open the diff in an editor
+tab, or open the file as it is now. A purple dot marks a file another chat
+also wrote during that time. A dashed circle marks a file that changed
+during the turn but that Tori cannot attribute to a session.
+
+At the bottom of the detail:
+
+- **Revert tree to (time)** puts every file in the folder back to how it was
+  at that checkpoint, after a confirmation. The current state is saved as a
+  backstop first, so the revert itself can be undone. Files shared with
+  another chat get their own question, and unattributed files are left
+  alone. The button is disabled while a session is running a turn in that
+  folder.
+- **Rewind chat to here**, for chat sessions, also forks the conversation
+  from that turn. See [Rewind](/docs/agents/chat/#rewind).
+
+Browsing never changes anything; only those two buttons do.
+
+### Backstops
+
+Under the sessions, **Backstops** lists the snapshots Tori takes before it
+overwrites your files: one before each revert (tagged `session`), and one
+before a discard in the worktree (tagged `worktree`). Open one to see what
+has changed since, and **Restore tree to (time)** to go back to it.
+Restoring a worktree backstop overwrites anything done since.
