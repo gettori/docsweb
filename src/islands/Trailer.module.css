@@ -18,6 +18,22 @@
   background: var(--page);
   color: var(--text);
 }
+.aurora {
+  position: absolute;
+  inset: 0;
+  filter: blur(40px) saturate(1.2);
+}
+.aurora i {
+  position: absolute;
+  mix-blend-mode: plus-lighter;
+}
+.grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.22;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
 .glow {
   position: absolute;
   inset: 0;
@@ -175,9 +191,9 @@
 .sticker {
   position: absolute;
   bottom: 70px;
-  padding: 6px 44px 14px;
-  border-radius: 28px;
-  font-size: 150px;
+  padding: 5px 38px 12px;
+  border-radius: 24px;
+  font-size: 130px;
   line-height: 1;
   font-weight: 800;
   letter-spacing: -0.05em;

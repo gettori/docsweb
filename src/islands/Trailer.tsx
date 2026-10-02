@@ -34,6 +34,15 @@ const WORKERS: Worker[] = [
   { agent: "gemini", where: "docs", at: 13.5, x: 980, y: 530, rot: 1.5, lines: ["> document the webhook api", "ReadFile src/webhooks/sign.ts", "WriteFile docs/webhooks.md", "WriteFile docs/signing.md", "  ok"] },
 ];
 
+// The landing page hero's aurora: colour, centre x, centre y, drift speed.
+const AURORA: [string, number, number, number][] = [
+  ["217,164,104", 0.3, 0.35, 0.9],
+  ["192,132,252", 0.7, 0.3, 1.1],
+  ["251,113,133", 0.55, 0.62, 0.7],
+  ["45,212,191", 0.2, 0.7, 0.8],
+  ["192,132,252", 0.85, 0.75, 0.6],
+];
+
 const SLAMS: [number, string, string?][] = [
   [14, "WHICH"],
   [14.5, "ONE"],
@@ -311,7 +320,7 @@ export default function Trailer() {
     const t = now();
     const beat = 0.05 * pulse(t);
     if (t >= 32) return `rgba(217,164,104,${0.2 + beat})`;
-    if (t >= 16) return `${cutNow()!.color}30`;
+    if (t >= 16) return "transparent";
     if (t >= 14) return `rgba(251,113,133,${0.1 + 0.25 * clamp((t - 14) / 2)})`;
     return `rgba(217,164,104,${0.08 + beat})`;
   };
@@ -364,6 +373,28 @@ export default function Trailer() {
   return (
     <div class={s.screen} data-playing={playing() ? "true" : "false"}>
       <div class={s.stage} style={{ transform: `translate(-50%, -50%) scale(${fit()})` }}>
+        <Show when={now() >= 16}>
+          <div class={s.aurora} style={{ opacity: 0.9 * ease((now() - 16) / 0.35) }}>
+            <For each={AURORA}>
+              {([color, bx, by, speed], i) => {
+                const t = () => (now() - 16) * 3;
+                const rad = () => W * (0.28 + 0.05 * Math.sin(t() * 0.2 + i()) + 0.012 * pulse(now()));
+                return (
+                  <i
+                    style={{
+                      left: `${(bx + Math.sin(t() * 0.13 * speed + i() * 1.7) * 0.12) * W - rad()}px`,
+                      top: `${(by + Math.cos(t() * 0.11 * speed + i()) * 0.1) * H * 0.8 - rad()}px`,
+                      width: `${rad() * 2}px`,
+                      height: `${rad() * 2}px`,
+                      background: `radial-gradient(closest-side, rgba(${color},.34), rgba(${color},0))`,
+                    }}
+                  />
+                );
+              }}
+            </For>
+          </div>
+          <div class={s.grain} />
+        </Show>
         <div class={s.glow} style={{ "--soft": soft() }} />
         <div class={s.dots} style={{ opacity: 0.6 + 0.4 * pulse(now()) }} />
 
@@ -425,7 +456,7 @@ export default function Trailer() {
                   <span
                     class={s.sticker}
                     data-side={cut.tilt < 0 ? "left" : "right"}
-                    style={{ background: cut.color, rotate: `${cut.tilt}deg`, scale: back((now() - cut.at - 0.08) / 0.22) }}
+                    style={{ background: cut.color, rotate: `${cut.tilt}deg`, scale: lerp(1.3, 1, clamp((now() - cut.at) / 0.07)) }}
                   >
                     {cut.label}
                   </span>
