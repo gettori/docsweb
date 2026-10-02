@@ -90,10 +90,10 @@ const QUERY = '[aria-label="Search files, actions and symbols"]';
 const CUTS: Cut[] = [
   { at: 16, dur: 2, label: "STATUS", color: "#fb7185", tilt: -5, mode: "loop", region: FULL, from: 9.6, to: 13.8 },
   { at: 18, dur: 2, label: "UNDO", color: "#f3d3a4", tilt: 4, mode: "undo", region: CARD, from: 4.6, to: 8.6 },
-  { at: 20, dur: 1.5, label: "PULL REQUEST", color: "#c084fc", tilt: -4, mode: "pr", region: CARD, from: 0.6, to: 7 },
-  { at: 21.5, dur: 1.5, label: "REVIEW", color: "#2dd4bf", tilt: 4, mode: "review", region: CARD, from: 4, to: 9.6 },
+  { at: 20, dur: 2, label: "PULL REQUEST", color: "#c084fc", tilt: -4, mode: "pr", region: CARD, from: 0.6, to: 7 },
+  { at: 22, dur: 2, label: "REVIEW", color: "#2dd4bf", tilt: 4, mode: "review", region: CARD, from: 4, to: 9.6 },
   {
-    at: 23,
+    at: 24,
     dur: 1,
     label: "WORKTREES",
     color: "#f3d3a4",
@@ -102,7 +102,7 @@ const CUTS: Cut[] = [
     steps: [[0.15, click('[aria-label="Add worktree"]')], ...typing(BRANCH, "feat/retry", 0.35, 0.85)],
   },
   {
-    at: 24,
+    at: 25,
     dur: 1,
     label: "PANES",
     color: "#fb7185",
@@ -114,9 +114,9 @@ const CUTS: Cut[] = [
       [0.7, click('[aria-label="Open a file"]')],
     ],
   },
-  { at: 25, dur: 1, label: "SEARCH", color: "#2dd4bf", tilt: -5, demo: OmniboxDemo, steps: typing(QUERY, "rank", 0.15, 0.6) },
+  { at: 26, dur: 1, label: "SEARCH", color: "#2dd4bf", tilt: -5, demo: OmniboxDemo, steps: typing(QUERY, "rank", 0.15, 0.6) },
   {
-    at: 26,
+    at: 27,
     dur: 1,
     label: "CHANGES",
     color: "#c084fc",
@@ -128,21 +128,21 @@ const CUTS: Cut[] = [
     ],
   },
   {
-    at: 27,
-    dur: 1.5,
+    at: 28,
+    dur: 1,
     label: "SPACES",
     color: "#f3d3a4",
     tilt: -4,
     demo: SpacesDemo,
     steps: [
-      [0.35, click('[aria-label^="Switch to"]', 1)],
-      [0.85, click('[aria-label^="Switch to"]', 2)],
+      [0.3, click('[aria-label^="Switch to"]', 1)],
+      [0.65, click('[aria-label^="Switch to"]', 2)],
     ],
   },
-  { at: 28.5, dur: 2, label: "AUTOPILOT", color: "#c084fc", tilt: 5, mode: "cockpit", region: FULL, from: 7.6, to: 11.7 },
+  { at: 29, dur: 1, label: "AUTOPILOT", color: "#c084fc", tilt: 5, mode: "cockpit", region: FULL, from: 9.5, to: 11.5 },
   {
-    at: 30.5,
-    dur: 1.5,
+    at: 30,
+    dur: 2,
     label: "MOBILE APP",
     color: "#2dd4bf",
     tilt: -4,
@@ -151,8 +151,8 @@ const CUTS: Cut[] = [
     steps: [
       [-0.5, hide(SCREENS)],
       [-0.4, click(`${SCREENS} button`, 8)],
-      [0.6, click(`${SCREENS} button`, 1)],
-      [0.95, press("Approve")],
+      [0.5, click(`${SCREENS} button`, 1)],
+      [1, press("Approve")],
     ],
   },
 ];
@@ -303,7 +303,7 @@ export default function Trailer() {
     const t = now();
     const riser = t >= 14 && t < 16 ? ((t - 14) / 2) ** 2 : 0;
     const cut = cutNow();
-    const punch = cut ? Math.exp(-(t - cut.at) * 9) : 0;
+    const punch = cut ? Math.exp(-(t - cut.at) * 9) + (t - cut.at >= 1 ? 0.5 * Math.exp(-((t - cut.at) % 1) * 9) : 0) : 0;
     const amp = riser * 16 + (t >= 16 && t < 16.5 ? 22 * Math.exp(-(t - 16) * 9) : 0);
     return `translate(${amp * Math.sin(t * 61)}px, ${amp * Math.cos(t * 53)}px) scale(${1 + riser * 0.14 + punch * 0.03})`;
   };
@@ -322,7 +322,7 @@ export default function Trailer() {
     const box = () => {
       const t = now();
       const born = ease((t - wk.at) / 0.3);
-      const settle = i === 0 ? inOut((t - 8) / 0.6) : 1;
+      const settle = i === 0 ? back((t - 8) / 0.28) : 1;
       const shake = t < 16 ? 14 * clamp((t - 14) / 2) ** 2 : 0;
       const gone = ease((t - 16) / 0.25);
       const px = lerp(680, wk.x, settle) + shake * Math.sin(t * 47 + i * 2.1);
