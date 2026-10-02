@@ -136,8 +136,9 @@ to turn the whole integration off while keeping your credential. See
 
 | Setting | Default | Effect |
 | --- | --- | --- |
-| Remote access | Off | Lets a paired phone reach Tori over the network |
-| Listen on | Not set | LAN, Tailscale, or this Mac only |
+| Remote access | Off | Lets a paired phone reach Tori over Tailscale |
+| Tailscale | | Shows whether Tailscale is installed and connected |
+| Listen on | Not set | Your Tailscale address, or this Mac only |
 | Port | 47821 | |
 
 See [Pairing and remote access](/docs/phone/pairing).

@@ -6,17 +6,30 @@ description: Connecting the phone app to a running Tori.
 import Demo from "../../../../components/docs/Demo.astro";
 import PairingDemo from "../../../../islands/docs/PairingDemo";
 
-The phone app talks to a running Tori over the network, it is not a
+The phone app talks to a running Tori over Tailscale, it is not a
 standalone app, and it never uses anything but that connection: no shared
 process, no iCloud sync, just a WebSocket to the Mac you paired it with.
 
+## Tailscale first
+
+The phone reaches the Mac over [Tailscale](https://tailscale.com/download)
+and nothing else. Tori has no relay or cloud service of its own, and its
+WebSocket is not encrypted, so it only listens where Tailscale does the
+encrypting. A local network address is not offered, not even on your own
+Wi-Fi.
+
+Install Tailscale on the Mac and on the phone and sign both in to the same
+account. It has to be running on the phone whenever you use the app, at home
+or away.
+
 ## Turning it on
 
-Settings > Remote > **Remote access**. Pick a **Listen on** address: a LAN
-interface (same Wi-Fi only), Tailscale (reachable from anywhere both devices
-are signed into the same Tailscale account), or this Mac only, which is
-really "off" for anything but local testing. Tori never listens on more
-than one address at once.
+Settings > Remote > **Remote access**. The **Tailscale** row says whether it
+is installed and connected, with a button to get it or open it when it is
+not. Then pick a **Listen on** address: your Tailscale address, or this Mac
+only, which is really "off" for anything but local testing. Tori never
+listens on more than one address at once, and a local network address saved
+by an older build is refused.
 
 While remote access is on, the Mac is kept from idle sleeping so the
 connection holds; this costs battery on a laptop, which is why remote access

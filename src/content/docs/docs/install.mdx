@@ -80,10 +80,11 @@ files; it is what the **Open Anyway** button does under the hood.
 
 `Tori_<version>.apk` on the
 [Releases page](https://github.com/gettori/releases/releases) is Tori on
-Android. It pairs with a Mac running Tori rather than standing alone, so turn
-on Settings > Remote there first, pick an address the phone can reach
-(Tailscale works across networks, not only the same Wi-Fi), then scan the QR
-the Remote pane shows.
+Android. It pairs with a Mac running Tori rather than standing alone, and it
+reaches that Mac over Tailscale only, so
+[install Tailscale on both](/docs/phone/pairing#tailscale-first) first. Then
+turn on Settings > Remote on the Mac, listen on its Tailscale address, and
+scan the QR the Remote pane shows.
 
 The APK is signed with Tori's own key rather than distributed through the
 Play Store, so Android asks once whether to allow the install. Later releases

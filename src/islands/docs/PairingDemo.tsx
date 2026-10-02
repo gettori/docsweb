@@ -29,11 +29,10 @@ import s from "./PairingDemo.module.css";
 type Iface = {
   address: string;
   label: string;
-  kind: "lan" | "tailscale" | "loopback";
+  kind: "tailscale" | "loopback";
 };
 const IFACES: Iface[] = [
   { address: "100.84.12.7", label: "Tailscale", kind: "tailscale" },
-  { address: "192.168.1.20", label: "en0", kind: "lan" },
   { address: "127.0.0.1", label: "this Mac only", kind: "loopback" },
 ];
 const PORT = 47821;
@@ -512,7 +511,7 @@ export default function PairingDemo() {
                         <input
                           class={s.mono}
                           value={url()}
-                          placeholder="ws://192.168.1.10:7878"
+                          placeholder="ws://100.84.12.7:47821"
                           onInput={(e) => setUrl(e.currentTarget.value)}
                           spellcheck={false}
                         />
