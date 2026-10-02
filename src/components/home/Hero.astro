@@ -449,8 +449,10 @@ const WORDS = [
 </style>
 
 <script>
+  import { lenis } from "./smoothScroll";
+
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const hero = document.querySelector<HTMLElement>("[data-hero]")!;
+  const hero =document.querySelector<HTMLElement>("[data-hero]")!;
   const root = document.documentElement;
 
   // Aurora: five soft blobs at a sixth of the resolution, blurred by CSS.
@@ -524,11 +526,13 @@ const WORDS = [
   const film = trailer.querySelector("video")!;
   document.querySelector("[data-trailer-open]")!.addEventListener("click", () => {
     trailer.showModal();
+    lenis?.stop();
     void film.play();
   });
   document.querySelector("[data-trailer-close]")!.addEventListener("click", () => trailer.close());
   trailer.addEventListener("click", (ev) => ev.target === trailer && trailer.close());
   trailer.addEventListener("close", () => {
+    lenis?.start();
     film.pause();
     film.currentTime = 0;
   });
