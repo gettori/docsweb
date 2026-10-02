@@ -179,12 +179,14 @@ export default function ToriWindow(props: {
   maxScale?: number;
   still?: boolean;
   onStormHover?: boolean;
+  time?: number;
 }) {
   const mode = (): Mode => props.mode ?? "loop";
   const startT = () => (mode() === "loop" && props.skipChaos ? 5.4 : 0);
   let root!: HTMLDivElement;
   const [cw, setCw] = createSignal(1200);
-  const [t, setT] = createSignal(0);
+  const [clock, setT] = createSignal(0);
+  const t = () => props.time ?? clock();
   const [reduced, setReduced] = createSignal(false);
   const [approvedAt, setApprovedAt] = createSignal<number | null>(null);
   const [hoverStorm, setHoverStorm] = createSignal(false);
@@ -207,7 +209,7 @@ export default function ToriWindow(props: {
     const io = new IntersectionObserver((e) => (visible = e[0].isIntersecting));
     io.observe(root);
     const id = setInterval(() => {
-      if (!visible || frozen() || document.hidden) return;
+      if (props.time != null || !visible || frozen() || document.hidden) return;
       const next = t() + 0.1;
       if (next >= LOOP[mode()]) {
         setApprovedAt(null);
