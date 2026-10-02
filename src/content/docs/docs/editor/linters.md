@@ -107,5 +107,5 @@ adding the file. A linter with no LSP mode cannot be added this way yet.
 
 ## Missing a linter?
 
-[Request a linter](https://github.com/gettori/releases/issues/new?labels=enhancement&title=Linter%20request%3A%20&body=Kind%3A%20linter%0ALanguage%3A%0ATool%2C%20with%20a%20link%3A%0AHow%20you%20install%20it%20today%3A%0AConfig%20file%20that%20marks%20a%20project%20as%20using%20it%20%28if%20any%29%3A%0A%0AIf%20you%20already%20wrote%20a%20TOML%20for%20it%2C%20paste%20it%20here%20and%20say%20where%20it%20fell%20short.). Say which tool, the config file that marks
+[Request a linter](https://github.com/gettori/tori/issues/new?template=feature_request.yml&title=Linter%20request%3A%20&problem=Kind%3A%20linter%0ALanguage%3A%0ATool%2C%20with%20a%20link%3A%0AHow%20you%20install%20it%20today%3A%0AConfig%20file%20that%20marks%20a%20project%20as%20using%20it%20%28if%20any%29%3A%0A%0AIf%20you%20already%20wrote%20a%20TOML%20for%20it%2C%20paste%20it%20here%20and%20say%20where%20it%20fell%20short.). Say which tool, the config file that marks
 a project as using it, and whether it has an LSP mode.
