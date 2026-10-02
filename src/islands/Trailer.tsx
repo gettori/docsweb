@@ -230,6 +230,7 @@ function DemoShot(props: { cut: Cut; now: number }) {
 export default function Trailer() {
   const query = new URLSearchParams(location.search);
   const capture = query.has("capture");
+  const light = query.get("theme") === "light";
   const [now, setNow] = createSignal(Number(query.get("t")) || 0);
   const [playing, setPlaying] = createSignal(false);
   const [fit, setFit] = createSignal(1);
@@ -278,6 +279,7 @@ export default function Trailer() {
 
   onMount(() => {
     const resize = () => setFit(Math.min(innerWidth / W, innerHeight / H));
+    document.documentElement.dataset.theme = light ? "light" : "dark";
     const key = (e: KeyboardEvent) => {
       if (e.code === "Space") playing() ? pause() : play();
       else if (e.key === "r") seek(0);
@@ -336,7 +338,7 @@ export default function Trailer() {
       const gone = ease((t - 16) / 0.25);
       const px = lerp(680, wk.x, settle) + shake * Math.sin(t * 47 + i * 2.1);
       const py = lerp(300, wk.y, settle) + shake * Math.cos(t * 53 + i * 1.3);
-      const dim = i !== WAITING && t >= 14 ? lerp(1, 0.45, clamp((t - 14) / 0.5)) : 1;
+      const dim = i !== WAITING && t >= 14 ? lerp(1, light ? 0.84 : 0.45, clamp((t - 14) / 0.5)) : 1;
       const thump = t >= 8 && t < 14 ? 0.02 * pulse(t) : 0;
       return {
         left: `${lerp(px, 680, gone)}px`,

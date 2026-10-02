@@ -525,6 +525,11 @@ const WORDS = [
   const trailer = document.querySelector<HTMLDialogElement>("[data-trailer]")!;
   const film = trailer.querySelector("video")!;
   document.querySelector("[data-trailer-open]")!.addEventListener("click", () => {
+    const cut = root.dataset.theme === "light" ? "-light" : "";
+    if (!film.src.endsWith(`/trailer${cut}.mp4`)) {
+      film.poster = `/trailer-poster${cut}.jpg`;
+      film.src = `/trailer${cut}.mp4`;
+    }
     trailer.showModal();
     lenis?.stop();
     void film.play();
