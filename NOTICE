@@ -1,0 +1,18 @@
+Tori docs site
+Copyright 2026 Fazlul Haque (Sk Arif)
+
+Licensed under the Apache License, Version 2.0. See LICENSE.
+
+The site's text, screenshots, trailer and artwork are part of this
+repository and are covered by LICENSE.
+
+Fetched at install, not kept in this repository (see package.json and
+pnpm-lock.yaml for exact versions; each keeps its own licence):
+
+  Geist, Geist Mono      The Geist Project Authors              OFL 1.1
+  Inter                  The Inter Project Authors              OFL 1.1
+  Instrument Serif       The Instrument Serif Project Authors   OFL 1.1
+  Astro                  withastro                              MIT
+  Expressive Code        Tibor Schiemann                        MIT
+  Pagefind               Pagefind                               MIT
+  Solid                  Ryan Carniato                          MIT
