@@ -3,8 +3,19 @@ Copyright 2026 Fazlul Haque (Sk Arif)
 
 Licensed under the Apache License, Version 2.0. See LICENSE.
 
-The site's text, screenshots, trailer and artwork are part of this
+The site's text, screenshots, trailer visuals and artwork are part of this
 repository and are covered by LICENSE.
+
+The trailer's music, "Built to Beat" (src/assets/trailer and the soundtrack
+of public/trailer*.mp4), is used under a commercial licence held by the
+copyright holder above. It is not covered by LICENSE and may not be reused
+apart from the trailer.
+
+Kept in this repository under their own licence:
+
+  Catppuccin Mocha       src/app/theme/palettes   Catppuccin          MIT
+  Rose Pine Dawn         src/app/theme/palettes   Rose Pine           MIT
+  Tokyo Night            src/app/theme/palettes   Folke Lemaitre      Apache 2.0
 
 Fetched at install, not kept in this repository (see package.json and
 pnpm-lock.yaml for exact versions; each keeps its own licence):
