@@ -1,11 +1,15 @@
 import { createEffect, createMemo, createSignal, For, Index, Match, onCleanup, onMount, Show, Switch, type JSX } from "solid-js";
 import {
   Anchor,
+  ArrowDownToLine,
   ArrowLeft,
   ArrowRight,
+  ArrowRightToLine,
+  ArrowUpFromLine,
   ArrowUpRight,
   Bell,
   Brain,
+  Bug,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
@@ -26,12 +30,16 @@ import {
   MessageSquare,
   PanelLeft,
   Paperclip,
+  Pause,
   PenLine,
+  Play,
   Plus,
   RefreshCw,
+  RotateCcw,
   Search,
   Settings,
   Smartphone,
+  Square,
   SquareTerminal,
   Tags,
   Undo2,
@@ -73,11 +81,11 @@ import hz from "../app/css/Horizon.module.css";
 import btn from "../app/css/Button.module.css";
 import pr from "./docs/PullRequestDemo.module.css";
 
-export type Mode = "loop" | "undo" | "pr" | "review" | "cockpit";
+export type Mode = "loop" | "undo" | "pr" | "review" | "debug" | "cockpit";
 type Session = "work" | "need" | "done";
 
-const LOOP: Record<Mode, number> = { loop: 24, undo: 14, pr: 13, review: 14, cockpit: 16 };
-const STILL: Record<Mode, number> = { loop: 16.4, undo: 9, pr: 7, review: 10.4, cockpit: 8 };
+const LOOP: Record<Mode, number> = { loop: 24, undo: 14, pr: 13, review: 14, debug: 15, cockpit: 16 };
+const STILL: Record<Mode, number> = { loop: 16.4, undo: 9, pr: 7, review: 10.4, debug: 4, cockpit: 8 };
 const AMBER = "217 164 104";
 const EASE = "cubic-bezier(.2,.8,.2,1)";
 
@@ -230,6 +238,8 @@ export default function ToriWindow(props: {
   const isUndo = () => mode() === "undo";
   const isPr = () => mode() === "pr";
   const isReview = () => mode() === "review";
+  const isDebug = () => mode() === "debug";
+  const dbgOnChat = () => isDebug() && at(5.1, 9.8);
   const isCockpit = () => mode() === "cockpit";
   const at = (a: number, b = Infinity) => t() >= a && t() < b;
 
@@ -310,6 +320,13 @@ export default function ToriWindow(props: {
       return [
         { key: "d", label: "sign.ts (PR #482)", diff: true, selected: true },
         { key: "c", label: "Sign webhook payloads", agent: "claude", status: "idle", selected: false },
+      ] as T[];
+    }
+    if (isDebug()) {
+      return [
+        { key: "f", label: "deliver.ts", file: "ts", selected: !dbgOnChat() },
+        { key: "c", label: "Retry failed deliveries", agent: "claude", status: at(6.4, 9) ? "working" : "idle", selected: dbgOnChat() },
+        { key: "t", label: "deliver.test.ts", file: "ts", selected: false },
       ] as T[];
     }
     if (isReview()) {
@@ -570,78 +587,86 @@ export default function ToriWindow(props: {
         <span class={w.modeBtn}>
           <Icon icon={Search} size={16} />
         </span>
-        <span class={w.modeBtn} data-on={isPr() ? "false" : "true"}>
+        <span class={w.modeBtn} data-on={isPr() || isDebug() ? "false" : "true"}>
           <Icon icon={GitBranch} size={16} />
-          <Show when={!isPr()}>
+          <Show when={!isPr() && !isDebug()}>
             <span class={w.modeCount}>{changeFiles().length}</span>
           </Show>
         </span>
         <span class={w.modeBtn} data-on={isPr() ? "true" : "false"}>
           <Icon icon={GitPullRequest} size={16} />
         </span>
+        <span class={w.modeBtn} data-on={isDebug() ? "true" : "false"}>
+          <Icon icon={Bug} size={16} />
+          <Show when={isDebug() && dbgLive()}>
+            <span class={w.modeLive} data-state={dbgState()} />
+          </Show>
+        </span>
       </div>
-      <Show when={!isPr()} fallback={<PrPanel />}>
-        <div class={`${review.reviewPanel} ${w.reviewWrap}`}>
-          <div class={review.topBar}>
-            <span class={review.title}>Source Control</span>
-            <span class={review.spacer} />
-            <Button size="sm" variant="ghost" icon={<Icon icon={RefreshCw} />} />
-            <Button size="sm" variant="ghost" icon={<Icon icon={Ellipsis} />} />
-          </div>
-          <div class={review.branchBar}>
-            <Icon icon={GitBranch} />
-            <span class={review.branchName}>{onWebhooks() ? "feat/webhooks" : "fix/rate-limit"}</span>
-            <span class={review.spacer} />
-            <span class={review.aheadPill}>{"\u2191"}2</span>
-            <Button size="sm" variant="ghost" icon={<Icon icon={GitPullRequest} />} />
-          </div>
-          <Show when={isReview()}>
-            <div class={review.commitCard}>
-              <div class={review.commitInput} style={{ "min-height": "20px" }}>
-                <Show when={commitMsg()} fallback={<span class={w.placeholder}>Message</span>}>
-                  {commitMsg()}
-                  <Show when={commitTyping()}>
-                    <span class={w.caretBlink} />
+      <Show when={!isDebug()} fallback={<DebugPanel />}>
+        <Show when={!isPr()} fallback={<PrPanel />}>
+          <div class={`${review.reviewPanel} ${w.reviewWrap}`}>
+            <div class={review.topBar}>
+              <span class={review.title}>Source Control</span>
+              <span class={review.spacer} />
+              <Button size="sm" variant="ghost" icon={<Icon icon={RefreshCw} />} />
+              <Button size="sm" variant="ghost" icon={<Icon icon={Ellipsis} />} />
+            </div>
+            <div class={review.branchBar}>
+              <Icon icon={GitBranch} />
+              <span class={review.branchName}>{onWebhooks() ? "feat/webhooks" : "fix/rate-limit"}</span>
+              <span class={review.spacer} />
+              <span class={review.aheadPill}>{"\u2191"}2</span>
+              <Button size="sm" variant="ghost" icon={<Icon icon={GitPullRequest} />} />
+            </div>
+            <Show when={isReview()}>
+              <div class={review.commitCard}>
+                <div class={review.commitInput} style={{ "min-height": "20px" }}>
+                  <Show when={commitMsg()} fallback={<span class={w.placeholder}>Message</span>}>
+                    {commitMsg()}
+                    <Show when={commitTyping()}>
+                      <span class={w.caretBlink} />
+                    </Show>
                   </Show>
-                </Show>
-              </div>
-              <div class={review.commitFooter}>
-                <span class={review.commitStats}>5 files</span>
-                <div class={review.commitActions}>
-                  <Button size="sm" variant="ghost" pressed={at(9.6, 9.9)}>
-                    AI Draft
-                  </Button>
-                  <span class={review.splitButton}>
-                    <Button size="sm" variant="primary" class={review.commitButton}>
-                      Commit
+                </div>
+                <div class={review.commitFooter}>
+                  <span class={review.commitStats}>5 files</span>
+                  <div class={review.commitActions}>
+                    <Button size="sm" variant="ghost" pressed={at(9.6, 9.9)}>
+                      AI Draft
                     </Button>
-                  </span>
+                    <span class={review.splitButton}>
+                      <Button size="sm" variant="primary" class={review.commitButton}>
+                        Commit
+                      </Button>
+                    </span>
+                  </div>
                 </div>
               </div>
+            </Show>
+            <div class={review.changesBody} style={{ flex: "1", "min-height": "0", display: "flex", "flex-direction": "column" }}>
+              <div style={{ flex: isUndo() ? "0 0 auto" : "1", "min-height": "0", overflow: "hidden" }}>
+                <Show when={isReview()}>
+                  <div class={review.groupHeader}>Changes</div>
+                </Show>
+                <Index each={changeFiles()}>
+                  {(f) => (
+                    <div
+                      class={`${review.reviewRow} ${isLoop() && f().from != null && t() < f().from! + 1.6 ? w.fileRowPulse : ""}`}
+                      style={{ opacity: reverted() && (f().turn ?? 0) > 3 ? 0.25 : 1, transition: "opacity .42s" }}
+                    >
+                      <FileGlyph />
+                      <span class={review.reviewName}>{f().name}</span>
+                      <span class={review.reviewDir}>{f().dir}</span>
+                      <span class={`${review.reviewStatus} ${f().st === "A" ? review.added ?? "" : review.modified ?? ""}`}>{f().st}</span>
+                    </div>
+                  )}
+                </Index>
+              </div>
+              <HistorySection />
             </div>
-          </Show>
-          <div class={review.changesBody} style={{ flex: "1", "min-height": "0", display: "flex", "flex-direction": "column" }}>
-            <div style={{ flex: isUndo() ? "0 0 auto" : "1", "min-height": "0", overflow: "hidden" }}>
-              <Show when={isReview()}>
-                <div class={review.groupHeader}>Changes</div>
-              </Show>
-              <Index each={changeFiles()}>
-                {(f) => (
-                  <div
-                    class={`${review.reviewRow} ${isLoop() && f().from != null && t() < f().from! + 1.6 ? w.fileRowPulse : ""}`}
-                    style={{ opacity: reverted() && (f().turn ?? 0) > 3 ? 0.25 : 1, transition: "opacity .42s" }}
-                  >
-                    <FileGlyph />
-                    <span class={review.reviewName}>{f().name}</span>
-                    <span class={review.reviewDir}>{f().dir}</span>
-                    <span class={`${review.reviewStatus} ${f().st === "A" ? review.added ?? "" : review.modified ?? ""}`}>{f().st}</span>
-                  </div>
-                )}
-              </Index>
-            </div>
-            <HistorySection />
           </div>
-        </div>
+        </Show>
       </Show>
     </div>
   );
@@ -1027,6 +1052,299 @@ export default function ToriWindow(props: {
       </div>
     </div>
   );
+
+  /* ---- debug: a breakpoint, the paused frame, and Ask ---- */
+  const dbgBp = () => t() >= 1.2;
+  const dbgPaused = () => at(2.9, 9.8);
+  const dbgFixed = () => t() >= 8.4;
+  const dbgRerun = () => t() >= 10.6;
+  const dbgState = (): "idle" | "running" | "paused" | "finished" =>
+    t() >= 11.6 ? "finished" : at(2, 2.9) || at(10.6, 11.6) ? "running" : dbgPaused() ? "paused" : "idle";
+  const dbgLive = () => dbgState() !== "idle";
+  type CodeLine = { k: " " | "+"; bp?: boolean; text: JSX.Element; hint?: string };
+  const dbgLines = createMemo<CodeLine[]>(() => {
+    const paused = dbgPaused();
+    const fix: CodeLine[] = dbgFixed()
+      ? [
+          { k: "+", text: <>{"    "}<span class={w.kw}>if</span> (res.status {"<"} <span class={w.num}>500</span> && res.status !== <span class={w.num}>429</span>) {"{"}</> },
+          { k: "+", text: <>{"      "}<span class={w.kw}>throw new</span> <span class={w.type}>DeliveryError</span>(hook, res.status);</> },
+          { k: "+", text: <>{"    }"}</> },
+        ]
+      : [];
+    return [
+      { k: " ", text: <><span class={w.kw}>import</span> {"{ "}<span class={w.var}>send</span>{" }"} <span class={w.kw}>from</span> <span class={w.str}>"./send"</span>;</> },
+      { k: " ", text: <><span class={w.kw}>import</span> {"{ "}<span class={w.var}>sleep</span>{" }"} <span class={w.kw}>from</span> <span class={w.str}>"../util/sleep"</span>;</> },
+      { k: " ", text: <><span class={w.kw}>import type</span> {"{ "}<span class={w.type}>Hook</span>{" }"} <span class={w.kw}>from</span> <span class={w.str}>"./types"</span>;</> },
+      { k: " ", text: <></> },
+      { k: " ", text: <><span class={w.kw}>const</span> <span class={w.cst}>MAX_ATTEMPTS</span> = <span class={w.num}>5</span>;</> },
+      { k: " ", text: <></> },
+      { k: " ", text: <><span class={w.kw}>export async function</span> <span class={w.fn}>deliver</span>(hook: <span class={w.type}>Hook</span>, body: <span class={w.type}>string</span>) {"{"}</> },
+      { k: " ", text: <>{"  "}<span class={w.kw}>let</span> <span class={w.var}>attempt</span> = <span class={w.num}>0</span>;</>, hint: paused ? "attempt = 3" : undefined },
+      { k: " ", text: <>{"  "}<span class={w.kw}>let</span> <span class={w.var}>delay</span> = <span class={w.num}>200</span>;</>, hint: paused ? "delay = 800" : undefined },
+      { k: " ", text: <>{"  "}<span class={w.kw}>while</span> (attempt++ {"<"} <span class={w.cst}>MAX_ATTEMPTS</span>) {"{"}</> },
+      { k: " ", text: <>{"    "}<span class={w.kw}>const</span> <span class={w.var}>res</span> = <span class={w.kw}>await</span> <span class={w.fn}>send</span>(hook, body);</>, hint: paused ? "res = Response {\u2026}" : undefined },
+      { k: " ", text: <>{"    "}<span class={w.kw}>if</span> (res.ok) <span class={w.kw}>return</span> res;</> },
+      ...fix,
+      { k: " ", bp: true, text: <>{"    "}<span class={w.kw}>await</span> <span class={w.fn}>sleep</span>(delay);</> },
+      { k: " ", text: <>{"    "}delay *= <span class={w.num}>2</span>;</> },
+      { k: " ", text: <>{"  }"}</> },
+      { k: " ", text: <>{"  "}<span class={w.kw}>throw new</span> <span class={w.type}>DeliveryError</span>(hook, <span class={w.str}>"gave up"</span>);</> },
+      { k: " ", text: <>{"}"}</> },
+    ];
+  });
+  const dbgBpLine = () => (dbgFixed() ? 16 : 13);
+
+  const DebugEditor = () => (
+    <div class={w.diff} style={{ position: "relative" }}>
+      <div class={w.fileBar}>
+        <span class="dim">src</span>
+        <Icon icon={ChevronRight} size={12} class="dim" />
+        <span class="dim">webhooks</span>
+        <Icon icon={ChevronRight} size={12} class="dim" />
+        <FileGlyph />
+        <span style={{ "font-weight": 600 }}>deliver.ts</span>
+        <Show when={dbgFixed()}>
+          <span class={`${w.tag} ${w.in}`}>EDITED BY CLAUDE</span>
+        </Show>
+      </div>
+      <div class={w.code2}>
+        <Index each={dbgLines()}>
+          {(l, i) => (
+            <div
+              class={`${w.codeLine} ${l().k === "+" ? w.in : ""}`}
+              data-k={l().k}
+              data-paused={dbgPaused() && l().bp ? "true" : "false"}
+            >
+              <span class={w.gutter}>
+                <Show when={l().bp && dbgBp()}>
+                  <span class={w.bp} />
+                </Show>
+                <Show when={!(l().bp && dbgBp())}>
+                  <span class={w.ln2}>{i + 1}</span>
+                </Show>
+              </span>
+              <span class={w.src}>
+                {l().text}
+                <Show when={l().hint}>
+                  <span class={`${w.inlineVal} ${w.in}`}>{l().hint}</span>
+                </Show>
+              </span>
+            </div>
+          )}
+        </Index>
+      </div>
+      <Show when={at(3.4, 4.2)}>
+        <div class={`${w.dataTip} ${w.in}`}>
+          <div class={w.dbgVar}>
+            <span class={w.twisty}>{"\u25be"}</span>
+            <span class={w.dbgKey}>res</span>
+            <span class={w.dbgVal}>Response</span>
+          </div>
+          <For each={[["status", "401"], ["statusText", '"Unauthorized"'], ["ok", "false"], ["url", '"https://hooli.dev/hooks"']]}>
+            {([k, v]) => (
+              <div class={w.dbgVar} style={{ "padding-left": "28px" }}>
+                <span class={w.dbgKey}>{k}</span>
+                <span class={w.dbgVal}>{v}</span>
+              </div>
+            )}
+          </For>
+        </div>
+      </Show>
+      <Show when={at(1.7, 2.9)}>
+        <div class={`${w.launch} ${w.in}`}>
+          <kbd>F5</kbd>
+          <span>Debug</span>
+          <b>deliver.test.ts</b>
+          <span class="dim">Node</span>
+        </div>
+      </Show>
+      <Show when={t() >= 11.6}>
+        <div class={`${w.passBar} ${w.in}`}>
+          <Icon icon={CircleCheck} size={14} />
+          1 test passed. A 401 is thrown once, not retried.
+        </div>
+      </Show>
+    </div>
+  );
+
+  const ASK = "deliver.test.ts is paused on breakpoint in deliver at @src/webhooks/deliver.ts#L13. Stack: deliver (deliver.ts:13) < drain (queue.ts:31) < onTick (worker.ts:9). Local: attempt = 3, delay = 800, res = Response { status: 401 }.";
+  const ADD = " Why retry a 401?";
+  const added = () => ADD.slice(0, Math.floor(Math.min(1, Math.max(0, (t() - 5.5) / 0.8)) * ADD.length));
+  const DebugChat = () => (
+    <div class={w.chat}>
+      <StatusLine state={at(6.4, 9) ? "working" : "idle"} secs={Math.max(1, Math.round((t() - 6.4) * 1.5))} files={2} ctx="204k/1.0M (20%)" pct={20} />
+      <div class={w.transcript}>
+        <div class={w.user}>Retry failed webhook deliveries with backoff, up to five attempts.</div>
+        <ToolRow name="Edit" edit arg="src/webhooks/deliver.ts" add={14} del={2} />
+        <div class={w.prose}>Deliveries now retry with a doubling delay, from 200ms, and give up after five attempts.</div>
+        <Show when={t() >= 6.4}>
+          <div class={`${w.user} ${w.in}`}>
+            <span class={w.userRef}>@src/webhooks/deliver.ts#L13</span>
+            Paused on breakpoint in deliver. Stack: deliver {"<"} drain {"<"} onTick. Local: attempt = 3, delay = 800, res = Response {"{ status: 401 }"}. Why retry a 401?
+          </div>
+        </Show>
+        <Show when={at(6.8, 7.6)}>
+          <div class={`${w.thinking} ${w.in}`}>
+            <Icon icon={Brain} size={14} />
+            Thinking
+          </div>
+        </Show>
+        <Show when={t() >= 7.6}>
+          <div class={`${w.prose} ${w.in}`}>
+            It retries every failure. A <span class={w.code}>401</span> means the secret is wrong, and five tries will not fix that. Only 5xx and{" "}
+            <span class={w.code}>429</span> should retry.
+          </div>
+        </Show>
+        <Show when={t() >= 8.4}>
+          <ToolRow class={w.in} name="Edit" edit arg="src/webhooks/deliver.ts" add={3} del={0} />
+        </Show>
+      </div>
+      <Composer
+        placeholder={"Reply, or @ a file \u00b7 / for commands"}
+        running={at(6.4, 9)}
+        agent="claude"
+        text={
+          at(5.1, 6.4) ? (
+            <span class={w.askText}>
+              {ASK}
+              {added()}
+              <span class={w.caretBlink} />
+            </span>
+          ) : undefined
+        }
+      />
+    </div>
+  );
+
+  const DbgCtl = (p: { icon: typeof Bug; off?: boolean }) => (
+    <span class={w.dbgCtl} data-off={p.off ? "true" : "false"}>
+      <Icon icon={p.icon} size={14} />
+    </span>
+  );
+  const DebugPanel = () => (
+    <div class={w.dbgPanel}>
+      <div class={review.topBar}>
+        <span class={review.title}>Debug</span>
+        <span class={review.spacer} />
+        <Button size="sm" variant="ghost" icon={<Icon icon={Ellipsis} />} />
+      </div>
+      <Show
+        when={dbgLive()}
+        fallback={
+          <div class={w.dbgEmpty}>
+            Nothing is being debugged. Press <kbd>F5</kbd> to run this file, or a test, under the debugger.
+          </div>
+        }
+      >
+        <div class={w.dbgControls}>
+          <DbgCtl icon={dbgPaused() ? Play : Pause} off={dbgState() === "finished"} />
+          <DbgCtl icon={ArrowRightToLine} off={!dbgPaused()} />
+          <DbgCtl icon={ArrowDownToLine} off={!dbgPaused()} />
+          <DbgCtl icon={ArrowUpFromLine} off={!dbgPaused()} />
+          <DbgCtl icon={RotateCcw} />
+          <DbgCtl icon={Square} off={dbgState() === "finished"} />
+        </div>
+        <div class={w.dbgSession}>
+          <span class={w.dbgDot} data-state={dbgState()} />
+          <span class={w.dbgName}>deliver.test.ts</span>
+          <span class={w.dbgWhere}>{dbgState() === "paused" ? "Paused" : dbgState() === "running" ? "Running" : "Finished"}</span>
+        </div>
+        <Show when={dbgPaused()}>
+          <div class={`${w.dbgSection} ${w.in}`}>
+            <div class={w.dbgHead}>deliver.test.ts {"\u00b7"} paused on breakpoint</div>
+            <div class={w.dbgFrame} data-on="true">
+              <span class={w.dbgName}>deliver</span>
+              <span class={w.dbgWhere}>deliver.ts:{dbgBpLine()}</span>
+              <span class={w.dbgAsk} data-down={at(4.7, 5) ? "true" : "false"}>
+                Ask
+              </span>
+            </div>
+            <div class={w.dbgFrame}>
+              <span class={w.dbgName}>drain</span>
+              <span class={w.dbgWhere}>queue.ts:31</span>
+            </div>
+            <div class={w.dbgFrame}>
+              <span class={w.dbgName}>onTick</span>
+              <span class={w.dbgWhere}>worker.ts:9</span>
+            </div>
+          </div>
+          <div class={`${w.dbgSection} ${w.in}`}>
+            <div class={w.dbgHead}>
+              Variables
+              <span class={w.dbgAskGhost}>Ask</span>
+            </div>
+            <div class={w.dbgVar}>
+              <span class={w.twisty}>{"\u25be"}</span>
+              <span class={w.dbgScope}>Local</span>
+            </div>
+            <For
+              each={[
+                ["attempt", "3"],
+                ["delay", "800"],
+                ["res", "Response { status: 401 }"],
+                ["hook", '{ url: "https://hooli.dev/hooks" }'],
+              ]}
+            >
+              {([k, v]) => (
+                <div class={w.dbgVar} data-hot={k === "res" ? "true" : "false"}>
+                  <span class={w.twisty}>{k === "res" || k === "hook" ? "\u25b8" : ""}</span>
+                  <span class={w.dbgKey}>{k}</span>
+                  <span class={w.dbgVal}>{v}</span>
+                </div>
+              )}
+            </For>
+            <div class={w.dbgVar}>
+              <span class={w.twisty}>{"\u25b8"}</span>
+              <span class={w.dbgScope}>Closure</span>
+            </div>
+          </div>
+        </Show>
+        <div class={`${w.dbgSection} ${w.dbgWatch}`}>
+          <div class={w.dbgHead}>Watch</div>
+          <div class={w.dbgVar}>
+            <span class={w.twisty} />
+            <span class={w.dbgKey}>res.status</span>
+            <span class={w.dbgVal}>{dbgPaused() ? "401" : "not running"}</span>
+          </div>
+        </div>
+        <div class={w.dbgConsole}>
+          <div>
+            <i>deliver.test.ts</i>POST /hooks {"->"} 401
+          </div>
+          <Show when={t() >= 2.4 && !dbgRerun()}>
+            <div>
+              <i>deliver.test.ts</i>POST /hooks {"->"} 401
+            </div>
+          </Show>
+          <Show when={dbgPaused() && !dbgRerun()}>
+            <div>
+              <i>deliver.test.ts</i>retrying in 800ms
+            </div>
+          </Show>
+          <Show when={t() >= 11.6}>
+            <div class={w.in}>
+              <i>deliver.test.ts</i>threw DeliveryError(401)
+            </div>
+            <div class={`${w.ok} ${w.in}`}>
+              <i>deliver.test.ts</i>1 passed (412ms)
+            </div>
+          </Show>
+        </div>
+        <div class={w.dbgRepl}>
+          <span>{">"}</span>
+          <span class="dim">Evaluate in the paused frame</span>
+        </div>
+      </Show>
+    </div>
+  );
+
+  const dbgCursor = (): { x: number; y: number; down: boolean } | null => {
+    if (!isDebug()) return null;
+    if (t() < 1.6) return at(0.2) ? { x: 303, y: 390, down: at(1, 1.2) } : { x: 560, y: 640, down: false };
+    if (at(2.6, 5.1)) return at(4.1) ? { x: 1132, y: 232, down: at(4.7, 5) } : at(2.9) ? { x: 420, y: 356, down: false } : { x: 640, y: 560, down: false };
+    if (at(5.5, 6.6)) return { x: 836, y: 708, down: at(6.1, 6.4) };
+    return null;
+  };
 
   /* ---- review: diff tab and the chat it feeds ---- */
   const CM = "Use a constant-time compare in verify";
@@ -1543,6 +1861,12 @@ export default function ToriWindow(props: {
                         <Match when={isPr()}>
                           <PrDiff />
                         </Match>
+                        <Match when={dbgOnChat()}>
+                          <DebugChat />
+                        </Match>
+                        <Match when={isDebug()}>
+                          <DebugEditor />
+                        </Match>
                         <Match when={isReview() && at(5.2, 9.2)}>
                           <ReviewChat />
                         </Match>
@@ -1576,6 +1900,8 @@ export default function ToriWindow(props: {
           <Show when={chaos()}>
             <Chaos />
           </Show>
+
+          <Show when={dbgCursor()}>{(c) => <Cursor x={c().x} y={c().y} down={c().down} />}</Show>
         </div>
       </div>
     </div>

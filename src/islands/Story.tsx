@@ -14,20 +14,9 @@ type Step = {
   region: string;
 };
 
-// Undo, Pull request and Review crop to the work card: the sidebar has nothing to add there.
+// Undo, Pull request, Review and Debug crop to the work card: the sidebar has nothing to add there.
 const CARD = "280,44,920,696";
 const STEPS: Step[] = [
-  {
-    bar: "Status",
-    color: "var(--need)",
-    glow: "rgba(251,113,133,.55)",
-    soft: "rgba(251,113,133,.16)",
-    title: "Know the moment one is waiting.",
-    body: "A permission prompt turns the branch rose, rolls up to its project, and fires one notification. Click it, allow, and it is back to work.",
-    facts: ["One notification", "\u2318\u21e7A jumps there", "Menu bar and Dock agree"],
-    mode: "loop",
-    region: "0,0,1200,740",
-  },
   {
     bar: "Undo",
     color: "var(--link)",
@@ -59,6 +48,17 @@ const STEPS: Step[] = [
     body: "A real editor and a Changes panel that stages, commits and opens the PR. A hunk comment lands in the session's composer with the lines attached.",
     facts: ["Stage by hunk or line", "AI drafted commit message", "Three pane merge"],
     mode: "review",
+    region: CARD,
+  },
+  {
+    bar: "Debug",
+    color: "var(--need)",
+    glow: "rgba(251,113,133,.55)",
+    soft: "rgba(251,113,133,.16)",
+    title: "Debug what the agent wrote.",
+    body: "Set a breakpoint and press F5. Paused on a bad value, Ask puts the frame, the stack and the variables in the chat, and the agent fixes it from there.",
+    facts: ["Breakpoints on F5", "Ask sends the frame", "JS, Python, Go, Rust, C"],
+    mode: "debug",
     region: CARD,
   },
 ];
