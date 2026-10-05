@@ -1,7 +1,36 @@
 ---
+import { getCollection, render } from "astro:content";
 import DocsLayout from "../layouts/DocsLayout.astro";
+
+const entries = (await getCollection("changelog")).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf() || b.data.patch - a.data.patch,
+);
+const releases = await Promise.all(entries.map(async (entry) => ({ entry, Content: (await render(entry)).Content })));
+const headings = entries.map((e) => ({ depth: 2, slug: e.id, text: e.data.version }));
+const day = new Intl.DateTimeFormat("en", { dateStyle: "long", timeZone: "UTC" });
 ---
 
-<DocsLayout title="Changelog" description="What changed in each Tori release.">
-  <p>Placeholder. Release notes will be read from the tori repo's CHANGELOG.md.</p>
+<DocsLayout title="Changelog" description="What changed in each Tori release." headings={headings}>
+  {
+    releases.map(({ entry, Content }) => (
+      <>
+        <h2 id={entry.id}>{entry.data.version}</h2>
+        <p class="date">
+          <time datetime={entry.data.date.toISOString().slice(0, 10)}>{day.format(entry.data.date)}</time>
+        </p>
+        <Content />
+      </>
+    ))
+  }
 </DocsLayout>
+
+<style>
+  h2 + .date {
+    margin-top: 0.4rem;
+    font-family: var(--d-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--d-muted);
+  }
+</style>
