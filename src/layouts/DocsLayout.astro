@@ -20,6 +20,7 @@ interface Props {
 const { title, description, headings = [] } = Astro.props;
 const docTitle = Astro.url.pathname.replace(/\/?$/, "/") === "/docs/" ? "Tori docs" : `${title} | Tori docs`;
 const toc = headings.some((h) => h.depth === 2 || h.depth === 3);
+const ogImage = new URL("/og.png", Astro.site).href;
 
 // Only the page column cross-fades. The header and sidebar are carried over
 // as they are, so a click never redraws them.
@@ -38,6 +39,10 @@ const swap = {
     {description && <meta name="description" content={description} />}
     <meta property="og:title" content={docTitle} />
     {description && <meta property="og:description" content={description} />}
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1280" />
+    <meta property="og:image:height" content="640" />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <script is:inline>
       // One stored choice for the docs and the home page. Applied to the next

@@ -4,6 +4,7 @@ import mdx from "@astrojs/mdx";
 import solid from "@astrojs/solid-js";
 
 export default defineConfig({
+  site: "https://gettori.app",
   prefetch: { prefetchAll: true, defaultStrategy: "hover" },
   integrations: [
     // Before mdx, which it has to hand its code blocks to.
