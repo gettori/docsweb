@@ -36,26 +36,93 @@ This only decides where a *new* tab lands; tabs already open stay put.
 ## The tab strip
 
 The strip never scrolls. Once tabs stop fitting, the rest fold into a `+N`
-dropdown rather than becoming scrollable. Right clicking a tab offers moving
-it to another pane, pinning a pane to only accept one kind of tab, splitting,
-closing others, closing to the right, and file specific actions like
-revealing it in Finder or opening its local or file history.
+dropdown rather than becoming scrollable. Every tab carries a leading glyph
+for its kind, and a chat tab that is working breathes in its agent's own
+colour.
+
+Right-click a tab for:
+
+- **Move to pane 2** (and so on) for every other pane, and **Split the pane to
+  the right** or **Split the pane below**.
+- **Only file tabs in this pane** (or chat, terminal...), which locks the pane
+  to that kind of tab so new tabs of other kinds go elsewhere. **Let this pane
+  take any tab** undoes it.
+- For a file: **Close others**, **Close to the right** and **Close saved**,
+  acting on that pane's own strip, then **Copy path**, **Copy relative path**,
+  **Reveal in Finder**, **File history** and **Local history**. See
+  [File and local history](/docs/editor/editor/#file-and-local-history).
+
+Middle click closes a tab. A tab with unsaved edits still asks first.
 
 `Ctrl+Tab` cycles the focused pane's tabs, `Cmd+1` through `Cmd+9` jump to a
-specific tab in it.
+specific tab in it, `Cmd+W` closes the focused tab and `Cmd+Shift+T` reopens
+the one you just closed. A reopened file gets its undo history and its folds
+back.
+
+### Preview tabs
+
+A single click on a file in the Files tree opens it as a preview: one tab
+that the next single click replaces, so browsing does not leave a trail of
+tabs. A double click on the row or on the tab keeps it, and so does your
+first edit. The files of a pull request open the same way.
+
+### The launch button
+
+The `+` at the end of a strip opens a new tab: your shell first, then each
+agent you have turned on. On a session's tab the same button's menu has
+**Continue this session in terminal** and **Continue this session in chat**
+(see [Chat or terminal](/docs/agents/starting-a-chat/#chat-or-terminal)), and the
+**Session history** dropdown beside it lists every session run in that
+folder.
+
+## The right panel
+
+The right side of the window holds the panels about the place you are working
+in, one at a time, chosen from the icon strip at its top:
+
+| Panel | What it is |
+| --- | --- |
+| **Files** | The file tree, with Scripts, Outline and TODOs under it. See [Files and the explorer](/docs/editor/files/) |
+| **Changes** | Source control. See [The Changes panel](/docs/git/changes-panel/) |
+| **Pull requests** | The branch's pull request. See [Pull requests and issues](/docs/git/pull-requests-and-issues/) |
+| **Problems** | Every diagnostic from the language servers and linters. See [Language tooling](/docs/editor/tooling/) |
+| **Calls** | Who calls the function under the caret, and what it calls. See [Language servers](/docs/editor/language-servers/) |
+| **Search** | Project search. See [Search and the omnibox](/docs/workspace/search-and-shortcuts/) |
+| **Debug** | The debugger. See [Debuggers](/docs/editor/debuggers/) |
+| **Session** | Every file the selected session touched: created (C), edited (E) or deleted (D), and with **Show reads** the files it only read (R). Click one for its diff. A badge marks a file another running session also touched |
+
+Each panel is also a **Show ...** command in the palette, such as **Show
+Changes**. Drag the divider to resize the panel, and `Cmd+Opt+B` hides the file
+tree side altogether. A count on an icon, such as the number of changed files,
+shows while another panel is in front.
 
 ## The dock
 
-A second strip at the bottom of the window, separate from the pane tree, for
-one-off command tabs: clones, bootstraps, installs, sign-ins. `Cmd+Ctrl+J`
-shows or hides it.
+A strip at the bottom of the window for one-off command tabs: clones,
+installs, sign-ins and plain shells. See
+[The dock](/docs/editor/terminal/#the-dock).
 
 ## Closing and reopening
+
+Tori asks before quitting, and the red traffic light closes the window
+rather than quitting the app.
+
+On the next launch every workspace comes back with its tabs in their order
+and the same tab in front. Restored tabs are inert. No
+shell and no agent process starts until you click the tab, so reopening
+Tori with forty tabs does not start forty processes. When you do reach for
+one, a shell tab gets a fresh shell and a session tab resumes its
+conversation. Terminal scrollback is not restored, and a shell opened in
+the dock does not come back. The dock keeps its height and whether it was
+open.
 
 Closing Tori with unsaved editor buffers does not prompt you to save or
 discard; it stashes them, undo history included, and restores them on next
 launch. Turn this off with **Keep unsaved edits across a quit**, in Settings
 > Editor.
+
+Each editor pane is isolated from the others: if one fails to draw, it shows
+a **Reopen** button and the rest of the window carries on.
 
 ## Dragging things around
 

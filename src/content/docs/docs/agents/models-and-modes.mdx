@@ -1,0 +1,167 @@
+---
+title: Models, effort and modes
+description: Pick the agent, account and model a chat runs on, set the thinking effort, and choose how much the agent may do without asking.
+---
+
+import Aside from "../../../../components/docs/Aside.astro";
+import Steps from "../../../../components/docs/Steps.astro";
+
+Three pills on the composer's bar decide what the next turn runs under, left
+to right:
+
+1. **The model pill**, with the agent's mark. It names the model, and the
+   account too once an agent has more than one, for example **Opus / work**.
+2. **The thinking effort pill**, with a brain icon. Only shown when the
+   selected model has effort levels.
+3. **The permission mode pill**, with a shield icon: Ask, Accept edits, Plan
+   and so on.
+
+After them come any extra switches the agent itself publishes, and last
+Tori's own **Follow live edits** toggle.
+
+## Pick the agent and model
+
+Click the model pill to open the model palette: agents on the left, the
+selected agent's models on the right, and one filter box over both.
+
+<Steps>
+
+1. Click the model pill.
+2. Type to filter. The filter matches agent names and model names at once.
+3. Use `ArrowUp` and `ArrowDown` to move, and `Tab` to switch between the
+   agents list and the models list.
+4. Press `Enter`, or click a model, to pick it.
+
+</Steps>
+
+`Escape` or a click outside closes the palette without changing anything.
+`Cmd+,` in the palette, or the **agent settings** button in its footer,
+opens the highlighted agent's page in Settings.
+
+### Agents and accounts
+
+An agent signed in with two or more accounts shows one row per account, such
+as **Claude / work** and **Claude / personal**, because each account has its
+own list of models. The row's header shows the agent's version and how many
+models it offers, and the **Check again** button asks that account for its
+models again, which is how a newly released model shows up.
+
+A row that cannot be used says why instead of a count, and opens the agent's
+settings when you pick it:
+
+| Row says | What to do |
+| --- | --- |
+| **Not installed** | Install the agent from Settings > Agents |
+| **Signed out** | Sign in to that account from Settings > Agents |
+| **Chat needs npx** | Install Node.js so `npx` is on your login shell's PATH. Codex and Pi chat through it |
+| **probing** | Tori is asking the agent for its models; wait a moment |
+
+Agents you turned off in Settings are not listed at all, and neither are the
+agents and accounts a project does not allow (see
+[Limiting agents per project](/docs/agents/accounts-and-usage/#limiting-agents-per-project)).
+
+### Before and after the first message
+
+The palette works differently depending on whether the chat has started:
+
+- **A new chat (a draft)** lists every agent and account you can use. Picking a
+  model from another agent or account switches the draft to it. The mode and
+  effort you had picked go with the old agent, since the new one may not have
+  them.
+- **A running chat** is bound to the agent and account it started on, for its
+  whole life. The palette shows only that agent's models. To move a
+  conversation to another agent, start a new chat.
+
+A new draft opens on what this project last used: the same agent, account,
+model, effort and mode. A remembered model the agent no longer offers is
+dropped, and the draft opens on the agent's first model instead.
+
+### What the pill shows
+
+The pill shortens the model's name, so **Opus (1M context)** reads as **Opus**;
+hover it for the full name, the account and the model's description. Two rows
+that run the same model, such as Claude's **Default** and the model it stands
+for, show the same name. With no models known yet, the pill reads **No
+models**.
+
+## Set the thinking effort
+
+Some models take an effort level that trades speed for how long they think.
+For those, the effort pill appears after the model pill.
+
+Click it and pick a level. The levels come from the model itself, for example
+Low, Medium, High, Xhigh or Max. The first row, **Default**, sends no level at
+all and lets the agent use its own default; that is where every new chat
+starts. A level the model offers but cannot use right now is shown greyed with
+the reason.
+
+Switching to a model with no effort levels hides the pill.
+
+## Choose the permission mode
+
+The mode decides what the agent may do without asking you. Click the mode
+pill and pick one; hover a row for what it does. The list comes from the agent
+itself, so it differs between agents.
+
+Claude's modes:
+
+| Mode | What it does |
+| --- | --- |
+| **Ask** | The default. Prompts before anything risky: running commands, editing files |
+| **Accept edits** | File edits go through without asking; commands still ask |
+| **Plan** | Plans only. Nothing is run or edited |
+| **Auto** | A model decides which prompts to allow or deny. Only on models that support it |
+| **Don't ask** | Never prompts. Anything not already allowed is denied |
+| **Bypass** | Never prompts and allows everything |
+
+The pill is tinted while **Bypass** is selected, because in that mode the
+agent runs every tool without asking.
+
+Other agents publish their own modes, with their own names. A mode the agent
+refuses stays in the list, greyed, with the agent's reason, rather than
+disappearing.
+
+A [permission prompt](/docs/agents/permissions-and-questions/) can also carry an
+offer from the agent to switch modes, such as **Switch to accepting edits**.
+
+## When a change takes effect
+
+A change to the model, effort or mode applies from the next turn. If a turn is
+running, it carries on under what it started with. While a change is waiting,
+its pill is tinted and one line above the composer says what is pending, for
+example **Model and permission mode apply from the next turn.**
+
+On Codex, OpenCode and the other agents that are not Claude, the agent
+confirms each switch. A switch it refuses or answers differently is not kept,
+so the pills always show what the agent actually agreed to.
+
+The model, effort and mode a chat ends up on are remembered for the project and
+for the tab. Reopen the chat, or open a new one in the same project, and they
+come back.
+
+<Aside type="note" title="Sessions started by other sessions">
+
+A chat opened by another chat, through `tori spawn` or the `session_spawn`
+tool, starts on the calling chat's mode and model unless it asks for others.
+
+</Aside>
+
+## Switches the agent publishes
+
+Anything else an agent offers that is not a model, effort or mode appears on
+the bar after the mode pill, exactly as the agent describes it: a menu for a
+choice, a switch for an on and off setting. Hover one for the agent's own
+description. Examples are a fast mode toggle and a collaboration mode.
+
+These change at once rather than at the next turn, and always show what the
+agent last reported.
+
+## Follow live edits
+
+The last control on the bar is Tori's, not the agent's. Turn it on and the
+editor opens whichever file was changed most recently, as sessions edit them,
+so you can watch the work land. It skips git's own files, build output and
+your own saves.
+
+It is one switch for every chat. It is not remembered across a relaunch,
+because it takes over the editor.

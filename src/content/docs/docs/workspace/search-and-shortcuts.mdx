@@ -1,16 +1,17 @@
 ---
-title: Search, the omnibox and shortcuts
-description: Finding files, running commands, and every default keyboard shortcut.
+title: Search and the omnibox
+description: Jump to any file, command, symbol or line from one box, search and replace across the project, and edit every match at once in a Search Editor.
 ---
 
+import Aside from "../../../../components/docs/Aside.astro";
 import Demo from "../../../../components/docs/Demo.astro";
+import Steps from "../../../../components/docs/Steps.astro";
 import OmniboxDemo from "../../../../islands/docs/OmniboxDemo";
 
 ## The omnibox
 
-One dialog, opened with `Cmd+P` (starts empty) or `Cmd+K` (starts in command
-mode), that switches what it searches by a prefix you type into the same
-box:
+One box finds everything. Press `Cmd+P` to open it on files, or `Cmd+K` to open
+it on commands. What it searches depends on the first character you type:
 
 <div class="key-grid">
 
@@ -21,7 +22,7 @@ box:
 | `@` | Symbols in the open file |
 | `#` | Symbols across the project |
 | `:` | A line number to jump to |
-| `?` | What the other prefixes do |
+| `?` | What the prefixes do |
 
 </div>
 
@@ -29,73 +30,125 @@ box:
   <OmniboxDemo client:visible />
 </Demo>
 
-File mode leads with recently visited files, then recent files, ranked by
-how often and how recently you open them, before the rest of the project.
-Inside a Topic, every member repo is searched at once, each result labeled
-with which repo it came from.
+Move with `ArrowUp` and `ArrowDown`, press `Enter` to go, `Escape` to close.
+Delete the prefix to switch back to files.
 
-Commands you cannot run right now, for example **Push to origin** with
-nothing to push, show up disabled with the reason underneath, rather than
-being hidden.
+### Files
 
-## Project-wide search
+With nothing typed, the list starts with the files you visited most recently,
+then files you open often, before the rest of the project. Typing matches
+loosely, so `sgnts` finds `src/sign.ts`. Inside a
+[Topic](/docs/workspace/topics/), every member is searched at once and each
+result names its repository.
 
-`Cmd+Shift+F` opens the Search panel: match case, whole word, and regular
-expression toggles, include and exclude glob fields, search only in open
-editors, and find and replace, one match, one file, or every match at once.
-Results can be viewed as a list or a tree, and a query can be saved for
-later. In a Topic, every member is searched together, one section per repo.
+### Commands
 
-## Shortcut sheet
+`>` lists every command in Tori: the git commands, layout, editor actions,
+the language server, the debugger, and a **Preferences:** entry for every
+setting, which opens Settings on that row. Each shows its shortcut when it has
+one. A command that cannot run right now, such as **Push to origin** with
+nothing to push, is shown greyed out with the reason under it rather than
+hidden.
 
-`Cmd+/` opens a sheet listing every shortcut below, grouped by what it does.
-There is currently no way to remap a shortcut; the sheet is the complete
-answer to what a key does, not a starting point for customizing it.
+### Symbols and lines
 
-## Every default shortcut
+`@` lists the functions, classes and other symbols in the file in front of
+you; `#` searches symbols across the project. Both come from the file's
+[language server](/docs/editor/language-servers/), so they need one running.
+`:42` jumps to line 42 of the open file.
 
-| Keys | Action |
+## Search across the project
+
+Press `Cmd+Shift+F`, or open **Search** in the right panel, to search every
+file in the project.
+
+<Steps>
+
+1. Type in **Search**. Results come as you type, grouped by file, with each
+   match's line.
+2. Narrow it with the toggles in the box: **Match Case**, **Match Whole Word**
+   and **Use Regular Expression**.
+3. Click **Toggle Search Details** for **files to include** and **files to
+   exclude** (globs such as `src/**/*.ts` or `**/*.test.ts`) and **Search Only
+   in Open Editors**.
+4. Click a match to open the file at that line.
+
+</Steps>
+
+The top bar has **Refresh**, **Open New Search Editor**, **Saved Searches**, a
+switch between a flat list and a tree, and more. Inside a Topic, the results
+are one section per member, and the member chips narrow the search to the
+members you pick.
+
+To search one folder, right-click it in the Files tree and choose **Find in
+Folder...**.
+
+### Work with results
+
+Right-click a match or a file in the results:
+
+| Item | What it does |
 | --- | --- |
-| `Cmd+P` | Go to a file, action, symbol or line |
-| `Cmd+K` | Run a command |
-| `Ctrl+-` | Jump back to where you were |
-| `Ctrl+Shift+-` | Jump forward again |
-| `Cmd+Shift+T` | Reopen the tab you just closed |
-| `Cmd+Shift+R` | Go to the pull request review form |
-| `Cmd+Shift+E` | Filter the sidebar |
-| `Cmd+/` | Show the shortcut sheet |
-| `Cmd+Shift+J` | Switch between Autopilot and Workspace |
-| `Cmd+L` | Show or hide the Autopilot overlay above Workspace |
-| `Cmd+=` / `Cmd+Shift+=` | Zoom in |
-| `Cmd+-` | Zoom out |
-| `Cmd+0` | Reset zoom |
-| `Cmd+R` | Reload the app |
-| `Cmd+B` | Show or hide the sidebar |
-| `Cmd+Opt+J` | Show or hide the terminal |
-| `Cmd+Ctrl+J` | Show or hide the dock |
-| `Cmd+Opt+E` | Show or hide the editor |
-| `Cmd+Opt+B` | Show or hide the file tree |
-| `Cmd+Opt+T` | Focus notifications; Tab cycles them, Escape dismisses the focused one |
-| `Cmd+Shift+F` | Search across the project |
-| `Cmd+F` | Search in the focused terminal |
-| `Cmd+J` | Focus the terminal |
-| `Cmd+Shift+B` | Run the last task again |
-| `Cmd+1` through `Cmd+9` | Jump to tab 1 through 9 in the focused pane |
-| `Ctrl+Tab` | Cycle the focused pane's tabs |
-| `Cmd+W` | Close the focused tab |
-| `Cmd+Shift+A` | Jump to the next session waiting for approval |
-| `Cmd+.` | Stop the running turn |
-| `Cmd+N` | New scratch buffer |
-| `Cmd+Opt+D` | Go to definition |
-| `Cmd+Opt+R` | Find references |
-| `Cmd+Opt+N` | Rename symbol |
-| `Cmd+Opt+A` | Show code actions |
-| `Shift+Opt+F` | Format document |
-| `Cmd+Opt+P` | Peek definition |
-| `F5` | Start debugging |
-| `Shift+F5` | Stop debugging |
-| `F9` | Toggle a breakpoint |
+| **Copy**, **Copy All** | Copies the match, or every result |
+| **Copy Path**, **Copy Relative Path** | Copies the file's path |
+| **Open to the Side** | Opens the file in the other pane |
+| **Reveal in Files** | Shows it in the Files tree |
+| **Restrict Search to Folder** | Adds the folder to **files to include** |
+| **Exclude Folder from Search** | Adds it to **files to exclude** |
+| **Replace**, **Replace All** | Replaces in this match or this file, with replace open |
+| **Dismiss** | Hides this result from the list |
 
-A number of other actions, save, close tab, go to line, the git commands,
-and every Settings entry, are reachable from the command palette without a
-default key.
+### Replace
+
+Click **Toggle Replace** to show the **Replace** field. **Preserve Case** keeps
+the case of each match, so replacing `user` with `account` turns `User` into
+`Account`. Then replace one match, one file, or **Replace All**.
+
+Replacing across files writes to disk and cannot be undone from Search, so
+Tori asks first, **Replace N occurrences**, and checks every file before
+writing: it has to be inside the project, unchanged since the search ran, and
+the replacements must not overlap. A file that fails any check is skipped
+whole and reported, never half replaced. An open file is reloaded afterwards,
+so a later save does not put the old text back.
+
+### Saved searches
+
+Click **Saved Searches** and **Name this search** to keep the current query.
+Saved searches can be renamed or deleted from the same list, and each opens in
+a Search Editor.
+
+## Search Editor
+
+A Search Editor opens the results as one editable buffer in an editor tab:
+every match with its file and line. Use it for a change too irregular for find
+and replace.
+
+<Steps>
+
+1. Click **Open New Search Editor** in the Search panel, or open a saved search.
+2. Search as usual. Use **More context lines**, **Fewer context lines** or
+   **Toggle Context Lines** for more or less of each file around the matches.
+3. Edit the lines in the buffer, with multiple cursors, find and replace or vim
+   keys.
+4. Press `Cmd+S`, or **Write every edited line back to the file it came
+   from**.
+
+</Steps>
+
+Each edit is checked against what its line said when the search ran. If the
+file has changed underneath, that edit is refused instead of landing on the
+wrong line. **Search Again** rebuilds the buffer from disk, and asks before
+dropping edits you have not written back.
+
+## Find in a file
+
+`Cmd+F` in an editor opens find over the editor's top right corner,
+`Cmd+Opt+F` opens find and replace. In a terminal, `Cmd+F` searches that
+terminal's output.
+
+<Aside type="tip" title="Every shortcut">
+
+`Cmd+/` shows the shortcut sheet. The full list is on
+[Keyboard shortcuts](/docs/workspace/keyboard-shortcuts/).
+
+</Aside>

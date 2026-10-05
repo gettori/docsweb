@@ -1,10 +1,11 @@
 ---
 title: Accounts and usage
-description: Signing in to more than one account per agent, and watching your quota.
+description: Sign in to an agent more than once, pick which account each chat runs on, watch every account's quota, and limit a project to the agents and accounts you choose.
 ---
 
 import Aside from "../../../../components/docs/Aside.astro";
 import Demo from "../../../../components/docs/Demo.astro";
+import Steps from "../../../../components/docs/Steps.astro";
 import AccountsDemo from "../../../../islands/docs/AccountsDemo";
 
 <Demo caption="Claude signed in twice (your own login and a Raviga account Tori created) plus Codex, with the usage strip in the title bar. Click a strip or a meter for the usage card. Start sessions to spend quota and cross the warn threshold, try Claude on pied-piper to hit its project rule, and add or remove an account.">
@@ -13,62 +14,221 @@ import AccountsDemo from "../../../../islands/docs/AccountsDemo";
 
 ## More than one account
 
-An agent that supports it (Claude, Codex, Copilot, OpenCode) can have more
-than one signed-in account, each with its own home directory so the two
-logins never collide. Add one from that agent's detail page in Settings >
-Agents: a name, an optional folder, and a real terminal tab running the
-vendor's own sign-in.
+Claude can be signed in more than once on the same Mac: a work login and a
+personal one, or one per client. Each account keeps its own sign-in, its own
+sessions, its own model list and its own quota, and they never sign each other
+out.
 
-<Aside type="caution" title="Removing an account">
+The other agents use one login each. Tori only offers **Add account** for an
+agent that has been shown to hold two logins at once without one replacing the
+other, which today is Claude.
 
-Removing an account you asked Tori to create deletes its sessions along with
-it; removing one you pointed at a folder you already had only forgets it, the
-folder and its login stay exactly as they were.
+Until you add a second account, Tori says nothing about accounts: no account
+names appear on pills, tabs or menus.
 
-</Aside>
+### Your existing login
 
-The account you never explicitly set up, your existing login from before
-Tori, always stays available too; Tori never copies or stores its
-credentials.
+The login you already had before Tori, in `~/.claude`, is always there as the
+first account, labelled **Your existing login** on its card. Tori never copies
+or stores its credentials; Claude keeps them in your macOS login Keychain as
+usual.
+
+If you keep Claude somewhere other than `~/.claude`, Tori does not create that
+folder for you. Settings says it is missing, and the first account you add
+becomes the default.
+
+## Add an account
+
+<Steps>
+
+1. Open Settings (the gear in the title bar) > **Agents** and click **Claude**.
+2. Under **Accounts**, click **+**, **Add account**.
+3. In **New Claude account**, fill in **Name**. This is Tori's own label for
+   it, such as `work` or `Hooli`; the agent never sees it.
+4. Fill in **Folder**, or leave it empty:
+   - **Empty**: Tori makes a folder for the account and manages it. The button
+     reads **Create and sign in**.
+   - **A folder you already use**, such as `~/.claude-work`: type it, or click
+     **Browse** to pick it (the picker shows hidden folders). Claude keys its
+     login by the folder's exact spelling, so write it the way your shell
+     exports it. The button reads **Add account**.
+5. Click the button.
+6. A terminal tab opens with Claude's own sign-in. Finish it in the browser it
+   opens. If the folder you picked is already signed in, no sign-in is needed
+   and Tori says **Added work. It is already signed in.**
+
+</Steps>
+
+A folder is accepted if it already holds Claude's files, or is empty (a lone
+`.DS_Store` counts as empty). A folder holding other files and none of
+Claude's is refused, so a sign-in never writes into something unrelated. The
+default `~/.claude` and a folder that is already an account are refused too.
+
+## Manage accounts
+
+Each account is a card under **Accounts**. Its header shows a green dot when
+the agent confirms it is signed in, the account's name, the email or sign-in
+state, and the plan and number of models it offers. Click the chevron to open
+the card.
+
+- **Rename**: click the account's name, type, and press `Enter`. `Escape`
+  keeps the old name.
+- **Default**: with two or more accounts, pick which one new chats start on.
+  A project's own last-used account still wins over it.
+- **Sign in**: shown when the account is signed out. It opens the sign-in in
+  a terminal tab.
+- **Check again**: the refresh button beside **Accounts** asks every account
+  again whether it is signed in and what it offers.
+
+### Sign out or remove
+
+Open the card and click **Sign out** (or **Remove**, when the account is not
+signed in).
+
+- **Sign out** asks **Sign work out?** Claude revokes the login and you can
+  sign back in from the same card. Tick **Remove the account as well** to also
+  remove it from Tori.
+- **Remove** takes the account out of Tori:
+  - For a folder Tori made, Tori forgets the account **and deletes its
+    folder, with the sessions inside**.
+  - For a folder you pointed it at, Tori only forgets it. The folder and the
+    login in it stay exactly as they were.
+
+The dialog shows the account's folder so you know which one you are acting on.
+Your existing login cannot be removed.
+
+### Notes on a card
+
+A card can carry a note when something about the account is not what you
+might assume:
+
+- **An API key is set**: an environment variable such as `ANTHROPIC_API_KEY`
+  is set, so this account bills against that key instead of its subscription.
+  Unset it to go back to the subscription.
+- **Signed in to the same account as**: two of your accounts are the same
+  login, so they are only told apart by name.
+- **Runs in a folder that was already set**: Tori itself was started with
+  `CLAUDE_CONFIG_DIR` set, so your existing login is that folder. Start Tori
+  from a shell without it to get your own login back.
+
+## Every chat runs on one account
+
+A chat or an agent terminal tab is bound to the account it started on, the
+same way it is bound to its agent, for its whole life. The model pill shows
+the account once you have two, for example **Opus / work**, and the model
+palette lists each account as its own row because each has its own models.
+
+A new chat opens on the account this project last used, then the agent's
+default account. To start a chat on another account, pick that account's row in
+the model palette before you send the first message. See
+[Models, effort and modes](/docs/agents/models-and-modes/#agents-and-accounts).
+
+## Watch your usage
+
+Your subscription's limits belong to the account, not to a chat: three chats
+on one login share one five hour window. So Tori shows usage per account.
+
+### The titlebar strip
+
+The usage strip at the right of the title bar shows each account that reports
+usage: the agent's mark and its windows as whole percentages, such as
+**5H 38%** and **W 12%**. When the title bar is narrow, it shrinks to one bar
+per account, showing the window you are closest to running out of.
+
+A bar turns amber once a window passes the account's **Warn at** level, and
+red once the limit is reached. A reading from a window that has since reset
+shows as 0%, because the old number no longer means anything.
+
+### The usage card
+
+Hover the strip to open the usage card, and click to keep it open while you
+move the pointer away. It shows:
+
+- The agent, how long ago the newest reading came in, and **Read again** to
+  ask now (for an account Tori can ask directly).
+- One tab per account when you have more than one, and the account's plan.
+- Every window the account reports: its name (**Session, 5h rolling**,
+  **Week, all models**, **Week, Opus only** and so on), its level, a bar, and
+  when it resets. Inside a day the reset is a countdown; further out it names
+  the day.
+- A sentence about where you are heading: **At this pace your weekly
+  all-model limit runs out around 18:30.**, or **Comfortable all week at this
+  pace.** It also names another account of yours if that one is the one near
+  its limit.
+
+Nothing on the card changes a setting.
+
+### Choose what the strip shows
+
+Each account card in Settings > Agents has a **Titlebar preview** row of
+chips, one per window: **5H**, **Week**, a model's own week such as **Opus**,
+and **Other**. Lit chips show in the title bar.
+
+The chips also decide how much Tori reads for the account: nothing lit means
+nothing is read. **5H** and **Week** come from what the agent already reports.
+A model's own weekly window needs one more step: Tori reads the account's token
+from your login Keychain to ask for it. Lighting that chip is the opt in, and
+macOS may ask you to allow it. A chip marked **n/a** has nothing to show until
+that read has happened, or the account has no such window.
+
+### Warn at and notifications
+
+On the same card:
+
+- **Warn at**: how full a window gets before Tori warns, with **Warn earlier**
+  and **Warn later** buttons. Until you change it, it follows **Warn at** in
+  Settings > Chat.
+- **Notify at the warn point and when spent**: a macOS notification when a
+  window passes the warn point, and when it is used up. Never sent while Tori
+  is the app in front.
+
+### Which agents report usage
+
+| Agent | Where the numbers come from |
+| --- | --- |
+| Claude | The agent's own reports during chat turns, plus the Keychain read for model windows if you light that chip |
+| Codex | Tori asks Codex for its limits directly |
+| Others | They do not report usage, so the strip leaves them out |
+
+There is no usage history or chart. The numbers are always what the agent or
+its vendor reports right now.
+
+When an account reaches a limit, its chats say so and can continue on their
+own once it resets. See [Limits and spending](/docs/agents/limits-and-spending/#when-a-usage-limit-stops-a-chat).
 
 ## Limiting agents per project
 
 A project can be limited to the agents and accounts you pick, so a client's
-repo only ever runs on that client's login. Right click the project in the
-sidebar and choose **Agents**, switch from **Every agent** to **Only
-selected**, and tick the agent and account pairs it may use, for example
-Claude on your work account and nothing else. The item only shows up once
-you have more than one agent or account to choose between.
+repository only ever runs on that client's login.
 
-Any other agent or account is refused before a session starts or resumes,
-with a note saying which pair is not allowed in this project. The rule
-follows the folder, so every worktree Tori makes under the repo inherits it,
-and a repo nested inside another project uses its own rule. A project with
-no rule allows every agent you have configured.
+<Steps>
 
-Put your client projects in their own spaces (see
-[Spaces](/docs/workspace/spaces/)) and keep a personal space whose projects
-have no rules. The git host side is picked per repo too: see
+1. Right-click the project in the sidebar, or open its row menu, and choose
+   **Agents**. The item appears once you have more than one agent or account
+   to choose between.
+2. In **Agents for "hooli-search"**, switch from **Every agent** to **Only
+   selected**.
+3. Tick the agent and account pairs the project may use, for example Claude on
+   your `hooli` account and nothing else. A pair that is no longer available is
+   marked **(unavailable)**.
+4. Click **Save**. The line beside it says how many pairs are allowed.
+
+</Steps>
+
+From then on, any other agent or account is refused before a session starts
+or resumes in that project. It is left out of the model palette for new chats,
+greyed in the launch menu with **Not allowed in this project**, and a chat
+that names it says why on its composer bar.
+
+The rule belongs to the folder, so every worktree under the repository follows
+it, and a repository nested inside another project uses its own rule. A project
+with **Every agent** allows everything you have turned on.
+
+<Aside type="tip" title="One space per client">
+
+Put each client's projects in their own [space](/docs/workspace/spaces/), limit
+those projects to the client's login, and keep a personal space whose projects
+have no rules. Pick the matching git host account per project too: see
 [Pull requests and issues](/docs/git/pull-requests-and-issues/).
 
-## Usage and quota windows
-
-Where an agent can report it, a titlebar strip shows a live bar per account:
-click it to pin open a card with every window that account can answer for,
-its plan, and when it resets. Usage comes from up to three sources, each one
-filling in what the last one could not answer: the agent's own session
-events, a bounded read through its CLI, and, only if you opt in per account,
-a read of its OAuth token from the system keychain. That third source is
-never on by default, since it is the most invasive: a single explicit toggle
-per account, not a background setting.
-
-Per account, in Settings > Agents, you can choose which usage windows show
-in the titlebar, set a warn threshold, and turn on a notification for when
-that threshold is crossed and when a window is fully spent.
-
-## What Tori does not do
-
-There is no historical usage chart. A quota window belongs to the account,
-not to Tori, so a chart built only from what Tori itself has observed since
-you opened it would be mostly gaps. What you get instead is always the
-number the agent, or its vendor, is willing to answer for right now.
+</Aside>

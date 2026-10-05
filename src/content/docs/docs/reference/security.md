@@ -1,0 +1,184 @@
+---
+title: Security model
+description: What Tori will and will not do on its own, and where each guard sits.
+---
+
+An app that runs coding agents sits between untrusted input (a cloned
+repository, a web page an agent read, a pull request from a stranger) and
+things that matter (your shell, your credentials, your git remote). This
+page lists the guards Tori puts between the two, in one place.
+
+The short version:
+
+- A folder cannot run its own code until you trust it.
+- Nothing is pushed, posted or merged by a background session without an
+  approval you gave for that exact draft.
+- Tori never presses Enter in your terminal.
+- A destructive action either asks first or takes a snapshot first.
+- Nothing about you or your code is sent anywhere by Tori itself.
+
+## Project trust
+
+Opening a repository in most editors runs its code: a language server loads
+the workspace's own compiler plugins, git runs the repository's hooks, an
+agent reads the folder's own settings. In Tori none of that happens until
+you trust the project.
+
+| What | In an untrusted project |
+| --- | --- |
+| Language servers that load project code (TypeScript, rust-analyzer and others) | Do not start. JSON and YAML servers, which run nothing from the project, still work |
+| Debuggers | Do not start, for every debugger, since the program being debugged is the project's own |
+| Formatters | Do not run. The editor offers to trust once per session on save, and every time on a manual Format Document |
+| Git | Does not run, since a repository's own config and hooks run with it. The refused folder offers the trust prompt |
+| Claude | Starts without the folder's own settings, so its hooks cannot run on the first message |
+| Editing, highlighting, saving | Work as usual |
+
+The first refused start shows a prompt with **Trust**, and trusting replays
+what was refused, so nothing has to be reopened. One answer covers every
+worktree of the project.
+
+Trust lives in `~/.config/tori/trusted.json`, outside any repository, so a
+repository cannot mark itself trusted. Settings > Languages > Projects lists
+trusted and untrusted projects with a search, **Revoke** and **Revoke all**.
+
+Two related rules follow the same idea, that a repository never grants
+itself anything:
+
+- A project's `.tori/settings.json` can turn a language server or linter
+  off for that project. It cannot turn one back on that you turned off.
+- A project's
+  [setup command](/docs/git/worktrees-and-branches/#a-setup-command-for-new-worktrees)
+  is stored in your own settings, not in the repository, and never runs for
+  a worktree made from a fork's pull request.
+
+## What leaves the machine
+
+A chat you are driving asks you before it acts, through the agent's own
+permission prompts. A session nobody is watching, an autopilot worker or
+anything started with `tori spawn --background`, cannot be trusted to a
+prompt nobody will see, so it works under a stricter rule: an outward
+action needs an approval reserved for it ahead of time.
+
+- Opening a pull request, submitting a review and merging are each their
+  own approval.
+- An approval names the exact draft: the title, body and branches, or the
+  verdict and every line comment, or the merge method, and the exact commit.
+  It is spent once. A worker cannot invent one, spend one meant for
+  something else, or reuse one.
+- Opening a pull request pushes exactly the approved commit, never with
+  force. If the branch has moved past it, the push is refused.
+- A review is pinned to the head commit that was read. If the pull request
+  moved, the review is refused rather than posted against code nobody
+  reviewed.
+- Tori pre-allows only its own tools for a session. Everything else an
+  agent wants still goes through the agent's permission prompt, and the
+  autopilot does not answer a worker's permission prompts: they wait for
+  you.
+
+See [Autopilot](/docs/automation/autopilot/#approvals).
+
+## Your terminal
+
+- **Tori inserts, you run.** Text Tori sends to a terminal, a hunk comment,
+  a selection, a dragged path, is placed at the prompt as a bracketed paste
+  and left there. Tori never presses Enter. The text is cleaned of anything
+  that could end the paste early and smuggle a command in after it.
+- **A program cannot read your clipboard.** It can set it, which is how a
+  copy over ssh works.
+- **Tori's own commands run directly**, not typed into a login shell, so
+  nothing in an rc file can swallow or rewrite them.
+
+## Rendered content
+
+Agents and repositories both produce text that gets rendered: chat replies,
+Markdown previews, pull request bodies.
+
+- Rendered HTML is sanitized. Chat shows raw HTML as text.
+- A remote image in chat becomes a link rather than a request your machine
+  makes on sight.
+- Links in a Markdown preview are routed through Tori rather than followed
+  inside the app.
+- The app runs under a content security policy, on the desktop and on the
+  phone, and can read files only under your home folder, external volumes
+  and the temp folder.
+
+## Credentials
+
+| Credential | Where it lives | What Tori does with it |
+| --- | --- | --- |
+| Your agent's existing login | Wherever the agent keeps it | Never copied or stored. The agent process reads it itself |
+| An extra agent account you add | Its own home folder, readable only by you | Kept separate, so two logins never collide |
+| An agent's usage token | The system keychain | Read only if you opt in per account, and then held in memory, never written out |
+| GitHub and GitLab sign-in | The system keychain | Used by the app's own requests; it is never handed to the window that draws the interface |
+| Git passwords and passphrases | Nowhere in Tori | A prompt opens a native dialog, and the answer goes straight to git. If the dialog cannot be shown, the prompt fails rather than hanging or guessing |
+| A paired phone's credential | The phone | Shown once at pairing. `devices.json` never holds the plain credential, and it is kept out of Android backups and device transfers |
+
+## The socket, the CLI and the MCP server
+
+The [`tori` CLI](/docs/automation/cli/), the
+[MCP server](/docs/automation/mcp-server/) and the phone app all speak one
+protocol. On the Mac it is a local socket; the phone reaches it only through
+[remote access](#remote-access).
+
+- Every terminal tab and chat gets a token of its own, so a call is
+  attributed to the session that made it.
+- What a caller may do depends on what it is. A worker cannot spawn or
+  steer. No agent session can turn the autopilot on or off. Pairing a
+  device can only be done at the Mac. The
+  [table](/docs/automation/mcp-server/#every-tool) lists every method.
+- A tool a caller may not use is left off its tool list entirely.
+- A phone connects with its own device credential, which is not accepted
+  on the local socket, and the local token is not accepted from the
+  network.
+
+## Remote access
+
+Off by default. When on, Tori listens on your Tailscale address or on this
+Mac only, never on the local network, and a local network address saved by
+an older build is refused. Pairing uses a code that lives five minutes,
+works once, and burns after five wrong tries. **Revoke** closes a device's
+connection immediately. See [Pairing](/docs/phone/pairing/).
+
+## Destructive actions
+
+| Action | Guard |
+| --- | --- |
+| Deleting a file in the tree | Goes to the Trash |
+| Discard all changes | A snapshot is taken first, restorable from Backstops |
+| Reverting to a checkpoint | The current state is saved as a backstop first, so the revert can be undone |
+| Whole tree actions while another session is working in the folder | Blocked, or flagged |
+| Removing a worktree or branch | Shows whether it is dirty, has unpushed commits, and how many tabs are open in it, before you confirm |
+| Amending a commit that looks pushed | Asks first |
+| Replace across files | Each file is checked and skipped whole on any doubt |
+| Promoting a fan out attempt | Cannot be undone, and says so |
+| Dropping a stash | Cannot be undone, and says so |
+
+## Which agents may run where
+
+A project can be limited to the agents and accounts you pick, so a client's
+repository only ever runs on that client's login. Anything else is refused
+before a session starts or resumes. See
+[Limiting agents per project](/docs/agents/accounts-and-usage/#limiting-agents-per-project).
+
+Tori keeps no permission rules of its own. When you answer an agent's
+prompt with "always in this project", that choice travels back to the agent
+in its own format and lives in the agent's own files.
+
+## What Tori installs
+
+Language servers and debuggers Tori installs for you come from a pinned
+catalog: an exact npm version, or a GitHub release checked against its
+sha256 before anything is written. They are kept under `~/.config/tori/`,
+and a copy of your own on the PATH always wins.
+
+## Network
+
+Tori sends no telemetry. See
+[Files on disk and privacy](/docs/reference/files-and-privacy/) for the two
+requests it makes on its own behalf.
+
+## Reporting a problem
+
+If you find a way for a folder, a transcript or a document to run code it
+should not, report it privately as described in
+[SECURITY.md](https://github.com/gettori/tori/blob/main/SECURITY.md).

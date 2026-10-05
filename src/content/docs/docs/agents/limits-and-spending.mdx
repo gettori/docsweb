@@ -1,0 +1,131 @@
+---
+title: Limits and spending
+description: Cap what a chat or a project may spend, stop at a context size, get warned before a limit, and let a chat carry on by itself after a usage limit resets.
+---
+
+import Aside from "../../../../components/docs/Aside.astro";
+import Steps from "../../../../components/docs/Steps.astro";
+
+Two kinds of limit stop a chat:
+
+- **Your own ceilings**, set in Settings > Chat > Spending: a dollar amount per
+  chat, a dollar amount per project, and a share of the model's context.
+- **Your subscription's usage limits**, set by the agent's vendor, such as
+  Claude's five hour and weekly windows. Tori shows how close each account is
+  (see [Accounts and usage](/docs/agents/accounts-and-usage/)) and can continue a
+  chat once a limit resets.
+
+## Set a spending ceiling
+
+<Steps>
+
+1. Open Settings (the gear in the title bar) and go to **Chat**, then the **Spending** group.
+2. Fill in any of the three fields. Leave a field blank for no limit, which is
+   the default.
+3. Move **Warn at** to how full a ceiling may get before Tori warns you.
+
+</Steps>
+
+| Setting | Limits |
+| --- | --- |
+| **Stop this chat after** | Dollars one chat may spend |
+| **Stop this project after** | Dollars across every chat in one project. Two chats on the same repository spend one budget |
+| **Stop at context** | Percent of the model's context window one chat may fill |
+| **Warn at** | How full a ceiling gets before Tori warns, from 50% to 100%. 80% by default. At 100% there is no early warning |
+
+### How a ceiling stops a chat
+
+Ceilings are checked between turns, never in the middle of one. The turn that
+crosses a ceiling is always allowed to finish, so you never get half an edit.
+After that the chat starts no new turn:
+
+- The transcript says **This chat hit this chat's spend limit of $5.00 ($5.12
+  used) and will not start another turn. Raise the limit in Settings to carry
+  on.**, or the same for the project or context limit.
+- A message you send is kept rather than refused. It goes into the
+  [queue](/docs/agents/steering-and-the-queue/#spending-ceilings-and-the-queue),
+  and the transcript says **This message is waiting**, with which limit was
+  reached.
+- Raise or clear the limit in Settings and the queued message goes out on its
+  own. Nothing has to be typed again.
+
+Before that, once a ceiling passes **Warn at**, the transcript warns once:
+**This chat has used $4.10 of this chat's spend limit ($5.00). It will stop
+when the limit is reached.**
+
+The **context** ceiling is the only one that recovers by itself: when the
+agent compacts the conversation and the context shrinks below the ceiling,
+the chat can carry on.
+
+Nothing is ever written into the agent's conversation to announce a ceiling.
+The agent does not know about your limits; Tori just stops starting turns.
+
+### Which agents ceilings work on
+
+The dollar ceilings need the agent to report what each turn cost. Claude does.
+Codex, OpenCode and the other agents report how full the context is but not
+what it cost, so the ceilings are not offered for them rather than shown and
+never triggered. A chat's **Session** panel lists **spending ceilings** under
+its capabilities when they apply.
+
+## When a usage limit stops a chat
+
+When Claude stops because your subscription's limit was reached, every chat on
+that account shows a banner above the transcript, for example **Your rolling
+5-hour limit has been reached. Resets 2:00 PM.** A chat that has not run a turn yet shows it
+too, so you do not start work on an account that cannot answer.
+
+### Resume at reset
+
+The banner can have Tori continue the chat for you once the limit resets:
+
+- Click **Resume at reset** on the banner to do it for this chat. The banner
+  adds **Tori will continue this chat when it resets.** Click **Cancel** to undo
+  that.
+- To make it the rule for every Claude chat, turn on **Resume at reset** in
+  Settings > Chat. It is off by default.
+
+Shortly after the limit resets, Tori sends the chat one message,
+**Your usage limit has reset. Continue where you left off.**, shown in the
+transcript as a Tori row, **Tori continued after the usage limit reset**. The
+agent picks up where it stopped.
+
+Some details:
+
+- It is sent once per stop, and only to the chat that was stopped, not to every
+  chat on the account.
+- Your spending ceilings still apply. A chat over a ceiling is not continued,
+  and says so.
+- If a turn is already running when the limit resets, for example because you
+  carried on by hand, nothing is sent.
+- Messages you queued while the chat was stopped wait behind the resume: if the
+  resumed turn finishes, they follow as usual.
+- Tori has to be running when the limit resets. A relaunch forgets the plan.
+- Only Claude chats can do this, and not chats the Autopilot is driving.
+
+## Too many chats at once
+
+Every open chat is a running agent process with its own spend, even one in a
+background tab nobody is reading. **Warn above**, in the same Spending group,
+sets how many live chats are fine at once (4 by default). Past that, every chat
+shows **5 chats are running at once, past your limit of 4. Each one is a live
+agent process with its own token spend. Close one, or raise the limit in
+Settings.** It is a warning, not a refusal; set it to 0 to turn it off.
+
+The Autopilot keeps its own workers one under this number, so it fits too.
+
+## Two chats in one worktree
+
+When a second chat starts in a worktree where another is already running, the
+new chat says **Another chat is already running in this worktree.** with a
+**Got it** button. Both chats edit the same files. Tori records which chat wrote
+what, so reverts and rewinds stay per chat, and a file both wrote is marked as
+shared rather than given to one of them. To keep their work apart, give each
+chat its own [worktree](/docs/git/worktrees-and-branches/).
+
+<Aside type="tip" title="See what a chat costs">
+
+The session menu's usage line shows the last turn's tokens and cost and the
+session's total. See [Reading the transcript](/docs/agents/transcript/#usage).
+
+</Aside>

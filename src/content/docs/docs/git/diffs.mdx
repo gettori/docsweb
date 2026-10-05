@@ -1,0 +1,122 @@
+---
+title: Diffs
+description: Read a change as rows or inside the whole file, stage or throw away a hunk or a few lines, comment on a hunk for an agent, and switch between inline and side by side.
+---
+
+import Aside from "../../../../components/docs/Aside.astro";
+import Steps from "../../../../components/docs/Steps.astro";
+
+Every diff in Tori opens as an editor tab: a file in the Changes panel, a
+commit in the graph, a stash, a checkpoint, a file in a pull request. Several can
+be open at once and the list you opened them from stays put.
+
+Clicking a file in a list opens its diff in a **preview** tab,
+which the next click replaces. Double-click the row or the tab, or start
+staging in it, to keep it.
+
+## Reading a diff
+
+Rows are coloured in the file's own language and numbered on both sides: the
+old line number on the left, the new one on the right. Unchanged stretches fold
+into a band you can click to open. Copying lines copies only the code, without
+the numbers or the `+` and `-`.
+
+The tab's bar names the file and whether you are looking at **Staged** changes
+or the **Working tree**, and has:
+
+| Control | What it does |
+| --- | --- |
+| **Previous change**, **Next change** | Jump between hunks. `Shift+Option+F5` and `Option+F5` in the file view |
+| **Stage this file** or **Unstage this file** | The whole file at once |
+| **Discard every hunk below** | Throws away every unstaged change in the file, after a confirmation and a snapshot |
+| **Ignore whitespace changes** | Hides changes that are only whitespace |
+| **Show the diff in the file itself** | Switches to the file view, below |
+| **Copy diff** | Copies the diff as text |
+| **Open the file itself** | Opens the file in the editor |
+| **Re-read this diff** | Reloads it from disk |
+
+Staging needs the whitespace: while whitespace is ignored, the stage and
+discard buttons are greyed out with **Show whitespace changes, which staging
+needs**.
+
+### Inline or side by side
+
+**Side-by-side diffs**, in Settings > Editor, shows every diff in Tori as two
+columns, old and new, instead of one. It applies to commits, pull requests,
+reviews and chats too. A pane too narrow for two columns falls back to inline.
+
+## Stage part of a file
+
+Each hunk has its own buttons:
+
+- **Stage this hunk** (or **Unstage this hunk** in a staged diff).
+- **Throw away this hunk**: it asks **Discard this hunk?** first. The change is
+  not staged, so git has no other copy, but Tori saves a snapshot before
+  discarding, and you can bring it back from the
+  [Checkpoints](/docs/git/checkpoints/#backstops) tab.
+
+To stage only some lines of a hunk:
+
+<Steps>
+
+1. Click the lines you want, or drag across them, in the diff.
+2. A **Stage 3 lines** button appears on the hunk (and on the bar). Click it.
+
+</Steps>
+
+The rest of the hunk stays unstaged. In a staged diff the same thing unstages
+the lines you picked.
+
+## The file view
+
+**Show the diff in the file itself** turns the tab into the whole file as a
+read only buffer with git's changes drawn over it:
+
+- Removed lines shown in place, and changed characters marked within a line.
+- A second gutter with the old line numbers.
+- Blame in the gutter, an overview ruler with added and removed strips down
+  the side, and breadcrumbs.
+- The editor's selection, find and Vim keys.
+- A stage button by each hunk in the gutter. Select lines to stage just those.
+
+**Switch back to diff rows** returns to the rows view.
+
+## Comment on a hunk
+
+Each hunk has a comment button, **Comment on this hunk**. Use it to point an
+agent at a specific change: "this should handle a 429 too", "rename this".
+
+<Steps>
+
+1. Select the session you want to ask in the sidebar.
+2. Click the comment button on the hunk and type your comment.
+3. Press `Enter` or **Send**. `Escape` closes the box.
+
+</Steps>
+
+The comment goes to that session as **In @src/sign.ts lines 12-18: your
+comment**, into its composer for a chat or typed at its prompt for a terminal
+agent. It is never sent for you; read it there and send. The button is greyed
+out with the reason when no session is selected or the session cannot be
+reached.
+
+## Diffs in the editor
+
+In an ordinary editor tab, the gutter marks lines added, changed or removed
+since the last commit. Click a mark, or the line number beside it, to see the
+lines that used to be there.
+
+## Commit diffs
+
+A commit opened from the graph, a stash or a pull request lists the files it
+changed; each opens its diff for that commit, with **Copy diff** and **Open the
+file as it is now**. A merge commit is shown against its first parent, and
+says so.
+
+<Aside type="tip" title="A whole session's changes">
+
+To see everything one chat changed as one diff per file, use **Show changes as a
+diff** in its session menu. See
+[Reading the transcript](/docs/agents/transcript/#show-changes-as-a-diff).
+
+</Aside>

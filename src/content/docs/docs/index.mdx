@@ -7,12 +7,25 @@ import SectionGrid from "../../../components/docs/SectionGrid.astro";
 
 Tori is a macOS app that puts every agent session you have going into one
 window: a tree of projects and branches, a real terminal and chat per session,
-an editor with language servers, and a review panel that stages and commits
-what the agent wrote. It does not bundle an agent and it is not tied to one.
-Claude ships supported out of the box, and any other CLI agent is a TOML file
-away.
+an editor with language servers and debuggers, and a review panel that
+stages and commits what the agent wrote. It does not bundle an agent and it
+is not tied to one. Seven agent CLIs are supported out of the box, and any
+other is a TOML file away.
 
 <SectionGrid />
+
+## Where to start
+
+- New here: [Install](/docs/install/), then [First run](/docs/first-run/).
+- Your first chat: [Starting a chat](/docs/agents/starting-a-chat/) and
+  [The composer](/docs/agents/composer/).
+- Talking to an agent while it works:
+  [Steering and the queue](/docs/agents/steering-and-the-queue/).
+- Agents in parallel without collisions:
+  [Worktrees and branches](/docs/git/worktrees-and-branches/).
+- Undoing what an agent did: [Checkpoints](/docs/git/checkpoints/) and
+  [Rewind and fork](/docs/agents/rewind-and-fork/).
+- Every key: [Keyboard shortcuts](/docs/workspace/keyboard-shortcuts/).
 
 ## Why
 
@@ -47,9 +60,26 @@ review, or merging. Off by default.
 [Tailscale](/docs/phone/pairing#tailscale-first), from anywhere, and you get
 the session tree, chat, and autopilot's decision cards there too.
 
+**Accounts and limits.** Sign in to an agent more than once, see each
+account's quota in the title bar, pin a client's repository to that client's
+login, and set spending ceilings per chat and per project.
+
+**Several repositories at once.** A Topic is one branch across any set of
+repositories, opened as a single workspace with one chat that sees all of
+them.
+
+**Scriptable.** A `tori` CLI in every shell Tori opens and an MCP server
+for the agents themselves, so a script or an agent can start sessions, ask
+you questions and open pull requests, behind approvals.
+
 **Interface.** A command palette, quick open, a shortcut sheet, menu bar
-tray, OS notifications, and a dock badge for sessions that need you. Dark and
-light themes.
+tray, OS notifications, and a dock badge for sessions that need you. 22
+themes, dark and light.
+
+**Guard rails.** A folder cannot run its own code until you trust it, a
+background session cannot push or post without an approval for that exact
+draft, and Tori never presses Enter in your terminal. See the
+[security model](/docs/reference/security/).
 
 ## Supported agents
 
@@ -69,8 +99,9 @@ documented and stable.
 
 ## Privacy
 
-Tori sends no telemetry. There is no analytics, no crash reporting, and no
-usage tracking of any kind. It makes two network requests on its own behalf,
+Tori sends no telemetry. There is no analytics, no automatic crash reporting
+(a crash file stays on your Mac until you choose to report it), and no usage
+tracking of any kind. It makes two network requests on its own behalf,
 both anonymous, both at most once a day, both silent on failure: a check
 against GitHub Releases for a newer version, and a read of a public,
 unauthenticated model list that feeds the context meter. Your agent's own

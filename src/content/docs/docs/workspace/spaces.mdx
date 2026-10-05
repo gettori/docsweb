@@ -1,92 +1,333 @@
 ---
 title: Spaces, projects and branches
-description: How the sidebar tree is organized.
+description: "The sidebar: create and arrange spaces, add projects by folder, clone or bare repo, read every mark on a branch row, and use every menu."
 ---
 
 import Aside from "../../../../components/docs/Aside.astro";
 import Demo from "../../../../components/docs/Demo.astro";
+import Steps from "../../../../components/docs/Steps.astro";
 import SpacesDemo from "../../../../islands/docs/SpacesDemo";
 
-The sidebar is a tree: spaces at the top, projects inside a space, and one
-row per branch you have checked out.
+The sidebar is a tree of three levels: **spaces**, the **projects** in a
+space, and one row per **branch or worktree** of a project. Select a branch
+row to make it the place everything else works in: the tab strip, the
+editor, the terminals and the right panel all follow it.
 
 <Demo caption="Richard's three spaces. Switch spaces from the tiles, collapse a project to see its dots roll up, and click a branch to focus its session. The one that needs you is waiting for an answer.">
   <SpacesDemo client:visible />
 </Demo>
 
+## How it maps to disk
+
+Tori keeps your work in one **base folder**, picked at first run. Every space
+is a folder inside it, and every project is a folder inside a space:
+
+```
+~/Projects            the base folder
+  work                a space
+    api               a project
+    web
+  personal
+    blog
+```
+
+Nothing is registered anywhere else. Create a folder inside a space from
+Finder and it appears as a project; create a folder in the base folder and it
+appears as a space. Folders whose names start with a dot are ignored.
+
+The base folder can be changed or forgotten in Settings > Advanced; nothing on
+disk moves when you do.
+
+## The parts of the sidebar
+
+- **The heading**: the active space's name, followed by **Spaces** in a quieter tone. The **...**
+  beside it is the space's menu. In Topics mode it reads **Topics** and has a
+  **+** for a new Topic.
+- **The filter**: the search button at the right of the heading, or
+  `Cmd+Shift+E`, opens a field that filters the tree by project name (by
+  Topic or member name in Topics mode). `Escape` closes it and clears it.
+- **The tree** of the active space's projects and branches.
+- **The space strip** at the bottom: a tile per space, then the **Topics**
+  tile, then the **dock** button at the far right, which shows or hides the
+  [dock](/docs/editor/terminal/#the-dock) (`Cmd+Ctrl+J`) and counts the dock's
+  tabs while it is hidden.
+
+Right-click the empty part of the tree, or the heading, for the space menu.
+
 ## Spaces
 
-A space is a top level grouping of projects, shown as an icon strip at the
-bottom of the sidebar. Only one space is active at a time, and its tree is
-what the sidebar shows. Click a tile to switch spaces; right click a tile,
-or the empty tree area, for **New space**, **Edit space** or **Delete
-space**. Drag tiles to reorder them.
+A space groups the projects of one client, company or side of your life. Only
+one space is shown at a time; switch with its tile.
 
-## Projects and branches
+### The space strip
 
-A project is a folder, and Tori treats it differently depending on what is
-in it:
+Each space is a tile with its icon or initials, tinted in the space's colour.
+The lit tile, the space you are in, grows into a pill that says its name; as
+the sidebar narrows the name shortens and then shows only the glyph.
 
-- **Plain folder**, no git. New session, or turn it into a repo with
-  **Initialize git**.
-- **Plain repo**, one branch checked out at a time, the ordinary git layout.
-  **Add branch** switches or creates one.
-- **Worktree container**, one bare repo with each branch checked out as its
-  own sibling folder, so several agents can work on different branches at
-  once without stepping on each other. **Add worktree** adds another branch
-  alongside the existing ones.
+Every tile you are not looking at carries one status bubble for everything in
+that space, so a space in the background still tells you when something in it
+needs you or is working.
 
-Right clicking a branch row offers **New session**, **Graph** (the commit
-graph for that branch), and, when a worktree or branch is done with, either
-**Remove worktree** or **Checkout and remove branch**.
+Drag a tile left or right to reorder the spaces.
 
-## Fan out
+**Space tiles**, in Settings > Appearance, puts the tiles in a strip along the
+**Bottom** of the sidebar (the default) or in a rail down its **Left** edge.
+The rail fits any number of spaces, has its own **New space** button, and stays
+visible when you hide the sidebar with `Cmd+B`; then the selected space's tile
+rolls up everything in it.
 
-Fan out creates two, three or four worktrees at once from one stated goal,
-each on its own branch, for trying a few approaches in parallel. It groups
-under one header row in the tree. Once you know which one you want,
-**Promote this attempt** keeps that worktree.
+A space remembers where you were: switch back to it and the project and branch
+you left on are selected again.
 
-<Aside type="danger" title="Promoting cannot be undone">
+### Create a space
 
-It deletes the other attempts, branch, sessions, checkpoints and all.
+<Steps>
+
+1. Open the space menu (the **...** by the heading, or right-click a tile) and
+   choose **New space**. With the tiles in a rail, the **+** under them does the
+   same.
+2. Type a **Name**. It becomes a folder in your base folder, so keep it short.
+3. Under **Appearance**, pick a **Colour** and an **Icon**, or keep the
+   defaults: the colour is worked out from the name, and the icon is the
+   space's initials. The dice button rerolls both.
+4. Click **Create space**.
+
+</Steps>
+
+The colour tints the space's tile and the window behind the space while you
+are in it. Icons come from a searchable set; **No icon - use initials** goes
+back to letters.
+
+### Edit a space
+
+**Edit space** in the space menu opens the same dialog. The name cannot change
+there, because the folder on disk carries it; rename the folder in Finder to
+rename the space. Colour and icon can change.
+
+### Delete a space
+
+<Aside type="danger" title="Deleting a space deletes its folder">
+
+**Delete space** permanently deletes the space's folder and every project in
+it from disk. It does not go to the Trash.
 
 </Aside>
 
-Reached from a project's context menu, **Fan out**.
+The confirmation shows what is at stake before you decide: how many agents
+are running in the space, its size on disk, how many projects have unpushed
+commits, and every folder inside it, with **uncommitted** and **unpushed**
+marked and those sorted first. Type the space's name to enable the button.
+Running agents and terminals in it are stopped first.
+
+## Projects
+
+A project is a folder inside a space. What Tori does with it depends on what
+is inside, and the project menu's heading says which kind it is:
+
+| Kind | What it is | Rows under it |
+| --- | --- | --- |
+| **Folder** | A plain folder, no git | None: the project row itself is where its sessions run |
+| **Repo** | An ordinary git repository, one branch checked out at a time | One row per local branch |
+| **Bare** | A bare repository in `.bare` with each branch checked out as its own folder beside it | One row per worktree |
+
+The **Bare** layout is what lets several agents work on several branches of
+one repository at the same time without touching each other's files. See
+[Worktrees and branches](/docs/git/worktrees-and-branches/).
+
+Click a project row to open or close it. A **Folder** project has nothing to
+open, so clicking it selects it.
+
+### Add a project
+
+<Steps>
+
+1. Open the space menu and choose **New in "work"** (with your space's name).
+2. Pick what to create:
+   - **Folder**: a plain folder, no git. Type a **Name**.
+   - **Clone**: clones a git repository into a new folder. Type the
+     **Repository URL**; the **Folder name** fills in from the URL unless you
+     change it.
+   - **Bare + worktree**: a bare repository plus one worktree for its default
+     branch. Add more branches later as their own folders.
+3. Press `Enter` or confirm.
+
+</Steps>
+
+A clone runs in the [dock](/docs/editor/terminal/#the-dock), so you can watch it
+and answer a password or passphrase prompt. The dock closes itself when the
+clone finishes, or stays open with the exit code when it fails. A URL starting
+with `-` is refused, so it can never be read as a git option.
+
+To add a project that already exists on disk, move or create its folder
+inside the space's folder.
+
+### The project menu
+
+Right-click a project row, or hover it and click its actions button:
+
+| Item | On | What it does |
+| --- | --- | --- |
+| **New session** | Folder | Opens Claude in a terminal tab in the folder |
+| **Initialize git** | Folder | Turns the folder into a repository. Choose **Normal repo** or **Bare + worktree**, an **Initial branch** (blank for your git default) and an optional **Remote URL**, added as `origin` |
+| **Add branch** | Repo | Checks out or creates a branch. See [Worktrees and branches](/docs/git/worktrees-and-branches/#add-a-branch-or-worktree) |
+| **Add worktree** | Bare | Adds a branch as its own folder |
+| **Fan out** | Repo, Bare | Several attempts at one task. See [Fan out](/docs/git/worktrees-and-branches/#fan-out-several-attempts) |
+| **Worktree settings** | Bare | The setup command and shared files. See [Worktree settings](/docs/git/worktrees-and-branches/#worktree-settings) |
+| **Prune worktrees** | Bare | Clears git's records of worktree folders deleted outside Tori, and says how many it pruned |
+| **Set origin**, **Change origin** | Repo, Bare | Points `origin` at a remote. Accepts `https://`, `git@` and `ssh://` URLs. Existing branches keep their names |
+| **Agents** | Any, once you have more than one agent or account | [Limit which agents and accounts](/docs/agents/accounts-and-usage/#limiting-agents-per-project) may run here |
+| **Change icon** | Any | Choose the project's icon |
+| **Remove project**, **Remove folder** | Any | Deletes it, see below |
+
+### Change a project's icon
+
+**Change icon** opens **Icon for "api"** with two sources:
+
+- **Its own image**: by default, a favicon Tori found inside the project, so
+  replacing it there replaces it here. With none, the icon is drawn from the
+  folder's path. You can drop an image on the dialog or **choose a file**
+  instead: SVG, PNG or ICO, up to 2 MB, square works best. An uploaded image
+  wins over whatever the project has.
+- **Pick an icon**: choose one from a searchable set. It stays until you
+  change it.
+
+### Remove a project
+
+<Aside type="danger" title="Removing a project deletes it from disk">
+
+**Remove project** and **Remove folder** permanently delete the folder, and
+for a bare project every worktree in it. Push what you want to keep first.
+
+</Aside>
+
+The confirmation shows the folder's size, running agents, and anything
+uncommitted or unpushed, and asks you to type the project's name. Agents and
+terminals running in it are stopped first.
+
+A bare project whose setup never finished, with a `.bare` and no worktree,
+shows as an empty container. Its menu has **Add worktree** and **Remove empty
+container**, which deletes the `.bare` and its folder.
+
+### Marks on a project row
+
+At the right end of a project row:
+
+- **A status bubble**, while the project is closed, rolling up every session
+  under it.
+- **A broken link mark** when a worktree is missing a
+  [shared file](/docs/git/shared-files/). Click it to open the project's
+  worktree settings.
+- **A plug** when the repository's host has no signed-in account: click it to
+  add one in Settings > Hosts.
+- **A person** when more than one of your host accounts could serve this
+  repository: click it to pick which one it uses.
+- **A shield** when your account cannot see the repository because its
+  organisation has not approved Tori. Click it for Settings > Hosts.
+
+See [Hosts and accounts](/docs/git/pull-requests-and-issues/#sign-in-to-github-or-gitlab)
+for those three.
+
+## Branch rows
+
+Each row under a project is one branch of a **Repo** or one worktree of a
+**Bare** project. Up to six show; the rest fold into a **N more** row that
+opens them. The branch you have selected always stays visible.
+
+### What a row shows
+
+From left to right:
+
+- **The glyph**: a branch for a repo's branch, a folder with a branch off it
+  for a worktree. The branch you are standing on (the checkout) is drawn
+  filled and brighter. While a session in it is working, the glyph traces
+  itself.
+- **The name**.
+- **An issue chip**, such as **#214**, when the branch was started from an
+  issue. Click it to open the issue.
+- **Sync marks**, small glyphs with counts. Hover for the full story:
+
+  | Mark | Means |
+  | --- | --- |
+  | Red conflict mark | The base branch has moved on and some files would conflict when you catch up |
+  | Up arrow with a count | Commits to push. Amber when you are also behind (diverged) |
+  | Up arrow, muted | Commits to publish: the branch has never been pushed |
+  | Up arrow, no count | The branch has no upstream yet, or its remote branch was deleted |
+  | Down arrow with a count | Commits to pull |
+  | Dot | Uncommitted changes |
+
+  The tooltip also says when the last commit was made, and lists conflicting
+  files. While a session in the branch is working or waiting on you, the marks
+  step aside for its status.
+- **A Topic tag** when the worktree belongs to a [Topic](/docs/workspace/topics/)
+  and **Show Topic worktrees in Spaces** is on. Click it to open the Topic.
+- **A status bubble** for the sessions in it.
+
+### The second line
+
+A branch with a pull request, or with changes against its base, grows a second
+line:
+
+- The pull request's number and state (draft, open, merged or closed), an eye
+  when a chat is [watching it](/docs/git/pull-requests-and-issues/#let-a-chat-watch-a-pull-request),
+  its review verdict, and its checks as passed out of total.
+- The size of the change against the base: `+120/-14` and the number of files.
+- When it was opened (or merged or closed), and how many comments it has.
+
+Hover the line for the title, the author, the review and checks in words, and
+the size. A branch whose pull request merged with nothing new since rests on a
+faint teal wash; one whose pull request was closed unmerged is dimmed.
+
+### Select a branch
+
+Click a row to select it. For a **Repo**, selecting a branch that is not
+checked out asks **Switch api to "feature"?** first, because a repository has
+one working tree and checking out changes every file in it, under every
+terminal open there. A **Bare** project's worktrees are separate folders, so
+selecting one never checks anything out.
+
+### The branch menu
+
+Right-click a row:
+
+| Item | On | What it does |
+| --- | --- | --- |
+| **New session** | Any | Opens Claude in a terminal tab here |
+| **Graph** | Any | Opens the commit graph for this branch |
+| **Reset to upstream** | A branch whose upstream was force-pushed over it | Resets the branch to the upstream, instead of pushing or pulling |
+| **Watch with this session** | A branch with an open pull request | Lets a chat in this folder [watch the pull request](/docs/git/pull-requests-and-issues/#let-a-chat-watch-a-pull-request) |
+| **Remove worktree** | A worktree | See [Remove a worktree or branch](/docs/git/worktrees-and-branches/#remove-a-worktree-or-branch) |
+| **Checkout** | A repo's branch | Checks it out |
+| **Remove branch** | A repo's branch that is not checked out | Deletes it, see the same section |
+
+A worktree that belongs to a fan out group has a shorter menu: **New session**
+and **Promote this attempt**.
+
+Drag a project or branch row onto a terminal or the composer to insert its
+path.
+
+## Status bubbles
+
+Sessions report one of three states, and the sidebar rolls them up:
+
+- **Needs you** (rose): waiting on a permission prompt, a question, a spending
+  limit or a failing check.
+- **Working** (violet): a turn is running.
+- **Done** (teal): finished and idle.
+
+A branch row shows its sessions, a closed project shows everything under it,
+and a space tile shows everything in the space. Needs you always wins: one
+waiting session makes the whole rollup say so, with the count.
 
 ## Topics
 
-A Topic checks the same branch name out across several repositories at once,
-useful when a change spans more than one repo. Switch the sidebar to Topics
-mode to see them: each Topic lists its member repos, and each member shows
-whether its worktree is ready, missing, or failed, with a one-click repair
-action for whichever state it is in. A Topic needs at least one member; the
-last one cannot be removed on its own, delete the Topic instead.
+The **Topics** tile in the strip switches the tree to Topics, a branch shared
+across several repositories. See [Topics](/docs/workspace/topics/).
 
-Click a member chip anywhere in the app (the sidebar row, the Changes panel,
-the file tree) to switch what a shared panel is showing.
+## Find a project
 
-## Working from another worktree
-
-**Shared in worktrees** lets you keep a folder of files that every worktree
-in a container should have, without committing them: put them in a project's
-`.shared/` folder and each new worktree gets them symlinked in automatically.
-The sidebar flags a worktree that has drifted from what is currently in
-`.shared/`.
-
-## Status dots
-
-Every session row carries a dot: **working**, **needs you**, or **done**
-(shown as a solid or hollow mark depending on what Tori can confirm).
-Collapse a project or a space and its row rolls its children's dots up into
-one badge, waiting sessions always counted first. A pull request that failed
-its checks also raises its branch to needs you.
-
-## Finding things
-
-**Filter the sidebar** (`Cmd+Shift+E`) searches project names, or Topic and
-member names in Topics mode. It does not search sessions themselves; for
-that, open a workspace folder's **Session history** dropdown from the
-terminal tab strip, which lists every session ever run against that folder,
-open ones first, then bucketed by when they last ran.
+Press `Cmd+Shift+E` or click the search button to filter the tree. To find a
+session rather than a project, use **Session history** in the tab strip (see
+[Starting a chat](/docs/agents/starting-a-chat/#pick-up-an-earlier-session)),
+or the omnibox (see
+[Search, the omnibox and shortcuts](/docs/workspace/search-and-shortcuts/)).

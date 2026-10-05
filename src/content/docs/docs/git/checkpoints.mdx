@@ -1,0 +1,128 @@
+---
+title: Checkpoints
+description: Tori's snapshot of the tree at every prompt. See what each agent turn changed, put the files back to any turn, and undo a revert or a discard.
+---
+
+import Aside from "../../../../components/docs/Aside.astro";
+import Steps from "../../../../components/docs/Steps.astro";
+
+Every time you send a prompt, Tori takes a snapshot of the whole working tree
+first. It is not a commit: your branch and history are untouched, and nothing
+shows up in `git log`. With one snapshot per prompt, Tori can tell you exactly
+what each turn of each session changed, and put the files back to how they were
+before any of them.
+
+Snapshots are on by default. Turn **Snapshot on each prompt** off in Settings >
+Chat to stop taking them; reverting, rewinding and per-turn diffs then stop
+working for new turns.
+
+Checkpoints work for chats and for agents running in terminal tabs alike.
+
+## Find a turn
+
+Open the Changes panel and click the **Checkpoints** tab under the file list.
+Its count is the number of turns.
+
+The list is grouped by session, the session you have selected first, then the
+rest. Each row is one turn: the time, the prompt that started it, and how many
+files it changed. Newest turns are at the top.
+
+## See what a turn changed
+
+Click a row to open the turn. The detail shows the prompt, the time and the
+session, and a switch between two lists:
+
+- **This turn**: only the files that turn changed.
+- **Since here**: everything that has changed in the folder since that point,
+  including your own edits and other sessions' work.
+
+Each file shows its added and removed lines. Click a file to unfold its diff
+in place, or hover it for **Open this diff in the editor** and **Open the file
+as it is now**. Long lists show the first files and a **+N more** row.
+
+Two marks can appear on a file, explained under the list:
+
+- **shared with another chat**: another chat in the same worktree also wrote
+  this file during that time. Reverting it undoes that chat's work too.
+- **unattributed** (a dashed circle): the file changed during the turn, but no
+  session recorded writing it, usually because a shell command wrote it. Tori
+  cannot tell whose it is.
+
+Browsing never changes anything. Only the buttons at the bottom do.
+
+## Put the files back to a turn
+
+<Steps>
+
+1. Open the turn you want to go back to.
+2. Click **Revert tree to 10:34** (the turn's time).
+3. Answer any questions about shared or unattributed files (below).
+4. Confirm **Revert the whole tree to 10:34?** with **Revert tree**.
+
+</Steps>
+
+Every file in the folder goes back to how it was at that checkpoint. Before
+anything is written, the current state is saved as a **backstop**, so the
+revert itself can be undone.
+
+The chat keeps going as if nothing happened; it is not told the files moved.
+Tell it, or use **Rewind chat to here** instead.
+
+### Decisions before a revert
+
+- **Files also written by another chat**: you are asked whether to revert them
+  too, with **Revert these too**. Otherwise they are left alone.
+- **Unattributed files** are left alone. You are told which, and can continue
+  with **Revert the rest**.
+- **Other sessions in the folder**: the confirmation names them, so you know
+  whose work shares the tree.
+
+The button is disabled while a session is running a turn in the folder,
+with its name in the tooltip, because the agent would keep writing over the
+revert.
+
+### Rewind the chat too
+
+For a chat session, **Rewind chat to here** puts the files back **and** forks
+the conversation from that turn, so the chat and the files agree. See
+[Rewind and fork](/docs/agents/rewind-and-fork/).
+
+## Backstops
+
+Under the sessions, **Backstops** lists the snapshots Tori takes before it
+overwrites your files:
+
+- **Before revert to 10:34**: saved before a checkpoint revert, tagged with the
+  session that did it.
+- One saved before a discard, a stash or another change to the whole
+  worktree, tagged as the worktree's.
+
+Open a backstop to see what has changed since it was taken, and click
+**Restore tree to 10:52** to go back to it. Restoring a worktree backstop
+overwrites anything you have done since.
+
+This is how a **Discard All Changes** or a revert you regret is undone.
+
+## Blame for code you have not committed
+
+[Git blame](/docs/editor/editor/#git-blame) names the commit behind each line.
+For a line that is not committed yet, Tori looks in the checkpoints instead and
+names the agent turn that wrote it, so you can tell which session produced the
+code you are reading.
+
+## From the command line
+
+`tori checkpoints <session>` lists a session's turns, and
+`tori checkpoint diff <session> <n> [<m>]` prints what turn `n`, or turns `n`
+to `m`, changed. Agents can do the same through Tori's MCP server. See
+[The tori CLI](/docs/automation/cli/).
+
+<Aside type="note" title="Where snapshots live">
+
+Each snapshot is a git tree saved under `refs/tori/checkpoint/<session>/`
+in the repository, built with a separate index so your staging is never
+touched. They are not branches or commits, and a normal `git push` does not send
+them. A turn that changed nothing takes no new snapshot. Deleting a session
+deletes its checkpoints.
+
+</Aside>

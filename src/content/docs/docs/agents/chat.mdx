@@ -1,114 +1,101 @@
 ---
 title: Chat
-description: The composer, models and modes, questions, and rewinding a turn.
+description: A tour of the chat view, and where to read about each part of it.
 ---
 
 import Demo from "../../../../components/docs/Demo.astro";
 import ChatDemo from "../../../../islands/docs/ChatDemo";
 
-A chat tab starts as a draft, just the composer, and becomes a live session
-on the first message.
+A chat is how you talk to an agent in Tori: a structured conversation with the
+same agent CLI you would run in a terminal, drawn as prompts, replies, tool
+cards and diffs, with Tori's controls around it. A chat tab starts as a draft,
+just the composer, and becomes a live session on the first message.
 
 <Demo caption="Claude on pied-piper's feat/middle-out. Send a message and answer its permission prompt, type @ or / for the menus, switch model or mode from the pills, send again mid-turn to steer, or hover a past prompt to rewind to it.">
   <ChatDemo client:visible />
 </Demo>
 
-## Composer
+## The parts of a chat
 
-`Enter` sends, `Shift+Enter` inserts a newline, and `Cmd+Enter` always sends
-even mid code fence. `Escape` closes an open completion menu, or interrupts
-the running turn if none is open. `ArrowUp`/`ArrowDown` at the start of the
-box walks your last 50 sent messages, shell style.
+From top to bottom:
 
-Type `@` to mention a project file (the agent reads it off disk, this is
-never an upload), or `/` for one of the agent's own slash commands. Drop or
-paste a file to attach it; a long paste (over 30 lines or 3000 characters)
-becomes a file chip instead of inline text unless you turn that off in
-Settings > Chat.
+- **Banners**, when something needs saying across the whole chat: a usage
+  limit reached, too many chats running, a rewind, another chat in the same
+  worktree.
+- **The status strip**: what the session is doing, the files it touched, its
+  figures, and the session menu. See
+  [Reading the transcript](/docs/agents/transcript/#the-status-strip).
+- **The transcript**: your prompts, the agent's replies, its thinking, tool
+  calls, diffs, notices and Tori's own notes. See
+  [Reading the transcript](/docs/agents/transcript/).
+- **The plan**, when the agent publishes one, pinned above the composer. See
+  [Permissions and questions](/docs/agents/permissions-and-questions/#the-plan-above-the-composer).
+- **The lane strip**, when the agent has subagents. See
+  [Subagents and background work](/docs/agents/subagents/).
+- **The queue**, when messages are waiting for the next turn. See
+  [Steering and the queue](/docs/agents/steering-and-the-queue/).
+- **The composer**, with the model, effort and mode pills under it. See
+  [The composer](/docs/agents/composer/) and
+  [Models, effort and modes](/docs/agents/models-and-modes/).
 
-**Open in editor** lifts the draft into a real scratch file for full editing;
-saving there mirrors back into the composer.
+## Everything about chats
 
-If the agent supports it (Claude only, today), sending mid-turn steers the
-running turn instead of queuing; otherwise your message waits and sends once
-the current turn ends, with an option to send it now or discard it if the
-turn was cancelled.
+| Page | Covers |
+| --- | --- |
+| [Starting a chat](/docs/agents/starting-a-chat/) | New chats, the launch menu, session history, chat or terminal, renaming and deleting sessions |
+| [The composer](/docs/agents/composer/) | Keys, mentions, slash commands, attachments, recall, drafting in the editor, quoting |
+| [Steering and the queue](/docs/agents/steering-and-the-queue/) | Messages sent mid-turn, and editing, reordering, steering or deleting queued ones |
+| [Models, effort and modes](/docs/agents/models-and-modes/) | The model palette, thinking effort, permission modes, agent switches |
+| [Permissions and questions](/docs/agents/permissions-and-questions/) | Answering prompts and questions, deny with feedback, `tori ask` cards, the plan |
+| [Reading the transcript](/docs/agents/transcript/) | Every kind of row, tool cards, hunk reverts, the status strip, the session menu, MCP servers |
+| [Subagents and background work](/docs/agents/subagents/) | Lanes, background tasks, prompts from subagents |
+| [Rewind and fork](/docs/agents/rewind-and-fork/) | Going back to a prompt, reverting files, forking a conversation |
+| [Limits and spending](/docs/agents/limits-and-spending/) | Spending ceilings, usage limits, Resume at reset, too many chats |
+| [Accounts and usage](/docs/agents/accounts-and-usage/) | Several logins, quota bars, per project agent rules |
+| [Agents in Settings](/docs/agents/agent-settings/) | Installing, updating, models, files and plugins per agent |
 
-## Model, effort and mode
+## What differs between agents
 
-One pill shows the current model; clicking it opens a two-pane picker,
-agents on the left and that agent's models on the right, one filter over
-both. A second pill appears for effort level when the model has one. Neither
-takes effect until the next turn; a shared notice above the composer says
-what is pending.
+Claude gets everything on these pages. The other agents run over the Agent
+Client Protocol, which has no way to steer a turn, fork a conversation, ask a
+structured question or report cost, so those parts are missing for them and
+Tori says so where they would be. The full comparison is in
+[Supported agents and adapters](/docs/agents/adapters/).
 
-The mode pill (Ask, Accept edits, Plan, Auto, and so on) is read entirely
-from what the agent itself declares, never hardcoded, so a mode the agent
-stops offering still shows rather than silently disappearing.
+## Notifications
 
-Anything else the agent publishes that is not model, mode or effort, a fast
-mode toggle, a collaboration mode select, shows below the composer, mirroring
-whatever control the agent itself sent.
+Settings > Chat > **Notifications** decides when a chat reaches you while you
+are looking elsewhere:
 
-## Permission prompts and questions
+| Setting | Default | When |
+| --- | --- | --- |
+| **Notify when a session needs you** | On | A permission prompt, a question, a spending limit or a failing check. Never for the session on screen |
+| **Play a sound when a session needs you** | Off | The same moments, as a sound Tori plays itself |
+| **Notify when a chat finishes its turn** | Off | A turn that ran to its end. Not one you stopped or one that failed, and not the chat on screen |
+| **Play a sound when a chat finishes its turn** | Off | The same moments, as a sound |
 
-When an agent asks for permission, the question reads as a sentence, with
-the raw arguments one click away, and five answers: allow once, allow for
-this session, always in this project, deny, or deny with a reason that
-reaches the agent as the tool result. Tori keeps no rule store of its own;
-the reach you pick travels back to the agent in its own format.
+Each sound has a play button so you can hear it first. Clicking a notification
+takes you to that chat, and a needs you notification is taken down by itself
+once its session moves on. Tori also counts sessions waiting on you on its
+Dock icon and in the menu bar.
 
-A structured question (`AskUserQuestion`) renders as an answerable form
-inline, unless you turn **Answer the agent's questions here** off in
-Settings > Chat, which reverts to a plain allow or deny card. The agent's own
-todo list, when it publishes one, pins above the composer rather than
-repeating in the transcript every time it changes.
+## Other chat settings
 
-## Rewind
+Settings > Chat also has:
 
-**Rewind to here**, on a past prompt, reverts the working tree to that turn
-and opens a new session forked from that point in the conversation. It only
-appears for agents that support it (Claude today) and only outside a running
-turn. The one thing it cannot undo is the forked session's own memory: it
-still remembers the turns you just reverted the files for, even though the
-files themselves are back to how they were.
+| Setting | Default | What it does |
+| --- | --- | --- |
+| **Open sessions in** | Chat | What a click on a session opens: the chat, or a terminal agent tab |
+| **Tool output lines** | 20 | Lines of a tool's output shown before it folds. 0 shows everything |
+| **Show every hook event** | Off | Show every hook run, not only failures |
+| **Collapse agent work** | Off | Fold thinking and tool calls between replies |
+| **Answer the agent's questions here** | On | Show the agent's questions as a form |
+| **Attach long pastes as files** | On | Long pastes become an attachment |
+| **Resume at reset** | Off | Continue a Claude chat by itself after a usage limit resets |
+| **Snapshot on each prompt** | On | Take the checkpoint that makes turns diffable, revertable and rewindable |
 
-The same action is on every chat turn in the Changes panel's
-[Checkpoints](/docs/git/changes-panel/#checkpoints) tab, as **Rewind chat to
-here**, next to a plain revert that leaves the conversation alone.
+**Stream responses** and **Transcript density** are listed in the pane too,
+but in this version they do not change anything yet.
 
-## Watching what happened
-
-The status strip above the transcript shows what a session is doing, the
-number of files it has touched, and the session's figures: the model, the
-prompts you sent, agent turns, tool calls, how many times the conversation
-compacted and roughly how many tokens that reclaimed, and context used
-against the model's window with a gauge. Hover any figure for its label.
-Context only shows when a source knows the window, and the percentage and
-gauge drop out if the usage contradicts it. The figures are read from the
-transcript on disk, so a resumed session counts its earlier turns too.
-
-The overflow menu at the end of the strip has:
-
-- **Show changes as a diff**: one diff per file across the whole session,
-  instead of the turn by turn transcript.
-- **Usage**: last turn and session total tokens and cost.
-- **Session**: the account this chat is running under, what it published it
-  can and cannot do, live MCP servers and their tool counts, and the
-  project's configured MCP servers from disk, with an inline form to add
-  one.
-
-A subagent a session spawned gets its own lane above the composer; switching
-lanes only changes what you are reading, what you type always goes to the
-main agent.
-
-## Keeping the cost down
-
-Settings > Chat has a **Warn above** setting for how many chats running at
-once is worth a warning, and three optional spending ceilings: stop this
-chat after a dollar amount, stop this project after a dollar amount summed
-across every chat in it, and stop at a percentage of context (the only one
-of the three that recovers on its own, once the conversation compacts). All
-three only take effect at the next turn boundary; a turn already running is
-always allowed to finish, and nothing is ever injected into the agent's
-context to announce that a limit was hit.
+The Spending group is described in
+[Limits and spending](/docs/agents/limits-and-spending/).

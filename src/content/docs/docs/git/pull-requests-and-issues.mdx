@@ -1,53 +1,291 @@
 ---
 title: Pull requests and issues
-description: GitHub and GitLab accounts, PR status, review, and starting a branch from an issue.
+description: Connect GitHub or GitLab, open a pull request, review it line by line, merge it, start work from an issue, and let a chat watch a pull request for you.
 ---
 
+import Aside from "../../../../components/docs/Aside.astro";
 import Demo from "../../../../components/docs/Demo.astro";
+import Steps from "../../../../components/docs/Steps.astro";
 import PullRequestDemo from "../../../../islands/docs/PullRequestDemo";
 
-## Signing in
+Tori reads and writes pull requests and issues on GitHub and GitLab, including
+GitHub Enterprise and self-managed GitLab. Opening a pull request in the app,
+the review and merge controls, and starting from an issue need a signed-in
+account; without one, **Open PR** opens the host's compare page in your
+browser instead.
 
-Settings > Integrations > Hosts holds your GitHub and GitLab accounts,
-including self-hosted instances of either. GitHub signs in through the `gh`
-CLI if it is installed, or a pasted personal access token. GitLab signs in
-through an OAuth device flow: a short code and a URL, which Tori polls until
-you approve it.
+## Sign in to GitHub or GitLab
 
-A repository whose host has more than one signed-in account shows an account
-picker; a repository can also use the signed-in account as its git push and
-pull credential, per-repo or for every repo at once. The whole integration
-has one kill switch that stops polling while leaving your sign-in in place.
+Open Settings (the gear in the title bar) > **Integrations** > **Hosts**.
 
-## Status at a glance
+<Steps>
 
-A branch row's status chip shows whether it has an open pull request, its
-checks (passing, failing, running), and its review verdict, with a separate
-glyph family for each so the two can never be confused at a glance. A second
-chip shows how the branch stands against its upstream and its base: ahead,
-behind, diverged, or conflicting, silent when there is nothing to report.
-Clicking it fetches and switches you to the Changes panel.
+1. Click **Connect github.com**, or **Another host...** and pick
+   **gitlab.com**, **GitHub Enterprise** or **GitLab, self-managed**.
+2. Sign in:
+   - **github.com** uses your GitHub CLI (`gh`) login when you have one, with
+     nothing to type. Otherwise create a classic personal access token on the
+     page Tori opens, which asks for the `repo` and `workflow` scopes, and paste
+     it.
+   - **gitlab.com** opens your browser with a short code already on your
+     clipboard. Paste it there, approve, and come back; Tori finishes on its
+     own. Codes last about two minutes. **Paste a token instead** is there if
+     you prefer.
+   - **GitHub Enterprise** and **GitLab, self-managed** ask for the host's URL
+     first. A self-managed GitLab can sign in with a token, or with the browser
+     once you give it the ID of an application you created there (with the
+     `api` scope and **Device authorization grant**).
+3. The account appears under its host as **Signed in**, with the scopes the
+   token holds and when it expires.
 
-## The pull request panel
+</Steps>
+
+Each host lists its accounts. You can sign in to several accounts on one host,
+for example a work and a personal GitHub account; a repository that more than
+one of them can see shows a person icon on its row to **Pick which account this
+repo uses**.
+
+What a card can tell you:
+
+- **This token expires on 23 Sep 2026.** or **expired**: **Sign in again**
+  replaces it in place.
+- **Pushes that change GitHub Actions need a newer sign-in.** A token without
+  the `workflow` scope cannot push changes under `.github/workflows/`. For a
+  `gh` login, run `gh auth refresh -s workflow`.
+- **Organisations have not let this account through:** an organisation with
+  OAuth restrictions has not approved the sign-in, so its repositories cannot be
+  read. Ask an owner to approve it. Projects affected show a shield on their
+  row.
+
+**Remove** on an account deletes the token Tori stored for it.
+
+### Use the account for git itself
+
+**Use for git push and fetch**, per host, makes git ask Tori for this account's
+credentials when it talks to that host. It covers Tori's own git, terminal tabs
+and agents; tabs and agents already open need reopening after you turn it on.
+Tori has to be running: while it is closed, git asks you as usual.
+
+**Use for git everywhere** extends the same to git run outside Tori, through your global git config.
+
+When a host has several accounts, choose which one git pushes and fetches as.
+
+### The switches
+
+- **Show pull requests and checks** turns the whole integration off or on. Off,
+  Tori stops asking the host for anything, and your sign-ins stay.
+- **Let a chat watch a pull request**, off by default, allows
+  [watches](#let-a-chat-watch-a-pull-request).
+
+A repository whose host has no account shows a plug icon on its row and in the
+Changes panel: **Add an account for github.com in Settings**.
+
+## Open a pull request
+
+From the Changes panel, click the **Open a pull request** button in the
+header, or from the Pull requests panel when the branch has none.
+
+<Steps>
+
+1. Tori pushes the branch first if the remote does not have its latest
+   commits.
+2. **Open a pull request** opens with the **Title**, the **Base** branch
+   (prefilled with the repository's default branch, editable for a stacked
+   branch) and a **Description**.
+3. Optionally click **Ask agent to draft**. It asks the selected session to
+   draft a title and body for the branch against the base, measured from where
+   the branch left the base rather than against everything the base gained
+   since. The request lands in its composer; send it, then copy the draft into
+   the form.
+4. Tick **Open as a draft** if you want a draft pull request.
+5. Click **Open pull request**. `Enter` does not submit, so you can write a
+   multi-line description safely.
+
+</Steps>
+
+This in-app form is for github.com with a signed-in account. For other hosts,
+or without an account, the button pushes and opens the host's compare page in
+your browser.
+
+## The Pull requests panel
 
 <Demo caption="Dinesh's PR #52 on hooli-search, reviewed from your side. Hover a diff line and press + to leave a comment, tick files as viewed, then submit the batch from the Review tab. The repo needs every check and one approval to merge, so watch the tests finish, approve, and merge from the Merge tab.">
   <PullRequestDemo client:visible />
 </Demo>
 
-Shows the one pull request for whichever branch is in front: title, files,
-three verdict lines (mergeable state, checks, review decision), and tabs for
-the overview, checks, review, and merge. From here you can push and open a
-pull request, or push only, review all files in one tab, or jump to the full
-listing of every open pull request in the repo.
+The Pull requests panel, in the right panel, is about the branch in front of
+you: its one pull request.
 
-Review posts a batch: any inline comments you left, plus one verdict, Comment,
-Approve, or Request changes, all together in one action rather than one call
-per comment. Merging lives only here, deliberately, so there is exactly one
-place a stale verdict could let a merge through, not two.
+At the top: the state (draft, open, merged, closed), the title and number,
+who opened it and when, and the branches. **Re-read this pull request**
+refreshes it, **Open the description in the editor** shows the full
+description, and the number opens it on the host. When new commits arrive
+while you are reading, the panel says **This pull request has new commits since
+you read it.**
 
-## Starting from an issue
+Then three verdict lines: the checks, the review decision, and whether it can
+merge. Click one to open its tab in the section at the bottom: **Review**,
+**Conversation**, **Checks** or **Merge**. Drag the section's edge to resize
+it; its height is remembered.
 
-Adding a branch offers an Issue mode: pick from your assigned issues, or
-type a number, and Tori creates the branch, optionally linking it to the
-issue on the host so the two show up connected there too. The new branch
-opens with a session whose first message is drafted from the issue.
+### When the branch has no pull request
+
+The panel says which situation it is, with the button for it:
+
+| Situation | Button |
+| --- | --- |
+| Commits the remote does not have | **Push and open a pull request**, or **Push only** |
+| Pushed, nothing open | **Open a pull request** |
+| No account for the host | **Open compare on github.com**, in the browser |
+| You are standing on the base branch | **New branch from base** |
+
+### Every pull request in the project
+
+**All pull requests**, at the top of the panel, lists the project's open pull
+requests with their branches. Click one to open it, including one on someone
+else's branch that you have not checked out.
+
+## Review a pull request
+
+### Read the files
+
+The **Files** tree is shaped like the host's own review view. Every file and
+folder has a **Viewed** box; a folder's box marks everything under it, and
+shows a dash when only some of its files are read.
+
+- Click a file to open its diff in a tab, with each conversation drawn between
+  the lines it is about and a reply box under it. File diffs share one preview
+  tab, so walking a forty file pull request does not leave forty tabs; a double
+  click keeps one.
+- **Review all files in one tab** stacks every file in one scroll, for reading
+  the change in order. The first ten open at once and the rest when you open
+  them.
+- A binary file says **Binary file, nothing to diff**, and a very large one
+  **Diff too large to load**.
+
+| Keys | Action |
+| --- | --- |
+| `j`, `k` | Next and previous file in the panel |
+| `n`, `p` | Next and previous conversation in a diff |
+| `Cmd+Shift+R` | Open the review form |
+
+The letters work only when you are not typing in a field.
+
+### Leave comments
+
+<Steps>
+
+1. Hover a line in a file's diff and press the **+** that appears, **Comment
+   on** that line. Drag across lines first to comment on a range.
+2. Type the comment. It is held, not posted, so you can write several.
+3. To post one right away instead, use **Post this comment on its own, now**.
+
+</Steps>
+
+Held comments survive a relaunch. Each remembers the exact line it was written
+against, and the review refuses to post one if that line has moved or now reads
+differently, or if the branch has new commits, so a comment never lands on the
+wrong line.
+
+### Reply to a conversation
+
+Each thread shows its comments, marked **outdated** or **resolved** where
+that applies. Type in its reply box to answer, and resolve or unresolve it
+from the thread. A thread's send button hands it to the session that worked on
+that branch, for the agent to address; the button names that session and
+whether it is running.
+
+### Submit the review
+
+Open the **Review** tab (or press `Cmd+Shift+R`), pick a verdict and write an
+optional summary:
+
+| Verdict | Means |
+| --- | --- |
+| **Comment** | Feedback without an explicit approval |
+| **Approve** | Sign off on these changes |
+| **Request changes** | Blocks the merge until you approve |
+
+Submitting posts the summary, the verdict and every held comment together, as
+one review. A summary alone, with no line comments, is a review too. The
+review in the panel and the one in the pull request's own tab are the same
+review.
+
+## Checks
+
+The **Checks** tab groups checks by outcome, worst first, with the count and
+colour on each heading. A failing check turns the branch **needs you** in the
+sidebar and lights its member chip in a Topic.
+
+## Merge
+
+The **Merge** tab is the only place in Tori that merges. Pick how, **Merge
+commit**, **Squash and merge** or **Rebase and merge**, and merge. The button is
+enabled only when the host itself says the pull request can merge, so a rule on
+the base branch is always respected. **Checking whether this can merge...**
+shows while the host decides.
+
+After a merge, **Delete branch...** offers to remove the branch.
+
+## After a pull request is done
+
+- The branch keeps its pull request line, with when it merged or closed.
+- A branch that merged with nothing new since rests on a faint teal wash, and
+  has nothing to push. Commits made after the merge show as **commits after
+  merge**, for a new pull request.
+- A closed pull request gets **Reopen the pull request** where **Open PR** was.
+  If its remote branch was deleted, Tori pushes it back first, but only when
+  your branch tip is still the pull request's head and it is not from a fork.
+- A deleted remote branch reads **Deleted** in the sidebar, the Changes panel
+  and the graph, rather than looking unpushed.
+
+## Start from an issue
+
+Starting a branch or worktree from one of your assigned issues is in the add
+branch dialog. See
+[Start from an issue](/docs/git/worktrees-and-branches/#start-from-an-issue).
+The Autopilot can also pick issues up for you; see
+[Autopilot](/docs/automation/autopilot/).
+
+## Let a chat watch a pull request
+
+A chat can watch its pull request and be woken when something happens, so you
+do not have to come back and paste in what a reviewer said.
+
+<Steps>
+
+1. Turn on **Let a chat watch a pull request** in Settings > Integrations >
+   Hosts.
+2. Right-click the branch row of an open pull request in the sidebar.
+3. Choose **Watch with this session**. With several chats open in that worktree
+   the menu names each; with none it says **No chat is open in this
+   worktree**.
+
+</Steps>
+
+The branch row shows an eye while a chat watches it. **Stop watching with this
+session** is in the same menu. An agent can also start a watch itself, through
+[Tori's MCP server](/docs/automation/mcp-server/).
+
+The chat is woken with one message from Tori, shown as **Tori: news on pull
+request #482**, listing what changed:
+
+- a check failed (with a link), or the checks passed,
+- someone else commented or reviewed, quoted,
+- the branch now conflicts with its base,
+- the watch ended, for example because the pull request merged or closed.
+
+A wake only reaches a chat that is idle; news that arrives mid-turn waits for
+the turn to end. Quoted comments are marked as other people's words, not
+instructions, and every wake ends with **This is news, not a decision to
+merge.** Ten wakes in a row that bring only comments end the watch, so a chatty
+bot cannot keep an agent busy forever. Each wake is a turn, and costs what a
+turn costs.
+
+<Aside type="note" title="How often Tori looks">
+
+Pull request state is read about every two minutes in the background, and
+sooner when you come back to the window. Reading pauses when the host's rate
+limit runs low, so the requests you make yourself always have room.
+
+</Aside>

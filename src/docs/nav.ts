@@ -8,22 +8,34 @@ const page = (label: string, slug: string): NavLink => ({ label, href: slug ? `/
 export const NAV: NavGroup[] = [
   {
     label: "Getting started",
-    items: [page("Overview", ""), page("Install", "install"), page("First run", "first-run")],
+    items: [page("Overview", ""), page("Install", "install"), page("First run", "first-run"), page("Updates and crash reports", "updates")],
   },
   {
     label: "Workspace",
     items: [
       page("Spaces, projects and branches", "workspace/spaces"),
+      page("Topics", "workspace/topics"),
       page("Panes, tabs and layout", "workspace/panes-and-tabs"),
-      page("Search, the omnibox and shortcuts", "workspace/search-and-shortcuts"),
+      page("Search and the omnibox", "workspace/search-and-shortcuts"),
+      page("Keyboard shortcuts", "workspace/keyboard-shortcuts"),
     ],
   },
   {
     label: "Agents and chat",
     items: [
-      page("Supported agents and adapters", "agents/adapters"),
       page("Chat", "agents/chat"),
+      page("Starting a chat", "agents/starting-a-chat"),
+      page("The composer", "agents/composer"),
+      page("Steering and the queue", "agents/steering-and-the-queue"),
+      page("Models, effort and modes", "agents/models-and-modes"),
+      page("Permissions and questions", "agents/permissions-and-questions"),
+      page("Reading the transcript", "agents/transcript"),
+      page("Subagents and background work", "agents/subagents"),
+      page("Rewind and fork", "agents/rewind-and-fork"),
+      page("Limits and spending", "agents/limits-and-spending"),
       page("Accounts and usage", "agents/accounts-and-usage"),
+      page("Agents in Settings", "agents/agent-settings"),
+      page("Supported agents and adapters", "agents/adapters"),
     ],
   },
   {
@@ -32,6 +44,9 @@ export const NAV: NavGroup[] = [
       page("Worktrees and branches", "git/worktrees-and-branches"),
       page("Shared in worktrees", "git/shared-files"),
       page("The Changes panel", "git/changes-panel"),
+      page("Diffs", "git/diffs"),
+      page("Checkpoints", "git/checkpoints"),
+      page("Merge conflicts", "git/merge-conflicts"),
       page("Pull requests and issues", "git/pull-requests-and-issues"),
     ],
   },
@@ -39,6 +54,7 @@ export const NAV: NavGroup[] = [
     label: "Editor and tools",
     items: [
       page("Editor", "editor/editor"),
+      page("Files and the explorer", "editor/files"),
       page("Language tooling", "editor/tooling"),
       page("Language servers", "editor/language-servers"),
       page("Linters", "editor/linters"),
@@ -58,7 +74,11 @@ export const NAV: NavGroup[] = [
   },
   {
     label: "Reference",
-    items: [page("Every setting", "reference/settings"), page("Files on disk and privacy", "reference/files-and-privacy")],
+    items: [
+      page("Every setting", "reference/settings"),
+      page("Security model", "reference/security"),
+      page("Files on disk and privacy", "reference/files-and-privacy"),
+    ],
   },
   { label: "Changelog", items: [{ label: "Changelog", href: "/changelog/" }] },
 ];

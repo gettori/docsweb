@@ -1,0 +1,225 @@
+---
+title: Steering and the queue
+description: Send a message while a turn is running, queue messages for later turns, and edit, reorder, steer or delete them before they go.
+---
+
+import Aside from "../../../../components/docs/Aside.astro";
+import Steps from "../../../../components/docs/Steps.astro";
+
+You never have to wait for an agent to finish before typing. Whatever you
+send while a turn is running goes one of two ways:
+
+- **A steer** goes into the turn that is running now. The agent reads it at
+  its next step and changes course without starting over.
+- **A queued message** waits in a strip above the composer and is sent as
+  the next turn, once the current one ends.
+
+Until a queued message is sent you can edit it, move it, push it into the
+running turn as a steer, or delete it. A steer that has already gone cannot
+be taken back, because the agent has read it.
+
+## Which agents can steer
+
+Only Claude takes a message in the middle of a turn. Every other agent
+(Codex, OpenCode, Gemini, Copilot, Kimi and Pi) talks to Tori over a protocol
+with no way to deliver one, so a message typed during their turn is always
+queued. Tori never pretends a queued message was a steer.
+
+The composer tells you which you are about to do. While a turn runs its
+placeholder reads:
+
+| Placeholder | What `Enter` does |
+| --- | --- |
+| **Steer this turn, picked up in 1.5-5.4s. Option+Enter queues** | Steers. The figure is how long a steer took to land when it was measured |
+| **Type to queue for the next turn** | Queues. The agent cannot be steered |
+
+There is also a short moment right after you send a prompt, before the agent
+has said its turn has started, when there is nothing to steer yet. Anything
+you send in that moment is queued, even on Claude.
+
+## Steer a running turn
+
+Use a steer when the agent is heading the wrong way and you want it to change
+course now: "use the existing helper instead", "skip the tests for now",
+"that file is generated, edit the template".
+
+<Steps>
+
+1. While the turn runs, type in the composer as usual.
+2. Press `Enter`.
+3. Your message appears in the transcript with a **Steer** label, inside the
+   turn it went into. The agent picks it up before its next tool call,
+   usually within a few seconds.
+
+</Steps>
+
+Attachments and `@` mentions ride along with a steer the same way they do
+with any message.
+
+A steer is refused while the agent is waiting on a
+[permission prompt](/docs/agents/permissions-and-questions/), because the
+agent has stopped on that question and a message written past it would be
+read after the answer. You see **Session is waiting for permission, answer it
+first.**, and your text goes back into the composer so nothing is lost.
+Answer the prompt, then send again.
+
+## Queue a message for the next turn
+
+Use the queue for follow ups that should not interrupt the step in progress:
+"after this, run the full suite", "then update the changelog". Each queued
+message becomes a turn of its own, sent in order, one after another.
+
+<Steps>
+
+1. While the turn runs, type the message.
+2. Press `Option+Enter`. On an agent that cannot steer, plain `Enter` queues
+   too.
+3. The message moves into the strip above the composer, under **Queued for
+   the next turn**, and the box is empty again for the next one.
+
+</Steps>
+
+When the running turn finishes, the first message in the strip is sent and
+leaves the strip. The second waits for that turn to finish, and so on. A
+queued message keeps any files, images or mentions that were attached when you
+queued it, and a message that is only attachments can be queued too.
+
+When no turn is running, `Enter` and `Option+Enter` both just send.
+
+## Work with queued messages
+
+Each row in the strip shows the message text, with a small preview for an
+attached image and the label of any other attachment. The buttons on a row:
+
+| Control | What it does |
+| --- | --- |
+| Drag handle | Reorder the queue. Shown once two or more messages are queued |
+| Pencil, **Edit in the composer** | Open the message in the composer to change it |
+| Arrow, **Steer this turn with it now** | Send it into the running turn as a steer. Only on an agent that can steer, while a turn runs |
+| Cross, **Remove from the queue** | Delete it |
+
+Clicking the text of a row does nothing, so a stray click never deletes or
+sends anything.
+
+### Edit a queued message
+
+<Steps>
+
+1. Click the pencil on the row. To edit the newest queued message without the
+   mouse, put the caret at the very start of the composer and press
+   `Option+ArrowUp`.
+2. The message opens in the composer and its row is highlighted. A bar above
+   the box reads **Editing a queued message**, with **Save** and **Cancel**.
+3. Change the text. You can remove an attachment with its cross, or add new
+   ones by pasting, dropping or typing `@`. Attachments keep the labels they
+   had, so `[image 1]` still means the same image.
+4. Press `Enter`, `Cmd+Enter` or **Save** to write the change back into the
+   same place in the queue. Press `Escape` or **Cancel** to leave the message
+   as it was.
+
+</Steps>
+
+Whatever was in the composer before you started the edit, text and
+attachments both, is set aside and comes back when the edit ends, saved or
+cancelled.
+
+While you edit, `Option+Enter` and `Cmd+Shift+Enter` do nothing, so the edit
+cannot be sent by accident. **Save** is greyed out while the message is empty;
+to get rid of a message, cancel and delete it instead.
+
+A message cannot be edited while it is on its way in as a steer, and you
+cannot edit while the draft is open in an editor tab (see
+[Open in editor](/docs/agents/composer/#write-a-long-prompt-in-the-editor)).
+
+If the message leaves the queue while you are editing it, because the turn
+ended and it was sent, or because you deleted it, the edit ends on its own.
+What you typed is not thrown away:
+
+- If the composer was empty before the edit, your edited text stays in the
+  box as a normal draft.
+- If you had a draft set aside, that draft comes back, and your edited text
+  goes into the composer's history. Press `ArrowUp` at the start of the box to
+  get it back.
+
+### Reorder the queue
+
+Drag a row by its handle to a new place. From the keyboard, focus the handle
+with `Tab` and press `ArrowUp` or `ArrowDown` to move the row one place at a
+time; focus stays on the handle so you can keep moving it. The top row is the
+next to be sent.
+
+### Turn a queued message into a steer
+
+On Claude, while a turn is running, click the arrow on a row to send that
+message into the running turn now instead of waiting. `Cmd+Shift+Enter` does
+the same for the oldest queued message and leaves whatever you are typing
+untouched. With nothing queued, `Cmd+Shift+Enter` just sends the composer.
+
+The row stays in the strip, marked as in flight, until the agent has taken it.
+If the steer is refused, for example because a permission prompt arrived, the
+row simply stays queued and nothing is lost. While it is in flight its arrow is
+disabled and its pencil is hidden, so it cannot be sent twice or changed
+halfway.
+
+### Delete a queued message
+
+Click the cross on the row. The message is gone for good; there is no undo.
+To clear every held message at once, use **Discard** (below).
+
+## When the queue is held
+
+Some events stop the queue from sending on its own:
+
+- You stopped the turn, with `Escape` or the stop button.
+- The turn failed, or the session ended or crashed.
+- Tori was reloaded or relaunched with messages still queued.
+
+Stopping a turn usually means you changed your mind, so Tori does not fire the
+messages you queued behind it. The strip turns into a held strip that reads
+**N messages held: the turn was stopped**, or **N messages held: saved from
+last time** after a relaunch, with two buttons:
+
+- **Send now** releases the queue. The first message goes out as the next
+  turn and the rest follow in order, as usual.
+- **Discard** deletes every held message.
+
+While the queue is held you can still edit, reorder and delete single rows.
+Deleting the last one clears the hold.
+
+## The queue survives a relaunch
+
+Each chat's queue is saved to disk, under `~/.config/tori/chat-queues/`, as
+you change it. Reload the window or quit Tori and the messages come back with
+their attachments, held, so nothing is sent until you press **Send now**.
+
+Closing the chat's tab, or deleting the session, deletes its saved queue.
+
+## Spending ceilings and the queue
+
+If a [spending ceiling](/docs/agents/limits-and-spending/) has stopped the
+chat, a message you send is not lost: it is added to the queue, and the
+transcript says **This message is waiting**, which ceiling was reached, and to
+raise the limit in Settings. The queue does not send while the chat is over a
+ceiling, and **Send now** does not get around it. Raise or clear the limit and
+the queue starts sending again, without you having to type anything a second
+time. A steer from a queued row under a ceiling is refused the same way, and
+the row stays put.
+
+<Aside type="note" title="Steering from elsewhere">
+
+The [phone app](/docs/phone/using-the-phone-app/) can steer a chat, and so can
+`tori steer` in the [CLI](/docs/automation/cli/) and the `session_steer` tool in
+[Tori's MCP server](/docs/automation/mcp-server/). These deliver into the
+running turn the same way; the queue strip belongs to the desktop composer.
+
+</Aside>
+
+## Keys at a glance
+
+| Keys | While a turn runs | With no turn running |
+| --- | --- | --- |
+| `Enter` | Steer, or queue if the agent cannot steer | Send |
+| `Option+Enter` | Queue for the next turn | Send |
+| `Cmd+Shift+Enter` | Steer with the oldest queued message, or send if the queue is empty | Send |
+| `Option+ArrowUp` | Edit the newest queued message (caret at the start of the box) | Same |
+| `Escape` | Cancel a queue edit, otherwise stop the turn | Cancel a queue edit |

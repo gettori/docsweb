@@ -1,0 +1,288 @@
+---
+title: The composer
+description: Write and send prompts, mention files, attach images and documents, recall earlier messages, and draft long prompts in the editor.
+---
+
+import Aside from "../../../../components/docs/Aside.astro";
+import Steps from "../../../../components/docs/Steps.astro";
+
+The composer is the box at the bottom of every chat. It starts three lines
+tall and grows with what you type, up to nine lines, then scrolls. Under the
+box is a bar with the attach and editor buttons on the left, the
+[model, effort and mode pills](/docs/agents/models-and-modes/), any switches
+the agent publishes, the **Follow live edits** toggle, and the send button
+on the right.
+
+What you type is kept per chat tab. Switch to another tab, or close the chat
+and reopen it, and the unsent draft is still there.
+
+## Send a message
+
+Type and press `Enter`. `Shift+Enter` starts a new line. The send button
+does the same as `Enter`; while a turn is running it turns into a stop
+button.
+
+A message can be text, attachments, or both. A message with only an
+attachment is fine: "look at this" can be the image alone.
+
+### Code blocks
+
+When the caret is inside an open code fence (you typed three backticks and
+have not closed them), `Enter` adds a line instead of sending half a block.
+A hint under the box says **Enter adds a line inside the code block.
+Cmd+Enter sends.**
+
+`Cmd+Enter` always sends: inside a fence, with a completion menu open, from
+anywhere in the box.
+
+### Long drafts
+
+Once a draft passes about 2,000 characters, the bar shows a rough size, for
+example **about 1.2k tokens**. It is an estimate, at four characters a token,
+so you can tell before sending that a paste is bigger than you thought.
+
+## Keys in the composer
+
+| Keys | What it does |
+| --- | --- |
+| `Enter` | Send. While a turn runs, steer it or queue (see [Steering and the queue](/docs/agents/steering-and-the-queue/)) |
+| `Shift+Enter` | New line |
+| `Cmd+Enter` | Send, even inside a code fence or with a menu open |
+| `Option+Enter` | While a turn runs, queue for the next turn |
+| `Cmd+Shift+Enter` | Steer with the oldest queued message, or send if nothing is queued |
+| `ArrowUp`, `ArrowDown` | At the start of the box, walk back and forward through what you sent |
+| `Option+ArrowUp` | At the start of the box, edit the newest queued message |
+| `Ctrl+C` | Empty the box, the way a shell prompt does |
+| `Cmd+S` | Stash the draft and empty the box. In an empty box, bring a stashed draft back (see [Stash a draft for later](#stash-a-draft-for-later)) |
+| `Escape` | Close an open menu. Otherwise cancel a queue edit, or stop the running turn |
+| `Tab` | With a menu open, accept the highlighted row |
+
+## Recall what you sent
+
+Press `ArrowUp` with the caret at the very start of the box to bring back the
+last message you sent in this chat. Keep pressing to go further back, up to
+your last 50 messages. `ArrowDown` walks forward again, and past the newest
+one gives you an empty box. Once you start walking, the caret can be anywhere;
+`ArrowUp` keeps going back.
+
+A recalled message is a fresh draft. Change it and send it as a new message;
+the original stays where it was in the transcript.
+
+## Clear the box
+
+`Ctrl+C` empties the text in one keystroke, so a prompt abandoned halfway
+through does not have to be selected and deleted. Attachments stay, each with
+its own remove button. With an empty box, `Ctrl+C` does nothing.
+
+## Stash a draft for later
+
+Halfway through a prompt, something more urgent comes up. Press `Cmd+S` and
+the draft, with its attachments, goes into the stash and the box empties.
+Write and send the urgent thing, then press `Cmd+S` in the empty box to get
+the draft back.
+
+- With one stashed draft, `Cmd+S` in an empty box brings it straight back.
+- With several, it opens a menu above the box, newest first. Each row shows
+  the first line of the draft, how many attachments it has, and how long ago
+  it was stashed. Move with `ArrowUp` and `ArrowDown` and press `Enter`, or
+  click a row, to bring it back. `Backspace`, or the **x** on a row, discards
+  that draft. `Escape` closes the menu.
+- Bringing a draft back takes it out of the stash.
+
+The stash is one list for all of Tori, not per chat or per project, so a
+draft stashed in one chat can come back in another. Its attachment labels are
+numbered again for the chat it lands in: `[Image 1]` may come back as
+`[Image 2]`, and the text changes to match. An attachment the new chat's
+agent cannot open stays in the stash on its own, its label is taken out of
+the text, and a message says what that agent does open.
+
+The stash holds 20 drafts. Stashing a 21st drops the oldest. It is kept on
+disk, so it survives a reload and a relaunch.
+
+If you start typing before a draft has come back, your typing wins and the
+draft stays in the stash.
+
+`Cmd+S` does nothing in the composer while you are editing a queued message,
+while the draft is open in the editor, or while a new chat's first message is
+waiting for its session to start.
+
+Discarding a draft, or one dropping off the end, deletes the files you pasted
+or dropped into it, unless a chat or another stashed draft still uses them.
+
+## Mention a file with @
+
+Type `@` and start typing a file name. A menu above the box lists matching
+files in the project, best match first. Move with `ArrowUp` and `ArrowDown`
+and press `Enter` or `Tab` to pick one, or click it. `Escape` closes the menu
+without picking.
+
+The file becomes an attachment chip above the box, and its label, like
+`[file 1]`, takes the place of what you typed, so your sentence still reads
+"look at `[file 1]`". The agent is handed the file's path and reads it off
+disk. Nothing is uploaded.
+
+The first `@` in a chat lists the project's files once; later mentions use
+that list.
+
+You can also mention a file by dragging it into the composer from the Files
+tree or from an editor tab. A dragged file is a mention, the same as `@`.
+
+## Run a slash command with /
+
+Type `/` at the start of a word to list the agent's own slash commands, the
+same ones it offers in its terminal interface: `/compact`, `/usage`, your own
+custom commands and so on. The list comes from the agent itself, so it
+matches whatever agent and version the chat is on, and a new chat shows the
+list the agent gave last time.
+
+Each row shows the command, the argument it expects if any, and a
+description. Picking one puts `/name ` in the box with the caret after it.
+The argument hint is shown, never inserted.
+
+What a command prints, like the output of `/usage`, `/context` or `/cost`, is
+shown in the transcript and is still there when you reopen the chat.
+
+## Attach files and images
+
+There are three ways to attach a file:
+
+- Click the **+** on the bar and pick one or more files.
+- Paste. A copied image or file attaches itself.
+- Drop files from Finder onto the composer. While you drag, the composer says
+  what this agent can take, for example **Drop to attach: image, pdf, file**.
+
+Every attachment is written under `~/.config/tori/attachments/` and the agent
+is handed its path, the same way a mention works. Nothing is embedded in the
+conversation as bytes.
+
+Each attachment gets a label by kind, numbered per chat and never reused:
+`[image 1]`, `[pdf 1]`, `[file 2]`. The label goes into your message where
+the caret was, or where you dropped the file, so you can write "compare
+`[image 1]` with `[image 2]`" and the agent knows which is which.
+
+### What each agent can take
+
+| Agent | Paste, drop or pick a file | Mention a project file |
+| --- | --- | --- |
+| Claude | Images, PDFs and any other file | Yes |
+| Codex, OpenCode, Gemini, Copilot, Kimi, Pi | Images, only when the model in use says it reads them | Yes |
+
+An agent that cannot open what you give it refuses it with a message saying
+what it does open. Where nothing at all can be attached, the **+** button is
+greyed out. Those agents cannot be given a file from outside their project, so
+drag the file in from the Files tree, or mention it with `@`, instead.
+
+### Limits
+
+- Up to 10 attachments per message. An eleventh is refused with **Send some
+  first.**
+- An image or a file can be up to 5 MB, a PDF up to 32 MB.
+- Images are PNG, JPEG, GIF and WebP.
+- Video, audio, archives, fonts, binaries and Office documents are refused,
+  because no agent can read them.
+
+### Attachment tiles
+
+Attachments sit above the box as tiles: a small preview for an image, the
+file's icon otherwise, with the file name and its label under it.
+
+- **Click** a tile to open the file in the editor.
+- **Cmd+click** a tile, or drag it into the text, to put its label in your
+  message again.
+- Click the **x** in the corner of a tile to remove it. With the tile focused,
+  `Delete` or `Backspace` removes it too. Removing an attachment also takes its
+  label out of your message.
+
+A mentioned file is checked when the chat opens and every time you click back
+into the box. If it has been deleted or moved, its tile turns red and says
+where the file was. The tile stays, because your sentence still names it;
+remove it yourself if the agent no longer needs it.
+
+When you reopen a chat later, the attachments in its past messages come back
+with it.
+
+### Long pastes become files
+
+A paste over 30 lines or 3,000 characters becomes an attachment named
+`pasted.txt` instead of a wall of text in the box. The agent reads it the same
+way, and your draft stays readable. Turn **Attach long pastes as files** off in
+Settings > Chat to keep every paste inline. Only Claude takes a pasted
+file, so with any other agent a long paste always stays in the box.
+
+## Write a long prompt in the editor
+
+For a prompt that needs real editing, multiple cursors, find and replace, or
+vim keys, open it in the editor.
+
+<Steps>
+
+1. Click the pen button on the composer's bar, **Open the draft in the
+   editor**.
+2. Tori writes your draft to a scratch file named `prompt-1` (then
+   `prompt-2`, and so on) and opens it in an editor tab.
+3. The composer goes read only and says **Editing in prompt-1. Save there to
+   update this draft, or edit here.** Each `Cmd+S` in the editor copies the
+   file's text back into the composer.
+4. When you are done, click the check button in the editor's bar, **Done: put
+   the prompt in the chat's input and close it here**. The text goes back into
+   the composer, the tab closes and the chat comes forward. Or just send from
+   the chat: it sends what the editor holds right now, saved or not, and closes
+   the tab.
+
+</Steps>
+
+Click **edit here** under the composer to take the draft back without
+closing the editor's text in, or close the editor tab: the composer keeps
+whatever you last saved. The scratch file is deleted when the link ends.
+
+While a draft is open in the editor you cannot start editing a
+[queued message](/docs/agents/steering-and-the-queue/#edit-a-queued-message).
+
+## Quote from the transcript
+
+Select some text in the transcript and a **Quote** button appears beside the
+selection. Click it to put those lines into the composer as a Markdown quote,
+each line starting with `>`, with a blank line under it and the caret ready
+for your reply. Selections inside an input, like the free text box of a
+question, do not offer it.
+
+The same button appears when you select text in a [PDF](/docs/editor/editor/).
+There it sends the quote, with the page number, to the selected session.
+
+## Things that land in the composer from elsewhere
+
+Several parts of Tori put text into a chat for you to read and send. None of
+them ever presses Enter for you: the text waits in the composer, or is typed
+at the prompt of a terminal agent, until you send it.
+
+| From | Goes to | What arrives |
+| --- | --- | --- |
+| A comment on a hunk in a diff | The session selected in the sidebar | The file and line range, and your comment |
+| A problem in the Problems panel | The selected session | The file and line, the severity and message, and any fixes the language server offers |
+| A TODO in the TODOs panel | The selected session | The line, and "Fix this TODO" with its text |
+| **Ask** in the Debug panel | The selected session | The paused frame, its call stack and the variables in scope |
+| **Ask agent to resolve** on a merge conflict | The selected session | The conflicted file and what to resolve |
+| A Quote from a PDF | The selected session | The quoted text and its page |
+| The send button on a pull request thread | The session that worked on the pull request's branch | The thread, for the agent to address |
+| The chat button on a file in Settings > Agents | A new chat draft | The file, and "Write my Claude skills" or similar |
+
+If the target session is waiting on a permission prompt, the send is refused
+with **Session is waiting for permission, answer it first.** Answer the
+prompt and try again.
+
+## Things that stop the composer
+
+The composer is disabled, with the reason on the bar, when:
+
+- The agent is turned off in Settings > Agents.
+- The project only allows other agents or accounts (see
+  [Limiting agents per project](/docs/agents/accounts-and-usage/#limiting-agents-per-project)).
+- The agent is not installed, is signed out, or needs a program it cannot find,
+  for example **Chat needs npx**.
+
+<Aside type="tip" title="Shortcuts work from the composer">
+
+App shortcuts like `Cmd+P` and `Cmd+K` still work while the composer has
+focus. Only the keys in the table above are the composer's own.
+
+</Aside>

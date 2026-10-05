@@ -1,0 +1,124 @@
+---
+title: Files and the explorer
+description: Browse, create, rename, move and delete files in the Files panel, run the project's scripts, read a file's outline, and collect its TODOs.
+---
+
+import Aside from "../../../../components/docs/Aside.astro";
+
+The **Files** panel is the right panel's file explorer for the branch,
+worktree or Topic you have selected.
+
+## The header
+
+The first line names the branch, with:
+
+| Button | What it does |
+| --- | --- |
+| **New File**, **New Folder** | Creates one at the top of the tree, or in the selected folder |
+| **Refresh** | Reads the tree again |
+| **Collapse Folders** | Closes every open folder |
+| **Views and More Actions** | Shows or hides **Scripts**, **Outline** and **TODOs**, and **Reveal Active File** in the tree |
+
+Under it, **Filter files** narrows the tree as you type. Inside a
+[Topic](/docs/workspace/topics/), member chips pick which repository the tree
+shows.
+
+## The tree
+
+- Files git ignores are shown, dimmed, so you can still reach a `.env`.
+- A chain of folders that each hold one folder is drawn as one row,
+  `src/utils/helpers`, while **Compact single-child folders** is on (the
+  default). Ignored folders are left as they are.
+- Single-click a file to open it in a preview tab, which the next click
+  replaces. Double-click to keep it.
+- The tree follows the file in front of you; **Reveal Active File** scrolls to
+  it if it does not.
+
+### Drag and drop
+
+- Drag a file onto a pane to open it there.
+- Drag it into a chat's composer to mention it, or onto a terminal to type its
+  path.
+- Drag a file or folder onto another folder in the tree to move it there.
+- Drag files in from Finder onto a folder to copy them into the project.
+
+### Right-click a file or folder
+
+| Item | What it does |
+| --- | --- |
+| **New File**, **New Folder** | Inside this folder |
+| **Open to the Side** | Opens it in the other pane |
+| **Reveal in Finder** | Shows it in Finder |
+| **Open in Integrated Terminal** | A shell tab in this folder |
+| **Find in Folder...** | A project search scoped to this folder |
+| **Cut**, **Copy**, **Paste** | Moves or copies files within the project |
+| **Duplicate** | A copy beside the original |
+| **Copy Path**, **Copy Relative Path** | Copies the path |
+| **File History**, **Local History** | See [File and local history](/docs/editor/editor/#file-and-local-history) |
+| **Share with other worktrees...** | An untracked file at the top of a worktree. See [Shared in worktrees](/docs/git/shared-files/) |
+| **Rename** | Renames it in place. A toast offers **Undo** |
+| **Delete** | Moves it to the Trash, after asking. Nothing is removed for good |
+
+Select several rows with `Cmd+click` and the menu acts on all of them. Right-click the empty space under the
+tree for the project folder's own menu: new file and folder, paste, copy
+path, reveal in Finder and open a terminal.
+
+Renaming or moving a file keeps its local history, and open tabs follow it.
+
+## Scripts
+
+The **Scripts** tab under the tree lists what the project can run: the
+scripts in the root `package.json`, then each workspace package's, then
+`Makefile` targets and `justfile` recipes.
+
+- Click a script, or **Run**, to run it in a terminal tab.
+- A running script is marked. Clicking it, or **Show terminal**, brings its
+  tab forward; **Run again** starts it fresh.
+- **Open package.json** (or `Makefile`, `justfile`) opens the file at that
+  script.
+- `Cmd+Shift+B` runs the last script again, in a new tab.
+
+With nothing to run it says **No scripts here. Tori reads package.json,
+Makefile and justfile.**
+
+## Outline
+
+The **Outline** tab lists the symbols of the file in front of you, classes,
+functions, methods and so on, as a tree from the language server. Click one to
+jump to it. A file with no language server says **No symbols in this file.**
+
+## TODOs
+
+The **TODOs** tab finds every `TODO`, `FIXME`, `HACK` and `XXX` comment across
+the project in one pass, grouped by file. Click one to open the file at that
+line.
+
+- Filter to one tag with **Show only TODO** (and so on).
+- **Send to agent** puts the line and "Fix this TODO" with its text into the
+  selected session's composer, for you to send.
+
+The tags are set per workspace in Settings > Editor > **TODO tags**, a
+comma-separated list matched case-sensitively, so the word "todo" in prose is
+not caught.
+
+## Problems
+
+The **Problems** panel, its own icon in the right panel, lists every error,
+warning and hint from the language servers and linters for the open files,
+worst file first, each with the tool that reported it. Click one to jump to it.
+**Send to agent** hands the problem, and any fixes the language server offers,
+to the selected session. With nothing wrong it says **No problems in the open
+files.**
+
+## Calls
+
+The **Calls** panel is a call hierarchy for the function under the caret: who
+calls it, and what it calls, expanding one level at a time. A recursive call
+is marked **cycle**. It needs a language server that supports call hierarchies.
+
+<Aside type="tip" title="Search">
+
+The Search panel lives beside Files. See
+[Search and the omnibox](/docs/workspace/search-and-shortcuts/).
+
+</Aside>

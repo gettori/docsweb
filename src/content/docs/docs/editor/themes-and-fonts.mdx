@@ -1,6 +1,6 @@
 ---
 title: Themes and fonts
-description: Dark and light themes, custom palettes, and typography settings.
+description: Pick one of 22 themes, make your own from a palette file, set the interface, editor and terminal fonts, and zoom the whole window.
 ---
 
 import Demo from "../../../../components/docs/Demo.astro";
@@ -12,23 +12,80 @@ import ThemesDemo from "../../../../islands/docs/ThemesDemo";
 
 ## Themes
 
-Five bundled themes: Tori Dark (default), Tori Light, Catppuccin Mocha,
-Tokyo Night, and Rose Pine Dawn. Ported themes keep the source palette's
-hues but always use Tori's own status and agent colors, never repainted by
-the port. Switch in Settings > Appearance, or with the toggle in the top bar,
-which starts from your system's light or dark preference the first time you
-open Tori.
+22 bundled themes, and the picker in Settings > Appearance is split into
+Dark and Light tabs:
 
-Drop a JSON palette file into `~/.config/tori/themes/` for a custom theme;
-it is live-watched, so it shows up in the picker without a restart. A theme
-that fails a basic legibility check paints nothing rather than a broken
-screen, Tori stays on whatever theme was active and tells you why with up to
-a few toasts naming the problem.
+| Dark (14) | Light (8) |
+| --- | --- |
+| Tori Dark (default) | Tori Light |
+| Ayu Dark | Atom One Light |
+| Catppuccin Frappe | Ayu Light |
+| Catppuccin Macchiato | Catppuccin Latte |
+| Catppuccin Mocha | GitHub Light |
+| Dracula | Quiet Light |
+| GitHub Dark | Rose Pine Dawn |
+| Monokai Pro | Solarized Light |
+| Night Owl | |
+| Nord | |
+| One Dark Pro | |
+| Shades of Purple | |
+| SynthWave '84 | |
+| Tokyo Night | |
+
+Ported themes keep the source palette's hues but always use Tori's own
+status and agent colors, never repainted by the port, so working, needs you
+and done look the same in every theme. Switch in Settings > Appearance, or
+with the toggle in the top bar, which starts from your system's light or
+dark preference the first time you open Tori. File icons take their hues
+from the theme too.
+
+## Pick a theme
+
+Open Settings (the gear in the title bar) > **Appearance** > **Theme**. The picker has **Dark** and
+**Light** tabs, and themes are grouped as **Bundled** and **From
+~/.config/tori/themes**. The theme applies as you click it.
+
+The sun and moon button in the top bar switches between your light and dark
+choice. The first time you open Tori it follows your system's appearance.
+
+## Make your own theme
+
+A theme is one JSON file of colours. Copy a bundled one as a starting point,
+change the colours, and save it in `~/.config/tori/themes/`. Tori watches the
+folder, so the theme appears in the picker without a restart, and edits to the
+file apply as you save.
+
+```json
+{
+  "schemaVersion": 1,
+  "id": "hooli",
+  "label": "Hooli",
+  "appearance": "dark",
+  "colors": {
+    "canvas": "#15171c",
+    "card": "#1b1e25",
+    "text": "#e4e8f0",
+    "accent": "#4a9eff"
+  }
+}
+```
+
+The file holds flat hex colours only (`#rgb`, `#rrggbb` or `#rrggbbaa`), one
+per role: surfaces (`canvas`, `card`, `head`, `input`, `hover`), lines, text,
+the accent, status colours, diff and diagnostic colours, and the syntax
+colours. Everything else, washes, shadows and the names the interface uses, is
+worked out from those, so a theme file can never contain anything but colours.
+
+Before a theme is used, Tori checks it is legible: text has to contrast with
+the surfaces behind it. A theme that fails is not offered, and if it is already
+selected the window keeps the theme it had and toasts say what failed, naming
+the colours. Fix the file and save it again.
 
 ## Fonts
 
-Settings > Appearance > Typography sets UI, editor and terminal font family
-and size independently, plus line height. The bundled terminal font is
+Settings > Appearance > **Typography** sets the **UI font family** and size,
+the **Editor font family** and size, the **Terminal font family** and size, and
+the **Line height**, independently. Any font installed on your Mac works. The bundled terminal font is
 JetBrains Mono Nerd Font, so prompt glyphs (powerline separators, devicons)
 render correctly without you needing to install a patched font yourself.
 

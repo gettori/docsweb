@@ -1,0 +1,122 @@
+---
+title: Rewind and fork
+description: Go back to before a prompt with the files and the conversation, or branch a chat into a new one to try another direction.
+---
+
+import Aside from "../../../../components/docs/Aside.astro";
+import Steps from "../../../../components/docs/Steps.astro";
+
+Three ways to go back, from the smallest to the largest:
+
+| You want to | Use |
+| --- | --- |
+| Undo one part of one edit | **Revert** on a hunk inside a tool call ([see the transcript](/docs/agents/transcript/#undo-one-hunk-from-the-transcript)) |
+| Put the files back to before a prompt, and keep talking in this chat | **Revert tree to** a turn in the [Checkpoints](/docs/git/checkpoints/) tab |
+| Put the files **and** the conversation back to before a prompt | **Rewind to here** |
+
+And one way to branch without undoing anything: **Fork this chat**.
+
+## Rewind to a prompt
+
+Rewinding puts every file this chat wrote back to how it was before the
+prompt you pick, and continues the conversation from that point in a new chat.
+
+<Steps>
+
+1. Make sure the chat is not mid-turn. Let it finish, or stop it with
+   `Escape`.
+2. Hover the prompt you want to go back to, and click **Rewind to here**.
+3. If any changed files need a decision, Tori asks first (see below).
+4. Confirm **Rewind to before this turn?** with **Rewind**.
+
+</Steps>
+
+What happens next:
+
+- Every file this chat wrote, from that prompt on, goes back to how it was.
+  The current state is saved as a checkpoint first, so the rewind itself can
+  be undone from the Checkpoints tab.
+- The chat's tab is replaced by a new chat whose transcript ends just before
+  the prompt you picked. A banner on it says **Rewound. The files and the
+  conversation above are back to this point, but the agent still remembers the
+  turns that were undone.**
+- The composer is filled with a note for the agent, telling it the files were
+  rewound and to read a file before changing it. It is a draft, not sent: add
+  what you want to do differently, then send it, or edit the note.
+
+The original conversation is not deleted. It is still in the session history
+with all its turns.
+
+### The agent still remembers
+
+The new chat carries the whole original conversation in the agent's memory,
+including the turns you undid. It knows the files went back, because the note
+says so, but it remembers the approach it took. If you want a clean slate,
+start a new chat instead.
+
+### Files that need a decision
+
+Before anything is written, Tori checks every file the rewind would touch:
+
+- **Files also written by another chat** in the same worktree. Rewinding them
+  would undo that chat's work too. You are asked **N files also written by
+  another chat**, and only if you choose **Rewind these too** are they
+  included. Otherwise they are left as they are.
+- **Files nothing claims**, usually changed by a shell command, which Tori
+  cannot attribute to a session. You are told **N files will be left alone**
+  and can continue with **Rewind the rest**, or cancel.
+
+A rewind only ever puts back what this chat recorded writing, so a different
+chat's work in the same folder is safe unless you say otherwise.
+
+### When you cannot rewind
+
+- **Mid-turn**: **This chat is mid-turn. Let it finish or interrupt it, then
+  rewind.**
+- **Agents other than Claude**: rewinding needs Tori to fork the conversation,
+  and those agents give it no way to. The button is not shown. Their turns can
+  still be put back from the Checkpoints tab, which leaves the conversation as
+  it is.
+- **Chats the Autopilot is driving**: **This chat can't be rewound.**
+- **With checkpoints turned off**: rewinding needs the snapshot taken at each
+  prompt. Turn on **Snapshot on each prompt** in Settings > Chat.
+
+## Revert the files and keep talking
+
+To put the files back without touching the conversation, use the Checkpoints
+tab in the Changes panel. Pick the turn and click **Revert tree to** its time.
+The chat carries on as if nothing happened, so tell the agent what you did.
+**Rewind chat to here** in the same place does the full rewind above.
+
+See [Checkpoints](/docs/git/checkpoints/) for the details.
+
+## Fork a chat
+
+Forking copies the conversation so far into a new chat, without changing any
+files. Use it to try a second approach while keeping the first one to come back
+to.
+
+<Steps>
+
+1. Open the session menu, the **...** at the end of the status strip.
+2. Click **Fork this chat**.
+3. A new chat opens beside it on the same agent and account, with the whole
+   conversation up to now.
+
+</Steps>
+
+Both chats work in the same folder, so their edits land on the same files. To
+keep two attempts apart on disk, give each its own
+[worktree](/docs/git/worktrees-and-branches/), or use
+[fan out](/docs/git/worktrees-and-branches/#fan-out-several-attempts) into several attempts.
+
+**Fork this chat** only appears once the chat has history, and only on agents
+that can fork, which today is Claude.
+
+<Aside type="tip" title="A side question">
+
+To ask something without adding it to this conversation at all, use **Send to
+a new chat** in the same menu. It opens a fresh chat and sends what is in the
+composer there.
+
+</Aside>

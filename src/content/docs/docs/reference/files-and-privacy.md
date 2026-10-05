@@ -39,13 +39,43 @@ Everything Tori itself writes is a plain file, mostly under
 | `accounts.json` | Registered agent accounts |
 | `devices.json` | Paired phones (never the plaintext credential) |
 | `scratch/` | Untitled scratch buffers |
+| `attachments/` | Files you pasted or dropped into a chat, handed to the agent by path |
+| `chat-queues/` | Each chat's queued messages, one file per session, removed when the queue empties or the session is deleted |
+| `stash.json` | Drafts stashed from the composer with `Cmd+S`, up to 20 |
+| `crashes/` | A file per crash: version, thread, message and backtrace. Never sent anywhere |
+| `topics.json` | Your [Topics](/docs/workspace/topics/) and their members |
+| `forge_accounts.json` | Your GitHub and GitLab accounts and which repository uses which |
+| `unit_issues.json` | Which branch was started from which issue |
+| `autopilot/` | The [Autopilot's](/docs/automation/autopilot/) queue and log |
+| `icons/` | Project icons you uploaded |
+| `servers/` | Language servers Tori installed for you |
+| `debuggers/` | The virtualenv Tori keeps for debugpy |
+| `setup/` | Output of each worktree's [setup command](/docs/git/worktrees-and-branches/#a-setup-command-for-new-worktrees) |
+| `claude-mcp.json` | The MCP configuration that gives Claude sessions [Tori's MCP server](/docs/automation/mcp-server/) |
+| `gitconfig` | The git credential settings used when a host account serves git |
+| `adopted.json` | Older sessions of a recreated folder you chose to adopt |
+| `update-check.json` | When Tori last looked for an update |
 
 Local file history lives inside each git repository's own object store, not
 under `~/.config/tori`, so removing a repo removes its history with it.
 
-Two things live outside `~/.config/tori`: the published model list Tori
-caches for the context meter, under `~/Library/Caches/tori/`, and per-account
-agent logins and usage snapshots, under `~/Library/Application Support/tori/`.
+Inside a project, Tori writes only these, and only when you use the feature
+behind each:
+
+| Path | What |
+| --- | --- |
+| `<project>/.tori/settings.json` | Editor and language tooling overrides for that project |
+| `<repo>/.tori/worktrees/` | A [Topic's](/docs/workspace/topics/) worktrees, for a plain repo |
+| `<project>/.shared/` | Files [shared across worktrees](/docs/git/shared-files) |
+| `<repo>/.mcp.json` | Written only when you add an MCP server from a chat's Session menu |
+
+Checkpoints and backstops are git objects in the repository's own object
+store, with their bookkeeping under `~/.config/tori/`. They are never
+commits on your branch and are never pushed.
+
+Account homes that Tori creates for extra Claude accounts live under
+`~/Library/Application Support/tori/profiles/`, and the latest usage readings
+under `~/Library/Application Support/tori/usage/`. The published model list Tori uses for the context meter is cached under `~/Library/Caches/tori/`.
 
 Deleting all of the above removes every trace of Tori. Your agent CLIs' own
 session data (Claude Code's transcripts, for example) is never touched;

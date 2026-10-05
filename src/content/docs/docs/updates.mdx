@@ -1,0 +1,79 @@
+---
+title: Updates and crash reports
+description: How Tori tells you about a new version, how to update with Homebrew or a DMG, and what happens when Tori closes on its own.
+---
+
+import Aside from "../../../components/docs/Aside.astro";
+import Steps from "../../../components/docs/Steps.astro";
+
+## When a new version is out
+
+Tori checks for a new release now and then and, when there is one, shows a
+pill in the title bar: **Tori 26.1005.0-alpha is available**. While you run an
+alpha, it tells you about newer alphas too.
+
+- Click the pill to open that release's page on GitHub, with its notes and
+  downloads.
+- Click the **x** to dismiss the notice.
+
+Tori never installs an update on its own.
+
+### Update with Homebrew
+
+If you installed Tori with Homebrew, the pill offers **Install with
+Homebrew**.
+
+<Steps>
+
+1. Click **Install with Homebrew**.
+2. A terminal tab runs `brew upgrade --cask tori`, so you can watch it and
+   answer any prompt.
+3. When it finishes, Tori offers to relaunch into the new version.
+
+</Steps>
+
+You can also run `brew upgrade --cask tori` yourself from any terminal, then
+quit and reopen Tori.
+
+### Update from a DMG
+
+Download the new DMG from the release page, drag Tori into Applications to
+replace the old one, and reopen it. A new download goes through the same
+Gatekeeper steps as the first install; see [Install](/docs/install/).
+
+Your settings, sessions, spaces and everything under `~/.config/tori/` are kept
+across updates.
+
+<Aside type="note" title="Releases moved">
+
+Releases are published at
+[github.com/gettori/tori/releases](https://github.com/gettori/tori/releases).
+Builds up to 26.1002 looked in an older place and were told once where to go.
+
+</Aside>
+
+## When Tori closes on its own
+
+If Tori crashes, it writes a crash file under `~/.config/tori/crashes/`: the
+version, the thread, the error and a backtrace. An uncaught error in the window
+is written there too.
+
+The next launch says so: **Tori closed on its own 2 minutes ago. A crash file
+was written.**, with **Reveal**, to show the file in Finder, and **Report**.
+
+**Report** opens the bug form on GitHub in your browser, filled in with the
+crash, for you to read and submit. Nothing is sent anywhere without that
+click, and you can edit or remove anything before submitting.
+
+### Crash logs in Settings
+
+Settings > **Advanced** > **Crash logs** lists every crash file and shows the
+version you are running. With none, it says **No crash files. If Tori ever
+closes on its own, the next launch says so and the file lands here.** **Report a
+bug** opens the same prefilled form.
+
+## Reporting anything else
+
+Use **Report a bug** in Settings > Advanced, or open an issue on
+[GitHub](https://github.com/gettori/tori/issues/new/choose). The version you
+are running is at the top of the Crash logs section.

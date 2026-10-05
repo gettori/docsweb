@@ -46,11 +46,13 @@ Folders work the same way as files.
 A worktree that already has its own file of the same name keeps it. Tori
 never replaces a real file with a link.
 
-## The Shared in worktrees page
+## The Worktree settings page
 
-Right-click the project in the sidebar and pick **Shared in worktrees**. The
-page lists everything shared on the left, and for the one you pick, every
-worktree with its state:
+Right-click the project in the sidebar and pick **Worktree settings**. Under
+the project's
+[setup command](/docs/git/worktrees-and-branches/#a-setup-command-for-new-worktrees),
+the page lists everything shared on the left, and for the one you pick,
+every worktree with its state:
 
 | State | Meaning |
 |---|---|

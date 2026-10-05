@@ -6,7 +6,11 @@ description: What the setup window walks you through.
 import Steps from "../../../components/docs/Steps.astro";
 
 The first time Tori opens with no space set up yet, it shows a short intro
-followed by setup. You can replay the intro later from Settings.
+followed by setup. Until a space exists the window cannot be closed; after
+that, `Escape` or a click outside closes it.
+
+To go through setup again later, use **Forget base folder** in Settings >
+Advanced. Nothing on disk is deleted.
 
 ## The intro
 
@@ -14,8 +18,9 @@ Eight slides, one idea each: every agent session in one window, a workspace
 organized the way your disk already is, one branch checked out across
 several repos at once, your agents and hosts on your own machine, undoing any
 turn an agent took, reviewing what it wrote, handing a queue to Autopilot,
-and your sessions on your phone. Back and Next move through them; the last
-slide's button reads **Set up Tori**.
+and your sessions on your phone. **Back** and **Next** move through them,
+**Skip intro** jumps to setup, and the last slide's button reads **Set up
+Tori**. Finish or skip the intro and it does not show again.
 
 ## Setup
 
@@ -26,22 +31,24 @@ skip ahead past where you have reached.
 
 1. ### Agents
 
-   Tori probes your PATH for the agent CLIs it knows how to drive. Sign in from
-   here if one needs it: sign-in opens your browser with a code to paste. This
-   step is not required. If nothing is found, you can continue anyway and add
-   one later from Settings > Agents.
+   Tori lists the agent CLIs it found on your login shell's PATH, with their
+   version and whether they are signed in. Install or sign in from here: both
+   run in a terminal inside the window, so you can answer any prompt right
+   there. Not required: Tori opens without an agent, and you can add one later
+   from Settings > Agents.
 
 1. ### Base folder
 
-   Pick the folder that holds your projects, the macOS folder picker. This is
-   required, it is the last step before Tori can open. If git is not installed,
+   Pick the folder that holds your projects, with the macOS folder picker.
+   Required; you can change it later in Settings. If git is not installed,
    this step offers to install it (Command Line Tools or Homebrew, depending on
    what is already on your machine).
 
 1. ### Space
 
    Pick an existing space or create a new one. Tori opens on whichever space you
-   choose here. Required.
+   choose here. Required: this is the last step before Tori can open. Picking a
+   base folder that already has spaces is enough.
 
 1. ### Git hosts
 

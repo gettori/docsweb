@@ -1,10 +1,11 @@
 ---
 title: Autopilot
-description: Hand a queue of work to Tori and it starts, watches and reports on workers.
+description: Hand Tori a queue of issues and pull requests. It makes the worktrees, starts workers, watches them, and brings you each pull request, review and merge to approve.
 ---
 
 import Aside from "../../../../components/docs/Aside.astro";
 import Demo from "../../../../components/docs/Demo.astro";
+import Steps from "../../../../components/docs/Steps.astro";
 import AutopilotDemo from "../../../../islands/docs/AutopilotDemo";
 
 Autopilot runs as an ordinary Tori chat session that reads a queue of work,
@@ -14,13 +15,30 @@ without you approving it first: opening a pull request, submitting a review,
 and merging are each their own approval, spent once, tied to the exact draft
 shown to you.
 
-<Aside type="note" title="Off by default">
+## Turn it on and start it
 
-Turn it on with **Enable autopilot** in Settings > Autopilot, which puts a
-Cockpit switch in the title bar (`Cmd+Shift+J` toggles between it and your
-normal workspace).
+<Steps>
 
-</Aside>
+1. Open Settings (the gear in the title bar) > **Autopilot** and turn on **Enable autopilot**.
+   A **Cockpit** and **Workspace** switch appears in the title bar.
+2. Click **Cockpit**, or press `Cmd+Shift+J`, to switch to the Cockpit.
+3. Click **Set sail**. The autopilot's own session starts, on the agent, account
+   and model in **Autopilot model**.
+4. Tell it what to do in **Tell the autopilot...**, for example `work on #60`,
+   `review https://github.com/hooli/api/pull/52`, or `work on #482 and #214,
+   then #215`.
+
+</Steps>
+
+**Drop anchor** stops it. Its session closes; the queue on disk and every
+worker stay as they are, and the workers go back to being ordinary sessions
+that notify you themselves. Set sail again and it picks up the same queue.
+
+Once started, the autopilot starts again by itself when Tori launches, until
+you drop anchor. Only you can start or stop it, from the Cockpit, a shell
+(`tori autopilot start`) or a paired phone; no agent session can.
+
+Turning **Enable autopilot** off stops it and hides the Cockpit.
 
 ## Per-project contract
 
@@ -31,6 +49,17 @@ the machine), and whether it queues new work on its own or proposes it and
 waits. A project with no contract set runs on the cautious defaults: pull
 request, ask before everything.
 
+| Term | Choices | Default |
+| --- | --- | --- |
+| How work ships | A pull request, or a local branch only | Pull request |
+| How far it goes | Ask before everything, or go ahead alone until something would leave the machine | Ask before everything |
+| Picking up work | Propose and wait, or start on its own | Propose and wait |
+| Workers run on | The agent, account and model you pick for this project | Not set |
+
+Tell the autopilot how a project should work and it records the contract,
+or set it yourself with
+[`tori autopilot project`](/docs/automation/cli/#autopilot).
+
 ## The queue
 
 Work items are either **ship** (take an issue to a pull request or a local
@@ -39,26 +68,122 @@ pick these up on its own from your assigned issues and review requests, or
 you can hand it one directly. Every item you see in the Cockpit, in flight,
 waiting, done, or failed, is one of these.
 
+To hand it work, type in the Cockpit's composer, for example
+`work on #60`, or ask it to review a pull request. For a ship item it reads
+the issue, titles the item, links a
+branch to the issue, makes the worktree, starts a worker on the project's
+picks, and brings you a pull request to approve. A review item runs the
+same way, to one review for you to approve.
+
+With pickup on, each poll of the host reads your assigned issues and review
+requests. A project's first poll only proposes, so an old backlog never
+starts itself.
+
+The queue is on disk. Quit Tori and relaunch, and the same items are there;
+an approval nobody answered comes back pending. An item closes itself when
+its pull request merges.
+
+Every reference the autopilot shows reads as a number and a place: the
+number opens the issue or pull request on the host, the place opens that
+worktree with the worker's tab.
+
+## Approvals
+
+Nothing leaves the machine on the autopilot's say. Opening a pull request,
+submitting a review and merging each wait on a card, and the card shows
+exactly what would be posted: the title, branches and body of a pull
+request; the verdict and every line comment of a review; the method and
+head commit of a merge. You can approve it, edit it, reply to the worker,
+or dismiss it.
+
+An approval is spent once and is tied to that exact draft and commit. If the
+branch moves after you approve, the push is refused rather than sending
+something you did not read.
+
+A worker's permission prompts are not the autopilot's to answer. They wait
+for you, on the card or on a paired phone. A worker's questions do reach the
+autopilot, which may answer the ones it can and brings you the rest.
+
+## While it runs
+
+- Workers are locked while the autopilot drives them: nothing to type into,
+  nothing to close. Stop the autopilot and they go back to being ordinary
+  sessions that notify you themselves.
+- Waiting costs no tokens. The autopilot is woken by Tori, not by polling,
+  when a worker asks a question, wants a permission, ends, goes idle,
+  stalls, or its pull request changes.
+- A worker that sits silent mid-turn past **Worker stalled after** is
+  flagged as stalled.
+- Starting the autopilot resumes its last session. If that session died, or
+  you changed its agent, it starts a fresh one that picks up the same
+  workers, holds and cards.
+- No agent session can turn the autopilot on or off. Only you can: from the
+  Cockpit, a shell, or a paired phone.
+
 ## The Cockpit
 
-<Demo caption="The Cockpit with two workers on deck, one in hooli-search and one in pied-piper. Approve, edit, reply to or dismiss the calls (A and R work too), drop anchor, queue more work from the composer (try: work on #60), or Watch a worker to see the session the autopilot is driving.">
+<Demo caption="The Cockpit with two workers on deck, one in hooli-search and one in pied-piper. Approve, edit, reply to or dismiss the calls, drop anchor, queue more work from the composer (try: work on #60), or Watch a worker to see the session the autopilot is driving.">
   <AutopilotDemo client:visible />
 </Demo>
 
-The full view shows crew on deck (workers currently running, each with a
-Watch button to open its session), what is waiting at the dock, a Ship's
-log of recent activity, and decision cards for anything that needs your
-call: approve, edit, reply, or dismiss. A compact popup version is reachable
-from anywhere with `Cmd+L`, without leaving your current workspace.
+The Cockpit has three columns:
 
-A session autopilot is actively driving cannot be typed into directly, its
-composer is replaced with a bar naming what autopilot is doing and a button
-to take it back.
+- **Crew on deck**: the workers running now, each a card ringed in the colour
+  of its state, with its issue number, title and place (`work -> api ->
+  feat/webhooks`), the last lines of its log, and what it is doing. **Watch**
+  opens the worker's session. Under it, **Waiting at the dock** lists queued
+  items, with what each waits for.
+- **The middle**: a banner saying where things stand, the autopilot's own chat,
+  and its composer. Decision cards appear in the chat under **Captain's call**.
+- **Ship's log**: what happened, newest last, with what needs you marked.
+
+The banner plays one of six scenes picked from the local hour, dawn to night,
+and turns to a storm when more workers are out than **Workers at once**
+allows. With nothing to do it says **The deck is quiet. Hand the autopilot a
+ticket or a PR.**
+
+Leaving the Cockpit detaches from the autopilot's session without closing it.
+
+### Decision cards
+
+Anything that needs your call is a card:
+
+| Card | Asks |
+| --- | --- |
+| **PR** | Open this pull request: title, branches and body |
+| **Review** | Submit this review: verdict, body and every line comment |
+| **Merge** | Merge with this method at this commit |
+| **Question from worker** | A worker's question the autopilot could not answer |
+
+Each has **Approve**, **Edit**, **Reply** and **Dismiss**. **Edit** lets you
+change the draft before approving; **Reply** answers the autopilot in the chat;
+**Dismiss** declines.
+
+### The popup
+
+`Cmd+L` opens the autopilot as a popup over your workspace, without leaving
+it: what is **In flight**, the **Decisions** waiting on you, and a composer. Its
+header says how things stand, for example **Working on 2, 2 decisions**. The
+expand button opens the full Cockpit. `Escape` or a click outside closes it.
+
+### Sessions the autopilot drives
+
+A worker the autopilot is driving cannot be typed into: its composer is
+replaced by a bar, **The autopilot has this session**, saying what it is doing
+now, with **Back to autopilot** and **Stop to type**. Stopping to type stops the
+whole autopilot, which hands every worker back to you. Workers cannot be closed
+or deleted while it drives them.
 
 ## Settings
 
-Settings > Autopilot: which agent, account and model the autopilot's own
-session runs on; how many minutes a worker can sit silent mid-turn before
-it is flagged stalled; how many workers run at once (capped one under your
-chat concurrency warning); and an optional context percentage past which
-Tori compacts between the autopilot's own turns.
+Settings > **Autopilot**:
+
+| Setting | Default | What it does |
+| --- | --- | --- |
+| **Enable autopilot** | Off | Shows the Cockpit switch. Off stops the autopilot and hides it |
+| **Autopilot model** | Claude | The agent, account, model and effort the autopilot's own session runs on |
+| **Worker stalled after** | 20 minutes | How long a worker may sit silent mid-turn before the autopilot hears it stalled. Waiting on your answer does not count |
+| **Workers at once** | 2 | How many workers run at a time, kept one under **Warn above** in Settings > Chat. The rest wait at the dock |
+| **Compact at context** | Agent decides | A context percentage past which Tori sends `/compact` between the autopilot's own turns |
+
+Workers run on each project's own picks; see [Per-project contract](#per-project-contract).

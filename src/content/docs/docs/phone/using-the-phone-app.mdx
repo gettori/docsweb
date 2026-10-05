@@ -1,53 +1,109 @@
 ---
 title: Using the phone app
-description: What the screens show, once you are paired.
+description: Follow every session from your phone, answer prompts and questions, steer or stop a turn, start a chat, and run the autopilot.
 ---
 
 import Demo from "../../../../components/docs/Demo.astro";
+import Steps from "../../../../components/docs/Steps.astro";
 import PhoneAppDemo from "../../../../islands/docs/PhoneAppDemo";
+
+The phone app shows what is happening in Tori on your Mac and lets you act
+on it while you are away from the desk. It is a window onto the Mac, not a
+second Tori: the agents keep running on the Mac, and the phone talks to it
+over Tailscale. Pair it first, see
+[Pairing and remote access](/docs/phone/pairing/).
 
 <Demo caption="The phone app, paired with a Mac running hooli, raviga and personal. Tap through it, or jump to a screen from the list. Answer the waiting permission, steer a chat, flip the autopilot, or change the theme from Settings (it changes this page too).">
   <PhoneAppDemo client:visible />
 </Demo>
 
-## Projects and Topics
+## Find a session
 
-A space switcher along the bottom, a search box that covers projects,
-worktrees and live sessions, and two views: **Projects**, each row showing a
-status rollup and session count, or **Topics**, showing each Topic's
-members. Tapping a project opens its worktree cards, each with ahead/behind
-marks, pull request status, and issue chips, the same information the
-desktop sidebar shows.
+The app opens on your projects.
+
+- The space switcher along the bottom picks a space, like the tiles on the
+  Mac. Each space shows its status bubble.
+- **Projects** lists the space's projects, each with its status rollup and how
+  many sessions are running.
+- **Topics**, in the bottom bar, lists your [Topics](/docs/workspace/topics/)
+  with their members.
+- The search button searches **Projects, worktrees, sessions** at once.
+
+Tap a project for its worktrees. Each worktree card shows its branch, the
+lines changed, its commits ahead and behind, its pull request and checks, and
+an issue chip, the same facts the desktop sidebar shows. A worktree the
+autopilot is working in is tinted violet.
 
 ## A worktree
 
-Branch name, diff counts, sync status, a **New** button to start a fresh
-chat there, and the session list split into what is running now and history.
+A worktree shows its branch and standing, then its sessions in two groups:
+**Now**, what is running, and the rest as history. Tap a session to open it.
 
-## Chat
+**New chat** starts a chat in this worktree, on the agent last used there.
 
-The same message rendering the desktop uses, paged history, a model and mode
-picker (hidden for autopilot's own chat), and a composer to steer or send.
-Whatever a session is waiting on, a structured question, a permission
-request, or an approval, shows as a card with the same answers you would
-have on the desktop: buttons, or free text.
+## Read and steer a chat
 
-## Autopilot
+A chat looks the way it does on the Mac: prompts, replies, tool calls, diffs.
+Scroll up and earlier history loads in pages.
 
-A scene that matches the desktop Cockpit's own time-of-day art, an on and
-off switch, decision cards for anything waiting on you, the list of crew
-currently running, and a log. A composer at the bottom messages autopilot
-directly.
+- **Send a message.** While a turn runs, the box reads **Steer the running
+  turn**: what you send goes into that turn, as a steer. Otherwise it starts the
+  next turn.
+- **Switch model or mode** from the pickers above the box. A switch applies from
+  the next turn.
+- **More** has **Stop** (stop the running turn), **Copy session id** and **Open
+  worktree**.
+
+## Answer what is waiting
+
+Whatever a session is waiting on shows as a card at the bottom of its chat,
+and the session's dot turns rose in the lists:
+
+- **A permission prompt**: **Allow Bash?** with the arguments, and **Allow
+  once** or **Deny**.
+- **A question**: its options as buttons, or **Or type an answer**.
+- **An approval** from the autopilot: the draft, **Show the draft** to read all
+  of it, and **Approve** or the other answers.
+- **A worker's question**: marked **A worker asks**.
+
+Answering from the phone is the same as answering on the Mac; the card closes on
+both.
+
+## The autopilot
+
+The wheel in the bottom bar opens the autopilot, with the same time of day scene
+as the Cockpit:
+
+- **Set sail** and **Drop anchor** start and stop it.
+- **Chat** is its own conversation, with **Message the autopilot** to hand it
+  work.
+- Decision cards for anything waiting on you.
+- **Crew**, the workers running now, and **Log**, what happened.
+
+See [Autopilot](/docs/automation/autopilot/).
 
 ## Settings
 
-A bottom sheet: your connection (the Mac's address, this phone's saved name,
-and Disconnect, which forgets this phone's own credential, the paired device
-still has to be revoked from the Mac separately to remove it there too),
-dark or light theme, and a switch for whether the autopilot button shows in
-the bottom bar at all.
+The gear opens a sheet:
+
+- **Connection**: the Mac's address, this phone's name, the status, and
+  **Disconnect**, which forgets the Mac on the phone. Revoke the phone in
+  Settings > Remote on the Mac too, to remove it there.
+- **Appearance**: **Tori Dark** or **Tori Light**, kept on this phone.
+- **Autopilot button**: whether the wheel shows in the bottom bar.
+
+If the Mac revokes the phone, the app says **This phone was removed from Tori.
+Pair it again to reconnect.**
+
+## What the phone cannot do
+
+The phone can read everything, steer, stop, answer, approve, start a plain chat
+in a folder, switch a chat's model and mode, and start or stop the autopilot.
+It cannot attach files, create worktrees, start background sessions, or pair
+another device. Those stay on the Mac.
 
 ## Platform
 
-Android is out now, an APK on the Releases page, not through the Play Store;
-see [Install](/docs/install) for how to get it. An iOS app is planned.
+The app is for Android, as an APK on the
+[releases page](https://github.com/gettori/tori/releases), not through the Play
+Store. See [Install](/docs/install/). An iOS app is planned.

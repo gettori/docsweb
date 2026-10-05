@@ -1,0 +1,219 @@
+---
+title: Agents in Settings
+description: Install, sign in, update and turn agents on or off, see what each one can do, and manage its models, instruction files, skills, commands and plugins.
+---
+
+import Aside from "../../../../components/docs/Aside.astro";
+import Steps from "../../../../components/docs/Steps.astro";
+
+Settings > **Agents** is where Tori finds your agent CLIs and where you set
+each one up. Open Settings (the gear in the title bar) and pick **Agents** in the rail.
+
+## The agents list
+
+The page opens on a table of every agent Tori knows, with a search box and a
+**Check again** button that looks for them again. Each row shows:
+
+| Column | Shows |
+| --- | --- |
+| **Version** | The version found, or nothing when the agent does not report one |
+| **Models** | How many models the agent offers |
+| **Accounts** | How many accounts it has, for an agent that can hold several |
+| **State** | Where it stands, below |
+| Switch | Whether Tori offers this agent |
+
+The **State** of an agent:
+
+| State | Meaning |
+| --- | --- |
+| **Checking** | Tori is looking for it |
+| **Not installed** | Not found on your login shell's PATH |
+| **Sign in** | Installed, but no account is signed in |
+| **Chat needs npx** | Installed, but its chat runs through `npx`, which is missing. The terminal tab works |
+| **Outdated** | Older than the version Tori was built against |
+| **Ready** | Installed, signed in and usable |
+| **Error** | The check itself failed; hover for why |
+
+Agents are looked up on your **login shell's** PATH, so one installed through
+nvm, volta, asdf, mise or Homebrew is found the same way your terminal finds
+it.
+
+### Turn an agent on or off
+
+The switch at the end of a row, **Offer Claude in Tori**, decides whether the
+agent is offered anywhere: the model palette, the launch menu, the **+** for a
+new chat, the Autopilot's picks. Turn off the ones you do not use so they stop
+cluttering those lists.
+
+An agent can only be turned on once it can be used. The switch explains why
+not: **Install it first**, **Sign in first**, **Add an account first**, or
+**Still being checked**.
+
+A chat already open on an agent you turn off keeps its tab, and its composer
+says the agent is off.
+
+## An agent's page
+
+Click a row to open the agent's page. **Agents** at the top, or `Escape`,
+takes you back to the list.
+
+The header shows the agent's mark, name and version, the path it was found
+at (or **not found on your login shell**), its state, and the same on or off
+switch.
+
+### Set it up
+
+An agent that is not ready yet shows a **Setup** group with three steps and
+how many are done:
+
+<Steps>
+
+1. **Install the binary.** Where Tori knows the vendor's install command, it
+   shows it and an **Install** button that runs it in a terminal tab. Come back
+   when it finishes. Otherwise the step says how to install it yourself.
+2. **Sign in.** **Sign in** runs the agent's own login in a terminal tab, where
+   you can answer its prompts. Tori checks again when the tab closes.
+3. **Ready for chat.** Tori asks the agent which models it can run.
+
+</Steps>
+
+The refresh button on the group checks again, for when you installed or
+signed in from your own terminal.
+
+Install and update commands Tori knows:
+
+| Agent | Command |
+| --- | --- |
+| Claude | `npm install -g @anthropic-ai/claude-code` |
+| Codex | `npm install -g @openai/codex` |
+| OpenCode, Gemini, Copilot | Their own npm packages |
+| Kimi, Pi | Install them yourself |
+
+npm's global bin folder has to be on your login shell's PATH for Tori to find
+what npm installed.
+
+### Update and uninstall
+
+When the installed version is older than the one Tori was built against, the
+page shows **Update available** with the vendor's update command and an
+**Update** button. A newer version than Tori knows says nothing; that is
+normal.
+
+Further down, **Update** and **Uninstall** run the vendor's own commands in a
+terminal tab. **Uninstall** really removes the binary.
+
+An agent that does not report its version says **It does not report a
+version, so Tori cannot check it.**
+
+### Notes on the page
+
+- **Chat runs through npx, which is not on your login shell's PATH. The
+  terminal works without it.** Codex and Pi chat through `npx`. Install
+  Node.js to fix it.
+- **ANTHROPIC_API_KEY is set in this environment, so Claude bills against that
+  API key rather than the subscription it is signed in with.** Shown when the
+  agent says it is using an API key from your environment.
+
+## Accounts
+
+For an agent that has accounts, the **Accounts** group lists one card per
+login. See [Accounts and usage](/docs/agents/accounts-and-usage/) for adding,
+renaming, signing out, the default account, and each account's quota chips
+and warnings.
+
+## Models
+
+The **Models** group lists every model the agent says it can run, with its id
+and its effort levels. With two accounts there is a tab per account, because
+each account can be offered different models. The heading shows the plan and
+the number of models.
+
+- **Search** filters a long list by name, id or effort level.
+- **Ask again** asks the agent for its models now. Use it after a new model is
+  released.
+- A model marked **yours** is one you configured in the agent's own settings;
+  Tori passes it through as is.
+
+**Its own options** lists any other switches the agent publishes, such as a
+fast mode. They are set per chat, from the composer's bar.
+
+## Files
+
+For an agent whose files Tori knows (Claude today), the **Files** group lists
+what each account's home folder holds, one tab per account:
+
+| Row | What it is |
+| --- | --- |
+| **Instructions** | The agent's own instructions file, `CLAUDE.md` for Claude |
+| **Skills** | The skills folder, one folder per skill with its `SKILL.md` |
+| **Commands** | Your own slash commands, one `.md` each |
+| **Subagents** | Your own subagent definitions |
+| **Rules** | Rule files the agent reads |
+| **Settings and hooks** | The agent's settings file, where its permissions and hooks live |
+
+Each row says what is there: **on disk**, **not created**, a file count for a
+folder, or **broken link** with where the link points. A linked row shows the
+link's target beside its path.
+
+Click a row to open it. Then:
+
+- **Open** opens a file in the editor.
+- **New** creates the file, or for a folder asks for a name and creates a new
+  skill, command, subagent or rule from blank. Press `Enter` or **Create**,
+  `Escape` to cancel.
+- **Write with an agent** opens a new chat draft in the selected project with
+  the file attached and a first line such as **Write my Claude skills.**, for
+  you to finish and send.
+- **Reveal in Finder** shows it in Finder.
+- Inside a folder, each item has its own open button and a remove button.
+  Removing asks first, shows the full path, and cannot be undone. Removing a
+  skill removes its whole folder, so no half skill is left for the agent to
+  load.
+
+The actions that open something in a project need a project selected in the
+sidebar first; until then they say **Select a project first**.
+
+Tori lists the settings file but never edits it for you. Open it to change
+permissions or hooks by hand.
+
+## Plugins
+
+For Claude, the **Plugins** group lists the plugins installed for each
+account, with their version and where they came from. A disabled plugin is
+marked **off**. Plugins are installed and removed with Claude's own commands.
+
+## Chat capabilities
+
+The **Chat capabilities** group says what this agent can do in a Tori chat,
+as chips: steering, rewind, approvals, exact diffs, spending ceilings,
+subagent lanes, attachments, history. Hover a chip for what it means.
+
+What the agent cannot do is shown struck through, and listed under the chips
+in full sentences, for example why messages typed during a Codex turn wait for
+the next one. An agent with no chat at all says **Terminal only. Tori has no
+chat transport for this agent.**
+
+See [Supported agents](/docs/agents/adapters/) for the same comparison across
+every agent.
+
+## Sessions
+
+The **Sessions** group says where Tori reads this agent's past sessions from,
+such as `~/.claude/projects`, or that they come over the agent's own protocol.
+Chips show **live status** when the agent reports its state through its own
+hooks, and **needs-you** when Tori can tell it is waiting on you.
+
+## Binary path
+
+To use a particular copy of the agent, for example a wrapper script or a build
+you are testing, type its path in **Binary path**. New chat sessions use it
+instead of the one found on your PATH. Leave it empty to go back to the one
+found. When an adapter file of your own overrides the agent, the page says so
+under the field.
+
+<Aside type="note" title="Agents you add yourself">
+
+An agent you describe with your own adapter file shows up here like the
+bundled ones. See [Adding an agent](/docs/agents/adapters/#adding-an-agent).
+
+</Aside>

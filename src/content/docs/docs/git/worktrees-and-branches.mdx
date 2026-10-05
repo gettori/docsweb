@@ -1,72 +1,241 @@
 ---
 title: Worktrees and branches
-description: Creating, switching and cleaning up worktrees and branches.
+description: Add a branch or worktree, start one from an issue, run a setup command in every new worktree, fan out several attempts, and remove what you are done with.
 ---
 
+import Aside from "../../../../components/docs/Aside.astro";
 import Demo from "../../../../components/docs/Demo.astro";
+import Steps from "../../../../components/docs/Steps.astro";
 import WorktreesDemo from "../../../../islands/docs/WorktreesDemo";
 
 <Demo caption="hooli-search with three worktrees and one whose folder was deleted outside Tori. Click a worktree for its graph and a commit for its files. Use + to add a worktree (try bug/search-ranking to see the folder name fall back to a full slug), or the ... menu to remove one or prune.">
   <WorktreesDemo client:visible />
 </Demo>
 
-## Creating a worktree
+## Branches or worktrees
 
-**Add worktree**, on a worktree container, figures out where a branch should
-start: an existing branch reuses its own worktree, a brand new one starts
-from a base you name, or falls back to the matching remote branch, then the
-default branch, then whatever HEAD happens to be. The folder is named after
-the branch's last path segment (`bug/critical` becomes `critical`), falling
-back to a full slug only on a collision.
+A project is either a **Repo** or a **Bare** project (see
+[Spaces, projects and branches](/docs/workspace/spaces/#projects)):
 
-A new worktree has only what git tracks. To give every worktree the same
-`.env` or other untracked file, see
-[Shared in worktrees](/docs/git/shared-files).
+- In a **Repo**, every branch shares one working folder. Only one branch is
+  checked out at a time, and switching branches changes the files under every
+  agent and terminal working there.
+- In a **Bare** project, every branch is checked out in its own folder, a
+  worktree, beside the others. Two agents on two branches never touch each
+  other's files, and switching between them checks nothing out.
 
-Starting a worktree from a pull request pins it to that PR's exact head
-commit; if a worktree or branch with that name already exists at a different
-commit, Tori refuses rather than resetting it out from under you.
+Use **Bare** for anything where agents work in parallel. Create one with **New
+in "space"** > **Bare + worktree**, or turn a folder into one with
+**Initialize git** > **Bare + worktree**.
 
-## Removing a worktree or branch
+## Add a branch or worktree
 
-Before it asks you to confirm, Tori checks whether the folder is dirty, has
-unpushed commits, and how many terminal or chat tabs are still open under
-it, and shows all three. Confirming closes those tabs and tears down their
-processes first, then removes the worktree or branch. Deleting the remote
-branch too is a separate option; if that fails, the local removal still
-happens, it is reported rather than aborted.
+<Steps>
 
-**Prune worktrees**, on a container, drops git's own bookkeeping for
-worktree folders that got deleted from outside Tori.
+1. Right-click the project and choose **Add branch** (Repo) or **Add
+   worktree** (Bare).
+2. In **Add branch in "api"** (or **Add worktree**), type in the filter. The
+   list shows every branch on disk, local and remote together, told apart by
+   their glyph. Branches already checked out say **checked out**, or **in a
+   worktree**.
+3. Pick an existing branch, or type a new name. A name that matches nothing
+   gets its own row, **Create branch** `name` **from** `main`.
+4. For a new branch, click the base after **from** to pick where it starts.
+   It defaults to the repository's default branch, and the picker filters as
+   you type.
+5. Press `Enter`, or click the button.
 
-## The branch graph
+</Steps>
 
-A unit's context menu **Graph** opens a commit lane view for that branch,
-each commit expandable to its changed files. The same view opens from the
-Changes panel's history tabs.
+What happens depends on what you picked:
 
-## Blame
+| You picked | In a Repo | In a Bare project |
+| --- | --- | --- |
+| A local branch | Adds its row. Select it or use **Checkout** to switch | Creates a worktree for it |
+| A remote branch | Adds a local branch tracking it | Creates a worktree tracking it |
+| A new name | Creates it from the base and checks it out | Creates it from the base, in a new worktree |
 
-Turn blame on from the editor's own button, or **Git blame** in Settings >
-Editor; the two stay in sync. Each line's gutter shows who last touched it
-and how long ago, shaded by age.
+A new worktree's folder is named after the branch's last part, so
+`bug/critical` gets the folder `critical`. If that folder exists, the folder
+uses the whole branch name instead, `bug-critical`; if both exist, Tori refuses
+rather than overwrite anything.
 
-## Resolving conflicts
+The new branch or worktree is selected, and a new worktree opens a
+[chat draft](/docs/agents/starting-a-chat/#chats-that-open-by-themselves) so you
+can start right away.
 
-An unresolved merge, rebase, cherry-pick or revert shows a three way view per
-conflicted file, built from the index's own base, ours and theirs stages.
-The Changes panel's operation bar offers Continue (disabled until every
-conflict is resolved), Skip where it applies, and Abort.
+### Fresh branches from the remote
 
-## Fan out and Topics
+The list is read from disk, so it opens at once. Branches pushed to the remote
+since the last background fetch are not in it until you click the **Fetch**
+button in the list's header. Tori fetches every repository on its own every 10
+minutes, and when you come back to the window; set how often with **Fetch every** in Settings > Integrations >
+Git, or turn it off. A repository whose remote would ask for a password is
+skipped by the background fetch rather than prompting you.
 
-See [Spaces, projects and branches](/docs/workspace/spaces) for fan out
-(trying several branches from one goal) and Topics (one branch checked out
-across several repos at once); both build on the same worktree machinery
-described here.
+### Delete a branch from the list
 
-## Keeping repos fresh
+Hover a local branch that is not checked out and click its trash icon. The
+dialog asks **Delete branch** `name` first, and says whether it **has commits
+the remote does not**, so you do not lose unpushed work by accident.
 
-Settings > Integrations > Git has **Fetch every**, how often every open repo
-is fetched in the background, off included. A repo whose remote needs a
-password for that fetch is simply left alone rather than prompted.
+## Start from an issue
+
+When the project's host is connected (see
+[Pull requests and issues](/docs/git/pull-requests-and-issues/)), the dialog has
+a **Branch** and **Issue** switch.
+
+<Steps>
+
+1. Switch to **Issue**. The list shows the issues assigned to you.
+2. Pick one, or type an issue number that is not in the list and choose
+   **Open issue #214**.
+3. The branch name fills in from the issue. Change it if you like, and pick a
+   base for a new branch.
+4. Leave **Link the branch to the issue on GitHub** ticked to have GitHub
+   create the branch and show it on the issue. It is greyed out when the base is
+   not on the remote, or the branch already exists here, and a note under it
+   says why.
+5. Confirm with **Start from #214**.
+
+</Steps>
+
+The branch or worktree is created, its row wears the issue's number (click it
+to open the issue), and a chat draft opens with the issue's title and body as
+the prompt and a **from #214** link above the composer. Read it, add anything,
+and send.
+
+## Worktree settings
+
+Every Bare project has a **Worktree settings** page: right-click the project and
+choose **Worktree settings**. It holds what each new worktree gets: a setup
+command, and the files shared into it.
+
+### A setup command for new worktrees
+
+A new worktree has only what git tracks: no `node_modules`, no build output,
+no generated files. A setup command fixes that.
+
+<Steps>
+
+1. Open **Worktree settings** for the project.
+2. Type the command in **Setup command**, for example
+   `pnpm install --frozen-lockfile --prefer-offline`.
+3. Press `Enter` or click away to save it.
+
+</Steps>
+
+From then on:
+
+- It runs in every worktree Tori creates for the project: from **Add
+  worktree**, from an issue, from [fan out](#fan-out-several-attempts), from
+  `tori worktree new` and from the Autopilot.
+- It runs with `sh -c` in the new worktree, with `TORI_PROJECT_ROOT` set to the
+  project's folder and `TORI_WORKTREE_PATH` to the new worktree.
+- It runs in the background, not in a tab. When it ends, a toast says **Setup
+  finished in critical**, or **Setup in critical failed (exit 1)** with **Show
+  log** to read its output.
+- A setup that runs longer than 30 minutes is stopped and reported as failed.
+  Removing the worktree stops a setup still running in it.
+- A worktree made from a fork's pull request never runs it, since that code is
+  not yours.
+
+**Agents started over the socket wait for it**: turn this on to make
+`tori worktree new`, `tori spawn` and the Autopilot wait until the command
+exits, up to four minutes, so a scripted session does not start work in a half
+installed tree. Sessions you start by hand never wait.
+
+The command is kept in your own settings file, keyed by the project, not in
+the repository, so a repository cannot give itself a command to run. An empty
+field runs nothing.
+
+### Shared files
+
+The same page lists the files shared into every worktree, such as a `.env`.
+See [Shared in worktrees](/docs/git/shared-files/).
+
+## Fan out several attempts
+
+Fan out starts two, three or four independent attempts at the same task, each
+in its own worktree on its own branch, so you can run an agent in each and
+keep the best result.
+
+<Steps>
+
+1. Right-click a Repo or Bare project and choose **Fan out**. The project needs
+   at least one commit.
+2. Answer **Fan out: what are these attempts for?** with the goal, for example
+   `retry webhooks with backoff`. It is kept with the attempts so you can still
+   see later what they were for.
+3. Pick **How many attempts?**: 2, 3 or 4.
+
+</Steps>
+
+Tori creates the attempts from the current commit, on branches named after the
+goal, `retry-webhooks-with-back-1`, `-2` and so on (the first 24 characters of the goal). They live in a hidden
+`.tori-attempts` folder inside the project, and show in the sidebar grouped
+under one heading with the goal.
+
+To save time, each attempt gets a copy of the project's `node_modules`,
+`vendor`, `target` and `.venv` folders if they exist. On macOS this copy is
+almost free. A toast lists any of these that could not be copied, so you can
+install them in the attempts yourself. The setup command runs in each attempt
+too.
+
+Start a chat in each attempt (**New session** on its row, or select it and
+open a chat), give each the same or a different prompt, and compare.
+
+### Keep the winner
+
+Right-click the attempt you want and choose **Promote this attempt**.
+
+<Aside type="danger" title="Promoting deletes the other attempts">
+
+The attempt you promote is kept as it is, on its own branch and unmerged. Every
+other attempt in the group is deleted outright: its worktree, branch, sessions
+and checkpoints. Agents and terminals running in them are stopped. This cannot
+be undone.
+
+</Aside>
+
+Promoting never merges anything. Merge or open a pull request from the winner's
+branch as you would from any other.
+
+## Remove a worktree or branch
+
+Right-click the row and choose **Remove worktree** (Bare) or **Remove branch**
+(Repo, for a branch that is not checked out).
+
+The dialog shows what you are about to remove before you confirm: the branch,
+the folder, whether it is **clean**, has **uncommitted changes** or **unpushed
+commits**, and how many tabs and agents are running in it. Two options:
+
+- **Delete local branch (git branch -D)**: on by default. Off keeps the branch
+  so you can make a worktree for it again later.
+- **Delete remote branch (git push --delete)**: off by default. Also deletes it
+  on the remote.
+
+Confirming stops the tabs and agents running there, then removes the worktree
+and the branches you chose. If deleting the remote branch fails, the local
+removal still happens and the failure is reported.
+
+### Clean up after deleting outside Tori
+
+If a worktree folder was deleted in Finder or a terminal, git still has a
+record of it. **Prune worktrees** on the project clears those records and says
+how many it pruned.
+
+## When the upstream was force-pushed
+
+If someone force-pushed the remote branch over commits you have, pushing would
+overwrite their update and pulling would merge two histories. Tori notices:
+the branch's sync mark says the upstream was force-pushed over your commits,
+and the branch menu offers **Reset to upstream**, which resets your branch to
+the remote's. Commit or stash anything you want to keep first.
+
+## The commit graph
+
+**Graph** on a branch's menu opens its commit graph in a tab: every commit
+as a lane, newest first. Click a commit to see the files it changed, and a file
+to open that commit's diff. The same graph is in the Changes panel's history
+section. See [The Changes panel](/docs/git/changes-panel/#graph-stashes-and-checkpoints).

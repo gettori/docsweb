@@ -1,0 +1,156 @@
+---
+title: Permissions and questions
+description: Answer an agent's permission prompts and questions, deny with feedback, and find every session that is waiting on you.
+---
+
+import Aside from "../../../../components/docs/Aside.astro";
+
+An agent stops and waits for you in three situations: it wants permission to
+run a tool, it asks you a question, or a script running inside it calls
+`tori ask`. In all three the chat turns **needs you**: its status strip reads
+**Waiting for approval**, its tab and sidebar row turn rose, and Tori sends a
+notification if you are looking somewhere else.
+
+## Find what is waiting
+
+- Press `Cmd+Shift+A` to jump to the next session that is waiting on you,
+  wherever it is. Press it again for the one after.
+- Click a needs you notification to land on that chat.
+- In the sidebar, a rose dot on a branch or project rolls up from the
+  sessions under it, and the space tile shows it too when you are in another
+  space.
+
+A notification is taken down by itself once its session moves on, so an old
+one never leads you to something already answered.
+
+## Answer a permission prompt
+
+The prompt sits on the tool call it is about, inside the transcript, so you
+can read what led to it. It asks in a sentence:
+
+- **Run `pnpm test webhooks` in this workspace?** for a shell command.
+- **Allow `Edit` on `src/webhooks/sign.ts`?** for any other tool.
+
+Click **Show the full arguments** to read exactly what the tool would be
+called with before you decide. The sentence is a summary; the arguments are
+what will actually run.
+
+Then pick an answer:
+
+| Answer | What it does |
+| --- | --- |
+| **Allow once** | Runs this one call |
+| **Allow for this session** | Runs it, and lets this chat make the same kind of call again without asking |
+| **Always in this project** | Runs it, and records a rule so every session in this project may make this call |
+| **Deny** | Refuses the call. The agent is told it was denied |
+| **Deny with feedback** | Refuses the call and tells the agent why |
+
+**Allow for this session** and **Always in this project** are remembered by the
+agent, in its own settings and its own format. Tori keeps no list of rules of
+its own, so what you allowed shows up in Claude's settings file exactly as if
+you had answered in Claude's terminal interface.
+
+On Codex, OpenCode and the other agents that are not Claude, the reach is not
+remembered: every allow answer allows this one call. Those agents keep their
+own permission rules in their own config.
+
+### Deny with feedback
+
+Use this to redirect the agent rather than just stop it: "not that file, use
+the fixture", "run the unit tests only".
+
+1. Click **Deny with feedback**.
+2. Type why, and what to do instead.
+3. Press `Enter` or **Send denial**. `Shift+Enter` adds a line, and **Back**
+   returns to the buttons.
+
+Your text reaches the agent as the result of the tool call, so it reads it
+before deciding what to do next. The turn carries on with your correction.
+
+### Mode switches the agent offers
+
+Some prompts carry an offer from the agent itself, shown after the five
+answers, such as **Switch to accepting edits**. Clicking it changes the chat's
+[permission mode](/docs/agents/models-and-modes/#choose-the-permission-mode)
+from the next turn, so the agent stops asking about this kind of call.
+
+### While a prompt is open
+
+The agent is stopped on the question, so a
+[steer](/docs/agents/steering-and-the-queue/) is refused until you answer:
+**Session is waiting for permission, answer it first.** Messages you queue
+still wait in the queue. Text that another part of Tori tries to send into
+the chat, like a hunk comment, is refused the same way.
+
+If the prompt came from a subagent that you are not watching, it shows in the
+main transcript too, with **Read what this subagent is doing** to jump to its
+lane. See [Subagents and background work](/docs/agents/subagents/).
+
+## Answer a question
+
+Claude can ask you structured questions in the middle of a turn: which
+approach to take, which files to include. They appear in the transcript as a
+form headed **The agent asked a question** (or **some questions**).
+
+1. For each question, pick one option, or several where the question allows
+   it. An option can show a worked example under it once picked.
+2. If none of the options fit, type your own answer in **Other**. You can pick
+   options and type at the same time.
+3. Press **Send answers**, or `Enter` in an **Other** box. `Shift+Enter` adds a
+   line.
+
+**Send answers** stays greyed until every question has an answer, and a line
+beside it says what is missing. There is no time limit: the agent waits as
+long as you take.
+
+Once answered, the card keeps your answers on show and is marked
+**Answered**. A question that was closed without an answer is marked **Not
+answered** and dimmed. In a chat reopened from history the cards are read
+only.
+
+A question from a subagent says **from a subagent**, and appears in main as
+well when you are not reading its lane.
+
+<Aside type="note" title="Prefer the plain prompt?">
+
+Turn **Answer the agent's questions here** off in Settings > Chat to get a
+plain allow or deny prompt for a question instead of the form. The question
+is then answered in the agent's own way, and counts as a tool call in the
+chat's figures.
+
+</Aside>
+
+Only Claude asks questions this way today. The other agents have no way to
+put a question to you mid-turn.
+
+## Answer a tori ask
+
+A program running in one of Tori's shells, or an agent using
+[Tori's MCP server](/docs/automation/mcp-server/), can ask you something with
+`tori ask`. The question appears as a card above the composer of the chat
+that asked it, with a needs you dot and a notification.
+
+- If the question came with options, click one.
+- Otherwise type your answer in the box and press `Enter` or **Answer**.
+
+When the question comes from another session, a worker that the chat
+spawned, the card starts with that session's name, for example
+**Retry worker asks:**. The chat that spawned it can answer on your behalf;
+you can answer it yourself from the card at any time.
+
+An [Autopilot](/docs/automation/autopilot/) approval arrives the same way, with
+the full draft on the card: the pull request's title, branches and body, the
+review's verdict and line comments, or the merge's method and commit. See
+[Approvals](/docs/automation/autopilot/#approvals).
+
+## The plan above the composer
+
+When an agent publishes a todo list for its work, it is pinned above the
+composer instead of being repeated in the transcript every time it changes.
+The card shows each step with a circle for pending, a spinner for the one in
+progress and a check when done, and the header shows how many are done, like
+**3/7**, and the step in progress.
+
+Click the header to fold the plan into a small **3/7** pill on the composer's
+edge; hover the pill to see the list, click it to open the card again. Every
+agent that publishes a plan gets one; Codex and the other ACP agents do.

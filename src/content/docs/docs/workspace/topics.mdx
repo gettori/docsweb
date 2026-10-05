@@ -1,0 +1,164 @@
+---
+title: Topics
+description: One branch across several repositories, worked on as a single workspace with one search, one commit and one chat that sees every repository.
+---
+
+import Aside from "../../../../components/docs/Aside.astro";
+import Steps from "../../../../components/docs/Steps.astro";
+
+A change that spans more than one repository, an API and the app that calls
+it, a service and its SDK, is awkward as separate branches in separate
+windows. A **Topic** is one branch name across any set of repositories, opened
+as a single workspace: one file tree, one search, one commit message, and one
+chat that sees all of them.
+
+Each repository joins a Topic in one of two ways:
+
+- **Worktree**: it gets its own worktree on the Topic's branch, so the work can
+  change it.
+- **Reference**: no branch and no worktree. A read only view of the
+  repository's own checkout, for code the change needs to read but not touch.
+
+## Switch to Topics
+
+Click the **Topics** tile at the end of the space strip, or run **Toggle Spaces
+/ Topics** from the command palette. The sidebar heading reads **Topics**, with
+a **+** for a new one. Click a space tile to go back.
+
+## Create a Topic
+
+<Steps>
+
+1. In Topics, click **+**, **New Topic**.
+2. Type a name. **Branch** fills in from the name as you type, with no prefix
+   added, until you change it yourself. It is the exact branch every worktree
+   member will use. A name git would not accept says **not a valid branch name**.
+3. On the left, pick the repositories, grouped by space. Filter them with
+   **Filter repositories**.
+4. Each pick gets a card on the right. Set it to **Reference** or **Worktree**.
+5. If a repository already has a branch of that name, its card offers to adopt
+   it instead of making a new one.
+6. Click **Create Topic**.
+
+</Steps>
+
+Worktrees are made under each repository's `.tori/worktrees/` folder (a plain
+repo) or beside its other worktrees (a bare one). A member that fails to set up
+is listed with **Retry**, and the rest of the Topic is still made.
+
+<Aside type="tip" title="Start with references">
+
+A reference costs nothing: no branch is made and nothing is checked out. Add
+every repository the change might touch as a reference, and promote one to a
+worktree when the work reaches it.
+
+</Aside>
+
+## References
+
+A reference row wears a lock, says how far behind its remote it is, and warns
+when the checkout is off its default branch or has local changes. Tori never
+stages, commits, discards or pushes in a reference. **Pull**, on its menu, is
+fast-forward only.
+
+## The Topic in the sidebar
+
+A Topic is a row with its members under it, like a project with its branches.
+Collapsed, it is one line with a chip per member and a status for the Topic's
+chat. A new Topic opens expanded, and the list remembers which are open.
+
+- Click a member to open the Topic with that member in front.
+- An expanded member shows its pull request on a second line. A failing check
+  lights that member's chip and the Topic's status.
+- The Topic's row shows its sync state beside the status.
+
+## The Topic menu
+
+Right-click a Topic, or use its actions button:
+
+| Item | What it does |
+| --- | --- |
+| **Rename...** | Changes the Topic's name. The branch stays as it is |
+| **Add repository...** | Opens the same picker to add members, **Add to Topic** |
+| **When a chat needs a worktree** | **Ask me first**, **Create it** or **Refuse**, see [Chats in a Topic](#chats-in-a-topic) |
+| **Delete...** | Deletes the Topic, see below |
+
+## The member menu
+
+Right-click a member:
+
+| Item | What it does |
+| --- | --- |
+| **Pull** | References only: fast-forward the checkout |
+| **Create worktree** | Turns a reference into a worktree on the Topic's branch |
+| **Remove worktree...** | Turns a worktree back into a reference. The branch is kept, so creating the worktree again picks the work back up |
+| **Rename...** | Changes the name shown for the member. The repository and its worktree stay as they are |
+| **Move up**, **Move down** | Reorders the members |
+| **Remove repository** | Takes the repository out of the Topic, and asks what to do with its worktree. A Topic needs one member, so the last cannot be removed; delete the Topic instead |
+
+## Delete a Topic
+
+**Delete...** lists every member with what git says about its worktree,
+**clean**, **uncommitted changes** or **unpushed commits**, before you confirm.
+Deleting the Topic itself loses nothing: make it again over the same
+repositories and the branches are still there.
+
+Then a second question, **webhooks is deleted. Its worktrees?**, asks per
+member whether to **Keep** or **Remove** its worktree, with a **Delete
+webhooks** checkbox for the branch too. **Keep all** keeps every worktree on
+disk.
+
+## One workspace
+
+A Topic opens as one workspace. Editor tabs, terminals, panes and search
+history belong to the Topic, while git, the file watcher and the shell follow
+whichever member you are in. The title bar reads **Topics > webhooks**, with
+the member chips beside it.
+
+- **Files, Changes and Pull requests** show the members as a strip of chips;
+  pick one to point the panel at it.
+- **Search** always covers the whole Topic, one section per member, and can be
+  narrowed to the members you pick.
+- **Quick open, breadcrumbs, tabs and menus** name the member a file is in, so
+  the same `src/index.ts` in two members can be told apart.
+- **Committing** shows a chip per member with staged changes, so one message
+  can go out to all of them, or only the ones you leave ticked. See
+  [Commit across a Topic](/docs/git/changes-panel/#commit-across-a-topic).
+- **Git commands** in the palette each name the member they act on.
+
+## Chats in a Topic
+
+A Topic chat starts in the Topic's own home folder, with every member added to
+it, along with each member's permission rules and instruction file
+(`CLAUDE.md`). The agent is told which Topic it is in and what its members
+are: with its first message, after a compaction, and whenever the members
+change. Those notes show in the transcript as **Tori told this chat about its
+Topic**.
+
+A Topic chat cannot write in a member's repository outside the Topic's own
+worktrees. When it needs to change a reference, it asks for a worktree, and
+the Topic's **When a chat needs a worktree** setting decides what happens:
+
+| Setting | What happens |
+| --- | --- |
+| **Ask me first** (the default) | A question in the chat. The worktree is made if you agree |
+| **Create it** | The worktree is made on the Topic's branch without asking |
+| **Refuse** | The agent is told no, and the member stays a reference |
+
+A chat that is already running picks up members that are added or promoted.
+
+## Checkpoints across repositories
+
+A [checkpoint](/docs/git/checkpoints/) taken from a Topic chat covers every
+worktree member, so one prompt is one snapshot across all of them. A rewind
+checks every member before it writes anything, so a problem in one stops it
+before any of them is changed.
+
+## Topic worktrees in Spaces
+
+A Topic's worktrees live in their Topic, and do not show under their
+repository in Spaces. Turn on **Show Topic worktrees in Spaces**, in Settings
+> Integrations, to list them there too. Shown that way, a worktree wears a
+small Topic tag: hover it for the Topic's name, click it to open the Topic.
+
+The [phone app](/docs/phone/using-the-phone-app/) has a Topics view of its own.

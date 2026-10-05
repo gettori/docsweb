@@ -1,0 +1,135 @@
+---
+title: Keyboard shortcuts
+description: Every default shortcut in Tori, the ones that work everywhere and the ones that belong to one place.
+---
+
+import Aside from "../../../../components/docs/Aside.astro";
+
+Press `Cmd+/` for the shortcut sheet, which lists the shortcuts that work
+everywhere, grouped as below. Every action, with or without a key, is also in
+the command palette (`Cmd+K`). Shortcuts cannot be remapped yet.
+
+## Navigate
+
+| Keys | Action |
+| --- | --- |
+| `Cmd+P` | Go to a file, action, symbol or line |
+| `Cmd+K` | Run an action (the command palette) |
+| `Ctrl+-` | Go back to where you were |
+| `Ctrl+Shift+-` | Go forward again |
+| `Cmd+Shift+T` | Reopen the tab you just closed |
+| `Cmd+Shift+E` | Filter the sidebar |
+| `Cmd+/` | Show the shortcut sheet |
+
+## View
+
+| Keys | Action |
+| --- | --- |
+| `Cmd+B` | Show or hide the sidebar |
+| `Cmd+Opt+J` | Show or hide the terminal |
+| `Cmd+Ctrl+J` | Show or hide the dock |
+| `Cmd+Opt+E` | Show or hide the editor |
+| `Cmd+Opt+B` | Show or hide the file tree |
+| `Cmd+=`, `Cmd+-`, `Cmd+0` | Bigger, smaller, and reset the interface size |
+| `Cmd+Opt+T` | Focus notifications. `Tab` moves between them, `Escape` dismisses one |
+| `Cmd+Shift+J` | Switch between the Autopilot's Cockpit and the Workspace |
+| `Cmd+L` | Show or hide the Autopilot over the Workspace |
+| `Cmd+R` | Reload the window (your tabs and sessions stay) |
+
+## Tabs and terminals
+
+| Keys | Action |
+| --- | --- |
+| `Cmd+1` to `Cmd+9` | Jump to tab 1 to 9 in the focused pane |
+| `Ctrl+Tab` | Cycle the focused pane's tabs |
+| `Cmd+W` | Close the focused pane's tab |
+| `Cmd+J` | Focus the terminal |
+| `Cmd+Shift+B` | Run the last task again |
+| `Cmd+F` | Search in the focused terminal |
+| Middle click | Close a tab |
+
+## Sessions
+
+| Keys | Action |
+| --- | --- |
+| `Cmd+Shift+A` | Jump to the next session waiting on you |
+| `Cmd+.` | Stop the running turn, from anywhere |
+
+## Search
+
+| Keys | Action |
+| --- | --- |
+| `Cmd+Shift+F` | Search across the project |
+| `Cmd+F` | Find in the open file |
+| `Cmd+Opt+F` | Find and replace in the open file |
+
+## Editor
+
+| Keys | Action |
+| --- | --- |
+| `Cmd+S` | Save |
+| `Cmd+N` | New scratch buffer |
+| `Cmd+I` | Expand the selection |
+| `Cmd+Shift+I` | Shrink the selection |
+| `Cmd+Opt+L` | Split the selection into lines, one cursor each |
+| `Ctrl+J` | Join lines |
+| `Cmd+Opt+D` or `F12` | Go to definition |
+| `Cmd+Opt+P` or `Opt+F12` | Peek definition |
+| `Cmd+Opt+R` or `Shift+F12` | Find references |
+| `Cmd+F12` | Go to implementation |
+| `Cmd+Shift+F12` | Go to type definition |
+| `Cmd+Opt+N` or `F2` | Rename symbol |
+| `Cmd+Opt+A` or `Opt+Enter` | Show code actions |
+| `Shift+Opt+F` | Format document |
+| `Cmd` held | Underline what a `Cmd+click` would jump to |
+| `Opt+F5`, `Shift+Opt+F5` | Next and previous change, in a diff |
+
+With [Vim keybindings](/docs/editor/editor/#vim-keybindings) on, Vim's own keys
+work in the editor too, and these shortcuts keep working.
+
+## Debugging
+
+| Keys | Action |
+| --- | --- |
+| `F5` | Start debugging the file in front of you |
+| `Shift+F5` | Stop debugging |
+| `F9` | Toggle a breakpoint on the current line |
+
+## Git and review
+
+| Keys | Action |
+| --- | --- |
+| `Cmd+Shift+R` | Go to the pull request review form |
+| `j`, `k` | Next and previous file in the Pull requests panel |
+| `n`, `p` | Next and previous conversation in a pull request diff |
+| `Enter`, `Shift+Enter` | Commit, or a new line, in the commit box |
+
+The bare letters only work when you are not typing in a field.
+
+## The composer
+
+| Keys | Action |
+| --- | --- |
+| `Enter` | Send. While a turn runs, steer it or queue |
+| `Shift+Enter` | New line |
+| `Cmd+Enter` | Send, even inside a code block or with a menu open |
+| `Opt+Enter` | While a turn runs, queue for the next turn |
+| `Cmd+Shift+Enter` | Steer with the oldest queued message, or send |
+| `ArrowUp`, `ArrowDown` | At the start of the box, recall sent messages |
+| `Opt+ArrowUp` | At the start of the box, edit the newest queued message |
+| `Ctrl+C` | Empty the box |
+| `Cmd+S` | Stash the draft, or in an empty box bring a stashed draft back |
+| `Escape` | Close a menu, cancel a queue edit, or stop the turn |
+| `Opt+1` to `Opt+9` | Read the main transcript or a subagent's lane |
+
+See [The composer](/docs/agents/composer/) and
+[Steering and the queue](/docs/agents/steering-and-the-queue/).
+
+<Aside type="note" title="When a terminal has focus">
+
+Most shortcuts above still work while a terminal has focus, because Tori
+catches them before the terminal does. The ones aimed at the editor, like
+`Cmd+Opt+D`, only work while the editor is focused, so they never act on a file
+you are not looking at.
+
+</Aside>

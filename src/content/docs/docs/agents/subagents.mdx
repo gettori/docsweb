@@ -1,0 +1,96 @@
+---
+title: Subagents and background work
+description: Read what each subagent of a chat is doing in its own lane, see background tasks, and answer a subagent's prompts.
+---
+
+import Aside from "../../../../components/docs/Aside.astro";
+
+Claude can hand parts of a task to subagents: one to search the code, one to
+write a test, while it carries on. Tori gives each subagent a **lane**, so you
+can read what it is doing on its own instead of seeing everything mixed into
+one transcript.
+
+Lanes need the agent to report its subagents, which Claude does. Other agents
+say nothing about helpers, so their work shows in the transcript as the main
+agent's own.
+
+## The lane strip
+
+Once a chat has started a subagent, a strip of chips appears above the
+composer:
+
+- **main**, the chat itself, always first. Its chip takes the agent's colour
+  while it works.
+- One chip per subagent, named after what it was asked to do. Running ones
+  come first.
+
+Each subagent chip has a status dot and one figure:
+
+| Figure | Means |
+| --- | --- |
+| **42s**, **1m12s** | It is running, for this long |
+| **18k** | It finished, using this many tokens |
+| **waiting** | It is stopped on a prompt for you |
+| Any other word | It ended another way, as the agent reports it, for example failed |
+
+A finished subagent whose ending was never recorded, usually one that ran in
+the background in a session you reopened, shows as finished rather than
+failed.
+
+Past two finished subagents, the rest fold behind a **+3 done** chip. Click it
+to show them all, and **Hide done** to fold them again. The lane you are
+reading always stays visible.
+
+## Read a lane
+
+Click a chip, or press `Option+1` for main and `Option+2` through `Option+9`
+for the chips after it, in the order they are drawn. The transcript narrows to
+that subagent's own rows: its tool calls with their names and arguments, its
+output, its result.
+
+Reading a lane changes only what you see. **What you type always goes to the
+main agent**, because there is no way to talk to a subagent directly. While you
+read a lane, the composer says so: **Watching write tests. What you type goes
+to the main agent**.
+
+In the main transcript, the tool call that started a subagent has a
+**Read what this subagent did** button (**is doing** while it runs) that opens
+its lane.
+
+## When a subagent needs you
+
+A subagent can ask for permission or ask a question while you are reading
+something else. So it does not stall unseen, its prompt is shown in the main
+transcript too, with **Read what this subagent is doing** to jump into its
+lane, and its chip reads **waiting**. Answer it from either place.
+
+A question from a subagent is marked **from a subagent**, so it does not read
+as the main agent's.
+
+## Background tasks
+
+Work the agent started in the background, such as a long shell command, shows
+in a second group labelled **Background**, with how long each has been
+running. These are labels, not lanes: a shell task has no transcript of its own
+to read.
+
+## When the turn ends before the work does
+
+A chat stays **working** while its subagents and background tasks are still
+going, even after the main reply has finished. The status strip says what it is
+waiting on, for example **Waiting: 2 agents, 1 task**, and the sidebar keeps the
+session's dot busy, so a chat never looks done while work is still running.
+
+Stopping the turn with `Escape` stops its subagents too.
+
+## Reopened sessions
+
+When you reopen a session, its lanes are read back from disk, so you can still
+read what each subagent did.
+
+<Aside type="note" title="Which agents report subagents">
+
+Settings > Agents shows, on each agent's card, whether it reports its
+subagents to Tori. Today only Claude does.
+
+</Aside>

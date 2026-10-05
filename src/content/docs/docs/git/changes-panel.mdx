@@ -1,94 +1,263 @@
 ---
 title: The Changes panel
-description: Staging, committing, stashing and reviewing your own edits.
+description: Review what changed, stage files, hunks or lines, commit and push, discard, stash, rebase, and read the branch's history from the right panel.
 ---
 
+import Aside from "../../../../components/docs/Aside.astro";
 import Demo from "../../../../components/docs/Demo.astro";
+import Steps from "../../../../components/docs/Steps.astro";
 import ChangesDemo from "../../../../islands/docs/ChangesDemo";
 
-The Changes panel is the right panel's source control view: conflicts,
-staged changes, and unstaged changes, each file expandable to its hunks.
+The Changes panel is the right panel's source control view for the branch or
+worktree you have selected. Open it from the branch icon in the right panel's
+strip. Its tab shows how many files changed whenever another panel is in
+front.
 
 <Demo caption="Richard's uncommitted work on hooli-search. Stage a file or a single hunk, write a message or let AI Draft write one, and commit.">
   <ChangesDemo client:visible />
 </Demo>
 
-## Staging and committing
+## The header
 
-Stage or unstage a whole file, a single hunk, or just the selected lines. A
-commit message box sends `Enter` to commit and `Shift+Enter` to add a
-newline, same as the chat composer. **AI Draft** asks the currently selected
-agent session to write the commit message from what is staged. The split
-commit button's chevron offers amend, commit and push together, or amend and
-push; amending a commit that looks already pushed asks you to confirm first,
-since that check is only as fresh as the last fetch.
+The first row names the branch, with **Refresh** (which also fetches) and
+**More Actions** (`...`). The second row says where the branch stands:
 
-Working inside a Topic, the composer shows a chip per repo with staged
-changes, so one commit message can go out across every repo at once, or you
-can pick which ones to include.
+- **The size of your uncommitted work**, across every changed file.
+- **The sync pill**: an up arrow with the commits to push and a down arrow with the commits to pull, such as up 2, down 1. Click it to push.
+  It reads **Unpushed** before the first push (the first push sets the
+  upstream), **Pushing** while it runs, and **Deleted** once the remote branch
+  is gone. When the upstream was force-pushed over your commits it shows the
+  count to pull and its click offers **The upstream was force-pushed. Reset to
+  it**.
+- **Open a pull request**, or **Reopen the pull request** for a closed one.
+  See [Pull requests and issues](/docs/git/pull-requests-and-issues/).
+- A **plug** to add an account for the repository's host, or a **person** to
+  pick which of your accounts the repository uses, when that is needed.
 
-## Per hunk actions
+Inside a [Topic](/docs/workspace/topics/), a strip of member chips above the
+header picks which repository the panel shows. Everything below follows it.
 
-Each hunk offers stage, unstage, and **throw away this hunk**; an inline box
-lets you send a comment straight to the active agent session, quoting the
-exact lines. A conflicted file's equivalent action asks the session to
-resolve the conflict.
+A reference member of a Topic is read only: the panel shows its changes and
+can fetch and pull (fast-forward only), but never stages, commits, discards or
+pushes.
 
-## Everything at once
+## The file list
 
-The overflow menu (`...`) has stage all, unstage all, discard all (which
-snapshots first, so it can be undone from history even though it feels
-final), fetch, pull, pull with rebase, push, a rebase submenu, and stash all.
-Destructive whole tree actions are blocked, or at least flagged, while
-another session is actively working in that folder.
+Changed files are grouped:
 
-## History
+- **Conflicts**, during a merge, rebase, cherry-pick or revert. See
+  [Merge conflicts](/docs/git/merge-conflicts/).
+- **Staged Changes**: what the next commit will hold.
+- **Changes**: everything else, including new files git has never seen.
 
-Below the file list, three tabs: **Graph** (the commit lane view), **Stashes**
-(open, apply, pop, or drop, dropping is the one truly irreversible action,
-since a stash never lived in the working tree to snapshot), and
-**Checkpoints**, Tori's own per-prompt snapshots, listed by session.
+Each row shows the file's icon, name, folder and a status letter: `M`
+modified, `A` added, `D` deleted, `R` renamed (with the old name), `?`
+untracked. A new folder shows as the files inside it, not as one row.
 
-## Checkpoints
+- **Click** a row to open its diff in a preview tab, which the next click
+  replaces. **Double-click** to keep the tab. See [Diffs](/docs/git/diffs/).
+- Hover a row for its buttons:
 
-With **Snapshot on each prompt** on in Settings > Chat (on by default), every
-prompt you send an agent gets a snapshot of the whole tree, without making a
-commit. The Checkpoints tab lists them for this worktree, grouped by the
-session that took them (a chat or a terminal session, the one you have
-selected first), newest turn on top. Each row shows the time, the prompt
-that started the turn, and how many files it changed. The tab's count is the
-number of turns.
+  | Button | What it does |
+  | --- | --- |
+  | **Open the file itself** | Opens the file in the editor |
+  | **Copy diff** | Copies the file's diff |
+  | **Discard** (unstaged only) | Throws away the unstaged changes to this file. For an untracked file it reads **Delete**, since the file was never committed |
+  | **Stage** or **Unstage** | Moves the whole file between the groups |
 
-Click a row to open it. The detail shows the prompt, the time and the
-session, and a switch between two lists:
+To stage only part of a file, open its diff and stage a hunk or selected lines
+there.
 
-- **This turn**: only the files that turn changed.
-- **Since here**: everything that has changed in the folder since that
-  point, including your own edits and other sessions' work.
+With nothing changed the panel says **No changes yet. Edit a file and it shows
+up here to stage, commit, and push.**
 
-Each file shows its added and removed line counts. Click a file to expand
-its diff in place, or hover it for two buttons: open the diff in an editor
-tab, or open the file as it is now. A purple dot marks a file another chat
-also wrote during that time. A dashed circle marks a file that changed
-during the turn but that Tori cannot attribute to a session.
+The panel refreshes on its own when files change, and when HEAD, the index or
+a branch changes outside Tori, for example after a commit in a terminal.
 
-At the bottom of the detail:
+## Discard safely
 
-- **Revert tree to (time)** puts every file in the folder back to how it was
-  at that checkpoint, after a confirmation. The current state is saved as a
-  backstop first, so the revert itself can be undone. Files shared with
-  another chat get their own question, and unattributed files are left
-  alone. The button is disabled while a session is running a turn in that
-  folder.
-- **Rewind chat to here**, for chat sessions, also forks the conversation
-  from that turn. See [Rewind](/docs/agents/chat/#rewind).
+Discarding asks first, and says what goes: **Every unstaged change in this
+repo goes back to how it is staged. Anything already staged is kept.**
 
-Browsing never changes anything; only those two buttons do.
+Before discarding anything, Tori saves a snapshot of the whole folder, so a
+discard can be undone. Find it under **Backstops** in the
+[Checkpoints](/docs/git/checkpoints/#backstops) tab and restore it.
 
-### Backstops
+Discarding, stashing and rebasing rewrite files across the worktree, so they
+check for agents first. If a session is in the middle of a turn in this
+worktree, the action is refused. If Tori cannot tell for sure, it asks
+**Another session may be running here** and lets you go ahead.
 
-Under the sessions, **Backstops** lists the snapshots Tori takes before it
-overwrites your files: one before each revert (tagged `session`), and one
-before a discard in the worktree (tagged `worktree`). Open one to see what
-has changed since, and **Restore tree to (time)** to go back to it.
-Restoring a worktree backstop overwrites anything done since.
+## Commit
+
+The commit box is hidden until you ask for it, so the panel stays a review
+surface by default.
+
+<Steps>
+
+1. Open **More Actions** and tick **Commit**. The commit box appears under the
+   header.
+2. Stage what you want in the commit.
+3. Type a message. `Enter` commits, `Shift+Enter` adds a line.
+4. Press `Enter` or click **Commit**.
+
+</Steps>
+
+The box shows how many files the commit will hold. **Commit** is never greyed
+out; clicking it with something missing says what: **Write a commit message
+first.**, or **Nothing staged to commit.** The message is kept if the commit is
+refused, for example by a failing hook.
+
+The arrow beside **Commit** offers:
+
+- **Commit (Amend)**: amend the last commit instead. The message box fills with
+  that commit's message (what you had typed comes back if you stop amending),
+  and the button reads **Amend**. If the commit looks like it is already pushed,
+  Tori asks **Amend a pushed commit?** first; that check is only as fresh as
+  your last fetch.
+- **Commit & Push**, or **Amend & Push**.
+- **Stop amending**.
+
+### AI Draft
+
+**AI Draft** asks the session selected in the sidebar to write a commit message
+for the staged files. It puts **Draft a commit message for the staged changes:**
+and the file names into that session's composer, for you to send. The agent's
+reply is a suggestion in its chat; copy what you like into the message box.
+
+### Commit across a Topic
+
+Inside a Topic, the box shows a chip for each repository with staged changes,
+and the button reads **Commit in 3 repos**. Click a chip to leave that
+repository out, or put it back. One message goes into each. They are
+committed one at a time, and if one fails the rest are left untouched.
+
+## More Actions
+
+The `...` menu acts on the repository on screen:
+
+| Item | What it does |
+| --- | --- |
+| **Stage All Changes**, **Unstage All Changes** | Everything at once |
+| **Discard All Changes...** | Discards every unstaged change, after a snapshot |
+| **Fetch** | Fetches from the remote |
+| **Pull** | Fetches and merges. Always merges, even if your git config says `pull.rebase` |
+| **Pull (Rebase)** | Fetches and rebases on top |
+| **Push** | Pushes, setting the upstream on the first push |
+| **Rebase** | A submenu, below |
+| **Stash All Changes** | Puts every change aside |
+| **Commit** | Shows or hides the commit box |
+| **Graph**, **Stashes**, **Checkpoints** | Shows or hides each history tab |
+| **Open Graph in Editor** | The full commit graph in a tab |
+
+When the upstream was force-pushed over your commits, **Pull** reads **Reset to
+Upstream** instead.
+
+A push or fetch that needs a password or passphrase asks in a Tori dialog, and
+the answer goes straight to git; Tori does not store it.
+
+### Rebase
+
+- **Onto origin/main** (your base branch): rebases onto the remote's copy of
+  the base.
+- **Onto Branch...**: pick any branch to rebase onto.
+- **Interactive...**: see below.
+- **Autosquash Fixups**: folds `fixup!` and `squash!` commits into the commits
+  they name.
+
+#### Interactive rebase
+
+**Interactive...** opens **Rebase N commits**: every commit of the branch since
+its base, oldest first. For each, pick an action:
+
+| Action | Does |
+| --- | --- |
+| **Pick** | Keeps the commit |
+| **Reword** | Keeps it with a new message you type in the row |
+| **Squash** | Folds it into the commit above, keeping both messages |
+| **Fixup** | Folds it into the commit above, keeping only the one above |
+| **Drop** | Leaves it out |
+
+Reorder commits with **Move up** and **Move down**. Commits already pushed are
+tagged **pushed**, since rewriting them means a force push. The **Rebase** button
+explains when the plan cannot run: every commit dropped, a squash with nothing
+above it, or a reworded commit with no message.
+
+A branch with merge commits cannot be rebased interactively, because the merges
+would be flattened; Tori says so instead of opening the dialog.
+
+### When an operation stops
+
+A merge, rebase, cherry-pick or revert that stops shows a bar under the
+header: **Rebase in progress (2 conflicts)**, with:
+
+- **Continue**: carries on. Greyed out until every conflict is resolved.
+- **Skip**: leaves out the commit it stopped on (rebase and cherry-pick).
+- **Abort**: goes back to before the operation.
+
+See [Merge conflicts](/docs/git/merge-conflicts/).
+
+## Graph, Stashes and Checkpoints
+
+Under the file list is a section with three tabs. Drag its top edge to resize
+it, and use the chevron to fold it down to its tab strip. Drag the tabs to
+reorder them, and hide any you do not use from **More Actions**. The size and
+state are remembered.
+
+### Graph
+
+The branch's commits as a lane, newest first, with the sync count above. A
+commit opens to the files it changed, and a file opens that commit's diff in a
+tab. **all branches** shows every branch instead of this one, and the graph
+button opens the full graph in a tab.
+
+### Stashes
+
+Every stash in the repository, with its branch and age on hover. The bar has an
+**untracked** checkbox, to also stash files git has never seen, and **Stash
+all**, which uses the first line of your commit message as the stash's name when
+you have typed one.
+
+Click a stash to see its files. Its buttons:
+
+- **Open this stash as a commit**: its full diff in a tab.
+- **Apply**: lays it back down and keeps it in the list.
+- **Pop**: lays it back down and removes it.
+- **Drop**: deletes it. This one cannot be undone from the timeline, because a
+  stash is not part of the working tree and no snapshot holds it.
+
+Nothing can be stashed while a merge has unresolved conflicts.
+
+### Checkpoints
+
+Tori's own snapshot of the tree at every prompt, so you can see and undo what
+each agent turn did. See [Checkpoints](/docs/git/checkpoints/).
+
+## Git commands in the palette
+
+Everything here, and more, is in the command palette (`Cmd+K`) under `Git:`. A
+command that cannot run right now is shown greyed with the reason. In a Topic,
+each command names the repository it will act on.
+
+| Command | What it does |
+| --- | --- |
+| **Git: Fetch**, **Pull**, **Pull (Rebase)** | As in the menu |
+| **Git: Sync (pull, then push)** | Both, in that order |
+| **Git: Stage All Changes**, **Unstage All Changes** | Everything at once |
+| **Git: Discard All Changes** | After a snapshot |
+| **Git: Commit (Signed Off)** | Commits with a `Signed-off-by` line |
+| **Git: Undo Last Commit** | Takes the last commit back, keeping its changes |
+| **Git: Stash Staged** | Stashes only what is staged |
+| **Git: Merge Branch...** | Merges a branch you pick into this one |
+| **Git: Rebase Branch...**, **Autosquash Fixups** | As in the Rebase menu |
+| **Git: Continue Merge or Rebase**, **Skip Commit (Rebase)**, **Abort Merge or Rebase** | For an operation that stopped |
+| **Git: Create Branch...**, **Rename Branch...**, **Delete Branch...** | Branch housekeeping |
+| **Stage this file**, **Unstage this file**, **Commit staged changes**, **Push to origin** | For the file and branch in front of you |
+
+<Aside type="tip" title="Ask an agent about a hunk">
+
+Every hunk in a diff has a comment button. What you type there goes to the
+selected session with the file and line range attached, for it to act on. See
+[Diffs](/docs/git/diffs/#comment-on-a-hunk).
+
+</Aside>

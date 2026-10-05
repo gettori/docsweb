@@ -1,0 +1,176 @@
+---
+title: Starting a chat
+description: Open a new chat or agent terminal, pick up an earlier session, move a conversation between chat and terminal, and rename or delete sessions.
+---
+
+import Aside from "../../../../components/docs/Aside.astro";
+import Steps from "../../../../components/docs/Steps.astro";
+
+Every chat belongs to a folder: a branch, a worktree or a
+[Topic](/docs/workspace/topics/). Select one in the sidebar first; the tab strip
+above the panes then holds that folder's chats, terminals and files.
+
+## Open a new chat
+
+Click the **+** at the right end of the tab strip, **New chat in
+api** (with your project's name). A new chat tab opens as a draft: just the
+composer, with nothing behind it yet.
+
+A draft costs nothing. No agent process is started and no session is
+created until you send the first message, so you can open one, set it up,
+and close it without leaving anything behind.
+
+<Steps>
+
+1. Select a branch, worktree or Topic in the sidebar.
+2. Click **+** in the tab strip.
+3. Optionally pick the agent, account, model, effort and mode from the
+   composer's pills (see [Models, effort and modes](/docs/agents/models-and-modes/)).
+4. Type your first message and press `Enter`. The agent starts, the draft
+   becomes a live chat, and your message is sent as soon as the agent is ready.
+
+</Steps>
+
+If the first message cannot start a session, for example the agent is signed
+out, the tab goes back to being a draft with your message still in it and the
+reason above the composer.
+
+### Which agent a new chat uses
+
+A new draft opens on what this project last used: the same agent and account.
+With no history it uses your Settings default for that agent's account, and
+otherwise the first agent you have turned on. A project that only allows some
+agents (see [Limiting agents per project](/docs/agents/accounts-and-usage/#limiting-agents-per-project))
+always opens on one it allows.
+
+The **+** is greyed out, with the reason in its tooltip, when no branch is
+selected (**Select a branch first**) or no agent is turned on (**No agent
+enabled. Turn one on in Settings.**).
+
+### Chats that open by themselves
+
+- Creating a worktree or branch from the sidebar opens a chat draft in it, so
+  it does not land on an empty strip. A worktree folder that already has tabs
+  keeps those instead.
+- Starting a branch from an issue opens a draft with the issue written in as
+  the prompt, and a **from** link above the composer that opens the issue.
+- A chat that another chat spawns, or that the Autopilot starts, opens as a
+  tab in its folder.
+
+## The launch menu
+
+The caret beside **+**, **Launch an agent session**, opens everything else
+you can start in this folder:
+
+| Row | What it opens |
+| --- | --- |
+| **Terminal** | A plain login shell, in this folder |
+| **Claude (terminal)** | Claude's own terminal interface in a terminal tab. With two Claude accounts there is one row per account, such as **Claude (work, terminal)** |
+| **Continue this session in chat** | The selected session, resumed as a chat |
+| **Continue this session in terminal** | The selected session, resumed in the agent's terminal interface |
+| **Close 3 tabs not started** | Closes restored tabs you have not opened since the last launch |
+| **Claude (yolo)** | Claude's terminal interface with every permission check skipped (`--dangerously-skip-permissions`) |
+
+Rows for agents you turned off are not shown. A row an agent's project rules
+refuse is greyed with **Not allowed in this project**.
+
+<Aside type="caution" title="Yolo means no prompts at all">
+
+A yolo session runs every tool without asking, including shell commands and
+file deletions. Use it in a throwaway worktree, not on a branch you care about.
+
+</Aside>
+
+## Pick up an earlier session
+
+Every session ever run in the selected folder is in **Session history**, the
+clock button to the right of the launch control.
+
+<Steps>
+
+1. Click the history button. A panel opens under it with a search box.
+2. Type to filter by session name.
+3. Use `ArrowUp` and `ArrowDown` and press `Enter`, or click a session, to open
+   it.
+
+</Steps>
+
+The list has **Open now** at the top, the sessions that have a tab open, and
+then the rest grouped by when they were last active: **Today**,
+**Yesterday**, **Previous 7 days**, **Previous 30 days** and **Older**. Each
+row shows the agent, the session's status dot, the account when you have
+more than one, and how long ago it was active. A lock marks a session the
+Autopilot is driving.
+
+A small badge on the history button counts sessions running in this folder
+that have no tab open, for example one started from the CLI or left running
+when you closed its tab.
+
+### What opening a session does
+
+Opening a session that is already open in a tab just brings that tab
+forward. Otherwise it opens on the surface you chose in Settings > Chat >
+**Open sessions in**:
+
+- **Chat** (the default) resumes it as a chat, with its history read back from
+  disk.
+- **Terminal (agent tab)** resumes it in the agent's own terminal interface.
+
+A session that is running somewhere else, in a terminal outside Tori for
+example, opens in a terminal tab instead of a chat, because driving one
+session from two places at once damages its history.
+
+Opening a session reads its history but does not start the agent. The agent is
+started when you send the first message, and it resumes the same session, so
+the conversation carries on where it stopped.
+
+### Rename or delete a session
+
+Right-click a session in the history panel, or use its row menu:
+
+- **Rename...** gives it a name of your own instead of its first prompt.
+- **Delete** asks first. For Claude it deletes the session's transcript, which
+  cannot be undone, along with its checkpoints. For an agent that keeps its
+  own history, Tori can only stop listing it: **Forget this session?** The
+  agent keeps its copy.
+
+Deleting a session closes any tab showing it and drops its saved
+[queue](/docs/agents/steering-and-the-queue/). Sessions the Autopilot is driving
+cannot be deleted.
+
+### Sessions from before a folder was recreated
+
+If you delete a worktree and create one again at the same path, the old
+sessions are kept apart under **Historical (N)**, folded, so they do not mix
+with the new work. Click the heading to see them, and **Adopt** to list them
+normally again.
+
+## Chat or terminal
+
+Every agent can run two ways:
+
+- **As a chat**, the view these pages describe: the composer, tool cards, the
+  model and mode pills, the queue, rewind.
+- **In its own terminal interface**, in a real terminal tab, exactly as it runs
+  in any terminal.
+
+The conversation is the same either way. Use **Continue this session in chat**
+or **Continue this session in terminal** from the launch menu to move one
+between the two without starting over.
+
+A session in a terminal tab still gets its row in the sidebar, its status
+dot, notifications and checkpoints. It does not get the model picker, the tool
+cards, the queue or the session menu; those belong to the chat view.
+
+Tabs come back after a relaunch on the surface they were saved on, whatever
+**Open sessions in** says.
+
+## Restored tabs
+
+When Tori starts, every tab you had open comes back in order, but nothing is
+started until you click one. A restored chat shows its history and starts its
+agent only when you send. A restored terminal gets a fresh prompt. Drafts come
+back with what you had typed.
+
+**Close N tabs not started** in the launch menu clears every restored tab you
+have not touched, in one go.

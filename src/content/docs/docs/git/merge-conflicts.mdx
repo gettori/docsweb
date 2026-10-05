@@ -1,0 +1,134 @@
+---
+title: Merge conflicts
+description: Resolve a conflicted merge, rebase, cherry-pick or revert in a three pane view, edit the result by hand, ask an agent to resolve it, and finish or abort the operation.
+---
+
+import Aside from "../../../../components/docs/Aside.astro";
+import Steps from "../../../../components/docs/Steps.astro";
+
+When a merge, rebase, cherry-pick, revert or stash apply stops on conflicts,
+the Changes panel shows a bar under its header, such as **Rebase in progress (2
+conflicts)**, and a **Conflicts** group above the other files.
+
+## Resolve a file
+
+<Steps>
+
+1. In the Changes panel, click a file under **Conflicts**. It opens in the
+   conflict view.
+2. Walk the conflicts with the **Previous conflict** and **Next conflict**
+   arrows. For each one, choose what the file should hold (below).
+3. When none is left undecided, click **Mark resolved**. Tori writes the
+   result and stages the file as merged: **Resolved. src/sign.ts is staged as
+   merged.**
+4. Repeat for every conflicted file, then click **Continue** in the bar.
+
+</Steps>
+
+## The conflict view
+
+The view has three panes:
+
+- **The two sides**, left and right, each headed with the branch and short
+  commit it came from. Their names follow the operation, so they always mean
+  what you expect:
+
+  | Operation | Left | Right |
+  | --- | --- | --- |
+  | Merge, stash apply | Yours (HEAD) | Incoming |
+  | Rebase | Upstream | Yours (being replayed) |
+  | Cherry-pick, revert | Yours (HEAD) | Being applied |
+
+  During a rebase, git's own "ours" is the upstream, which is why Tori names
+  the sides by what they are rather than by git's words.
+- **Result**: the file as it will be written. You can type in it.
+
+The three scroll together and line up region by region. Lines that only one
+side changed are carried across for you; only regions where both sides changed
+something are conflicts.
+
+Under the decision bar, **Base** shows what the region held before either side
+touched it, or says **Nothing here before: both sides added.** Knowing what was
+there is usually what tells you which side is right. **Compare** puts a side
+against the base, so you can see what that side changed.
+
+### Decide a conflict
+
+For the conflict you are on, the bar offers **Take** with one button per
+answer:
+
+- Either side by name, such as **Yours (HEAD)** or **Incoming**.
+- **Both**: keeps both versions, the left side first.
+- **Combine**: when the two sides edited different parts of the same lines,
+  splices both edits together. Where the order matters there are two, such as
+  **Combine, Yours (HEAD) first**.
+- **By hand**: write these lines yourself in the Result pane.
+
+Each side pane also has **Accept** and **Ignore** above every conflict, for
+deciding from the side you are reading.
+
+The Result pane says what each conflict currently holds, for example **Holds
+Yours (HEAD)** or **Written by hand**, with **Remove** for each side and **Reset
+to base**.
+
+### Write the answer yourself
+
+Often the right answer is a line neither side wrote. Type it in the Result
+pane: that conflict then reads **Written by hand**. Choosing a side for it
+afterwards asks **Discard your edits?** first, so typed lines are never thrown
+away silently.
+
+### A file one side deleted
+
+When one side deleted the file and the other changed it, there are no lines
+to choose between. The view says which side did what, for example **Incoming
+deleted this file; Yours (HEAD) changed it.**, and offers:
+
+- **Keep Yours (HEAD)**: keeps the file with that side's contents.
+- **Delete the file**: accepts the deletion. The button then reads **Delete and
+  mark resolved**.
+
+### Binary files
+
+A binary file has no lines to merge. The view says so; resolve it in a terminal
+by choosing a whole version, for example `git checkout --theirs file.png`.
+
+## Conflicts in the plain editor
+
+Opening a conflicted file in an ordinary editor tab paints each marker block,
+with a mark per conflict on the scroll ruler. Above each block:
+
+- **Accept Current**, **Accept Incoming**, **Accept Both**: replace the block
+  with that choice.
+- **Compare**: opens the three pane view.
+
+A banner over the file says **Merge conflict: this file holds both sides.**,
+with **Compare the versions** and **Ask agent to resolve**.
+
+## Ask an agent to resolve it
+
+**Ask agent to resolve**, on the banner, or the button on a row under
+**Conflicts**, sends the selected session a request to resolve that file's
+conflicts. As always, the text waits in its composer for you to send. Review
+what the agent wrote before marking the file resolved and continuing.
+
+## Finish the operation
+
+The bar under the header:
+
+- **Continue**: carries on. Greyed out with **Resolve the conflicted files
+  first** until no file is left under **Conflicts**.
+- **Skip**: leaves out the commit the rebase or cherry-pick stopped on.
+- **Abort**: goes back to before the operation, as if it never started.
+
+The same three are in the command palette as **Git: Continue Merge or
+Rebase**, **Git: Skip Commit (Rebase)** and **Git: Abort Merge or Rebase**.
+
+<Aside type="caution" title="Agents and conflicts">
+
+Continuing, skipping and aborting rewrite the worktree. If a session is in the
+middle of a turn in it, Tori refuses, and if it cannot tell, it asks first.
+Stop or wait for the agent before finishing a rebase it might be editing
+under.
+
+</Aside>

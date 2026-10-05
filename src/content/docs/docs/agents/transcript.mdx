@@ -1,0 +1,277 @@
+---
+title: Reading the transcript
+description: What every row in a chat means, how to open tool calls and diffs, undo a single hunk, read the status strip, and use the session menu.
+---
+
+import Aside from "../../../../components/docs/Aside.astro";
+import Steps from "../../../../components/docs/Steps.astro";
+
+A chat has three bands from top to bottom: the **status strip**, the
+**transcript**, and the [composer](/docs/agents/composer/). The transcript
+stays pinned to the newest line while the agent works. Scroll up to read
+something earlier and it stops following; scroll back to the bottom and it
+follows again. The wheel scrolls it from anywhere in the pane, the gutters
+included.
+
+## What the rows are
+
+### Your prompts
+
+Your messages are the bubbles on the right, with any attached images shown
+small above the text. A [steer](/docs/agents/steering-and-the-queue/) is a
+bubble too, inset and labelled **Steer**, because it went into the turn above
+it rather than starting a new one.
+
+Hover a past prompt to see **Rewind to here** on agents that can rewind. See
+[Rewind and fork](/docs/agents/rewind-and-fork/).
+
+### The agent's replies
+
+Replies render as Markdown: headings, lists, tables, quotes and code.
+
+- **Code blocks** are highlighted in their language, and have a **Copy code**
+  button.
+- **Mermaid** blocks are drawn as diagrams.
+- **Links** to a web page open in your browser. A link to a file in the
+  project, like `src/sign.ts` or `src/sign.ts:42`, opens the file in the editor,
+  at that line when there is one. A link to a file outside the project only
+  says where it is, rather than opening something unexpected. A `tori://` link,
+  which the Autopilot writes, opens that folder or session in Tori.
+- Raw HTML in a reply is shown as text, and a remote image is turned into a
+  link, so nothing in a reply can load or run anything.
+
+### Thinking
+
+When the agent thinks before it answers, a **Thinking** row appears and
+shimmers while it is live. Afterwards it reads **Thought for 12s**. Click it to
+read the thinking, and **Hide thinking** to fold it again.
+
+### Tool calls
+
+Each tool the agent runs is a row: the tool's name, the argument that tells
+this call apart (a file, a command, a search pattern), how long it took if over
+a second, and its state:
+
+| State | Meaning |
+| --- | --- |
+| **Running** | The call is in progress |
+| **Waiting for approval** | It needs your permission; the prompt is on the row |
+| **Done** | It finished |
+| **Failed** | It returned an error. The name is drawn in the failure colour |
+| **Denied** | You or a rule refused it |
+
+A failed or denied call stays folded, like any other, so a turn that makes a
+dozen calls does not rearrange itself under you. The row already says what
+happened.
+
+Click a row to open it. Inside you see the full input, the output, and for a
+tool that edits a file, the diff of exactly what this call changed.
+
+- **Every path is clickable.** Click a file name, or a line in a diff or in
+  search output, to open the file in the editor at that line.
+- **Long output folds.** Output past 20 lines folds, with **Show full output**
+  to read the rest. Set the number in Settings > Chat > **Tool output lines**;
+  0 shows everything. Very old output is not kept forever: **The rest of this
+  output is no longer held.**
+- **Several writes to one file** in a row fold onto the first card, which then
+  shows each write's diff in turn.
+
+### Undo one hunk from the transcript
+
+An edit card can show what is on disk now, and undo part of it.
+
+<Steps>
+
+1. Open an edit call's card.
+2. Click **Compare with the file on disk**. Tori compares the file with how it
+   was just before this call, using the copy it kept at the time.
+3. Each hunk of the difference has a **Revert** button, **Undo this hunk in the
+   working tree**. Click it to put that part of the file back.
+
+</Steps>
+
+Tori checks the hunk is still exactly what you see before writing anything, so
+a revert never lands on lines that have moved. If no copy was kept, for
+example in a chat reopened from history, the card says there is nothing to
+compare against.
+
+### Hooks
+
+Claude's hooks run around tool calls. A hook only shows in the transcript when
+it fails, with its exit code and what it printed. Turn on **Show every hook
+event** in Settings > Chat to see every run. Tori's own hook, which keeps the
+copy of a file before an edit, is labelled **Tori's before-state hook**.
+
+### Notices
+
+One line notices tell you about the session: a model switch that will apply
+from the next turn, a compaction in progress (with how long it has been
+running), a spending ceiling coming close, an error and what the agent's
+process printed when it died. Some have a **Summary** you can open for the
+detail.
+
+### Rows from Tori
+
+When Tori itself writes into a chat, the row is centred and wears the Tori
+mark, so it never reads as something you said:
+
+- **Tori: news on pull request #482**, from a [watched pull request](/docs/git/pull-requests-and-issues/#let-a-chat-watch-a-pull-request).
+- **Tori continued after the usage limit reset**, from
+  [Resume at reset](/docs/agents/limits-and-spending/#resume-at-reset).
+- **Tori told this chat about its Topic**, and **its Topic changed**, in a
+  [Topic](/docs/workspace/topics/) chat.
+- **From Retry worker**, a steer sent by another session.
+- The Autopilot's brief, resumes and wake ups, in the
+  [Cockpit](/docs/automation/autopilot/).
+
+Click the info button on the row to read exactly what Tori sent.
+
+### Command output
+
+What the agent prints for a slash command, like `/usage`, `/context` or
+`/cost`, is shown as a block in the transcript, and stays there when the chat
+is reopened.
+
+## Fold the agent's work away
+
+Turn on **Collapse agent work** to read a chat as prompts and replies only.
+Between two replies, the thinking, tool calls, hooks and answered questions
+fold into one line, for example **4 tool calls, 1 hook**, or
+**Thought for 20s** when there was only thinking. A count of failures follows
+in red. While the agent is working, the line names what it is doing right now.
+Click a line to open it.
+
+A permission prompt or a question still waiting on you is never folded.
+
+Switch it from the [session menu](#the-session-menu) or in Settings > Chat. It
+applies to every chat.
+
+## Long chats
+
+A long chat opens on its most recent turns, so it is quick to open. Click
+**Load earlier** at the top of the transcript to read further back; each click
+brings in more, from disk if needed. The figures on the status strip always
+count the whole conversation, not just what is loaded.
+
+## The status strip
+
+The strip above the transcript says what the session is doing:
+
+| Shows | Meaning |
+| --- | --- |
+| **Working 1m 12s** | A turn is running, with how long it has been going |
+| **Waiting for approval** | It is stopped on a prompt or question for you |
+| **Compacting** | The agent is summarising the conversation to free context. This can take half a minute with nothing else on screen |
+| **Waiting: 2 agents, 1 task** and similar | The turn is over but subagents or background tasks it started are still running |
+| **Idle** | Nothing is running |
+| **Connecting** | The agent's process is starting |
+| **Disconnected** | The process went away. Click **Reconnect** to resume the session in a new process |
+
+After it come the number of files the session has touched, and the session's
+figures. Hover any figure for its name:
+
+- **Model**: the model the session is running.
+- **Prompts you sent**.
+- **Agent turns**.
+- **Tool calls**.
+- **Compactions**, when there have been any, and roughly how many tokens they
+  freed.
+- **Context**: how much of the model's context window the conversation uses,
+  as a number over the window, a percentage and a small pie that fills.
+  Shown only when the window is known.
+
+The figures are read from the conversation on disk, so a session you
+reopened counts its earlier turns too.
+
+## The session menu
+
+The **...** button at the end of the status strip opens the session menu.
+
+### Show changes as a diff
+
+Swaps the transcript for one diff per file across the whole session: every
+file this chat changed, from how it was before the chat touched it to how it
+is now. A line rewritten four times shows once, at its final value. Click
+**Show transcript** to go back.
+
+- Each file shows how many edits made its diff, and **new file** if the chat
+  created it.
+- A hunk the agent explained has a **why** button that shows the reasoning the
+  agent wrote before making that change.
+- **shared** marks a file another chat in the same worktree also wrote. The
+  diff shows only this chat's edits; the file on disk carries both.
+- **Changed by something else while this session ran** lists files that
+  changed in the worktree but not through this chat, with which chat claims
+  them or **unattributed**.
+- **Side by side** and **Inline** switch the layout, the same choice as the
+  Changes panel.
+
+This view needs the session to be running, because Tori keeps the
+before-copies only while it runs. For an ended session, use the transcript or
+the [Checkpoints](/docs/git/checkpoints/) tab.
+
+### Collapse agent work
+
+The same switch as above.
+
+### Send to a new chat
+
+Opens a new chat on the same agent and account, and sends what is in the
+composer there. Use it to ask a side question without adding it to this
+conversation. With an empty composer it asks you to type something first.
+
+### Fork this chat
+
+Starts a new chat that carries this conversation up to now, so you can try a
+different direction and keep the original. Only offered once the chat has some
+history, and only on agents that can fork (Claude today).
+
+### Usage
+
+One line with the last turn's tokens and cost, and the session's cost. Hover
+it for the detail: the session's tokens, over how many turns, and its cost.
+For a chat you reopened, it says when the total only counts turns this window
+watched finish.
+
+### Session
+
+Click **Session** to see what the chat is working with. The heading already
+tells you how many MCP servers it has, how many are not connected, and how
+many skills it loaded.
+
+- **Account**: which of your accounts it runs on, and the plan and
+  organisation the agent reports.
+- **Chat capabilities**: what this agent can do in a Tori chat, such as
+  rewind, steering, approvals, diffs, spending ceilings, subagents and
+  attachments.
+- **MCP servers**: the servers the agent connected to, each with its status
+  and how many tools it offers. One that failed shows its error.
+- **Configured MCP servers**: the servers configured for this project, and
+  their scope. A server in the project's `.mcp.json` that Claude has not
+  approved yet says **pending approval (run `claude` to approve)**.
+- **Skills**, **Agents** and **Plugins** the session loaded.
+
+### Add an MCP server to the project
+
+<Steps>
+
+1. Open the session menu and click **Session**.
+2. Under **Configured MCP servers**, click **Add server**.
+3. Type a name and the command that starts it, for example
+   `npx -y @scope/server`.
+4. Click **Save**.
+
+</Steps>
+
+The server is written to the project's `.mcp.json`, the same file
+`claude mcp add --scope project` writes. **Remove** takes a project server out
+of that file again. Servers configured at user level are listed but not
+editable here.
+
+<Aside type="note" title="New servers and running chats">
+
+A chat loads its MCP servers when it starts. Start a new chat, or reconnect
+this one, to use a server you just added. Claude also asks you to approve a
+new project server once, in its own terminal interface.
+
+</Aside>
