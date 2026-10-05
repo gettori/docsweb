@@ -1,6 +1,7 @@
 ---
 import AgentSvg from "./AgentSvg.astro";
 import BrewCopy from "./BrewCopy.astro";
+import InstallNote from "./InstallNote.astro";
 import ToriWindow from "../../islands/ToriWindow";
 import { SITE } from "../../config";
 
@@ -20,7 +21,7 @@ const WORDS = [
 ];
 ---
 
-<header class="hero" data-hero>
+<header class="hero" data-hero data-install>
   <canvas class="aurora" data-aurora></canvas>
   <div class="fade"></div>
   <div class="grain"></div>
@@ -63,7 +64,7 @@ const WORDS = [
   </p>
 
   <div class="ctas rise" style="animation-delay:.3s">
-    <a href={SITE.download} class="primary" aria-label="Download for macOS">
+    <a href={SITE.download} class="primary" aria-label="Download for macOS" data-download>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
         ><path
           d="M16.4 12.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9-1.7 0-3.3 1-4.2 2.6-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8 1.6 0 2 .8 3.4.8 1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9-.1 0-2.7-1-2.7-4.1zM13.9 5c.7-.9 1.2-2 1-3.2-1 0-2.3.7-3 1.6-.7.8-1.2 2-1.1 3.1 1.2.1 2.3-.6 3.1-1.5z"
@@ -87,6 +88,7 @@ const WORDS = [
       >Apple Silicon and Intel</span
     ><span>&middot;</span><span>No telemetry</span>
   </div>
+  <InstallNote id="install-note-hero" />
 
   <div class="win-wrap" data-hero-win>
     <div class="halo"></div>
@@ -406,6 +408,9 @@ const WORDS = [
     font-size: 12.5px;
     color: var(--faint);
   }
+  :global(:root[data-nope]) .meta {
+    display: none;
+  }
 
   .win-wrap {
     position: relative;
@@ -426,6 +431,7 @@ const WORDS = [
     filter: blur(90px);
     opacity: calc(0.25 + var(--hp, 0) * 0.3);
     animation: v-spin 18s linear infinite;
+    pointer-events: none;
   }
   .tilt {
     position: relative;

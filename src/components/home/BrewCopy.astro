@@ -7,7 +7,7 @@ interface Props {
 const { tone = "glass" } = Astro.props;
 ---
 
-<div class:list={["brew", tone]}>
+<div class:list={["brew", tone]} data-brew>
   <span class="dollar">$</span>
   <span class="cmd">{SITE.brew}</span>
   <button type="button" data-copy={SITE.brew}>Copy</button>
@@ -29,6 +29,8 @@ const { tone = "glass" } = Astro.props;
     font-size: 13.5px;
     color: var(--soft);
     overflow: hidden;
+    position: relative;
+    transition: box-shadow 0.6s;
   }
   .brew.night {
     color-scheme: dark;
@@ -79,12 +81,48 @@ const { tone = "glass" } = Astro.props;
   :global([data-theme="light"]) .night button {
     background: var(--glass-hi);
   }
+
+  .brew.glow {
+    box-shadow:
+      0 0 0 1px var(--accent-text),
+      0 0 36px rgba(217, 164, 104, 0.4);
+    animation: brew-glow 1.2s ease-in-out 3;
+  }
+  .brew.glow::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(100deg, transparent 30%, rgba(255, 236, 205, 0.3) 50%, transparent 70%);
+    transform: translateX(-100%);
+    animation: brew-sweep 1.1s var(--ease) 0.15s;
+    pointer-events: none;
+  }
+  .brew.glow button {
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+  .brew.glow button:hover {
+    background: #f8dfb8;
+  }
+  @keyframes brew-glow {
+    50% {
+      box-shadow:
+        0 0 0 3px var(--accent-text),
+        0 0 70px 6px rgba(217, 164, 104, 0.6);
+    }
+  }
+  @keyframes brew-sweep {
+    to {
+      transform: translateX(100%);
+    }
+  }
 </style>
 
 <script>
   for (const btn of document.querySelectorAll<HTMLButtonElement>("button[data-copy]")) {
     btn.addEventListener("click", () => {
       navigator.clipboard?.writeText(btn.dataset.copy ?? "").catch(() => {});
+      btn.closest("[data-brew]")?.classList.remove("glow");
       btn.textContent = "Copied";
       setTimeout(() => (btn.textContent = "Copy"), 1600);
     });
