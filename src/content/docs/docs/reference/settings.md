@@ -149,6 +149,8 @@ or debugger that runs project code. See
 | --- | --- | --- |
 | Fetch every | 10 min | Background fetch cadence; 0 turns it off |
 | Show Topic worktrees in Spaces | Off | Also lists a [Topic's](/docs/workspace/topics/) worktrees under their repository in Spaces |
+| Remove worktrees after merge | Off | Removes a clean worktree once its pull request merged, active Space only. See [Remove worktrees automatically](/docs/git/worktrees-and-branches/#remove-worktrees-automatically) |
+| Remove idle worktrees after | Off | Removes a clean, pushed worktree idle for 3, 7, 14 or 30 days. The branch is kept |
 
 **Hosts**
 

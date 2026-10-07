@@ -225,6 +225,41 @@ If a worktree folder was deleted in Finder or a terminal, git still has a
 record of it. **Prune worktrees** on the project clears those records and says
 how many it pruned.
 
+### Remove worktrees automatically
+
+Tori can remove worktrees for you. Both settings are off until you turn them on,
+under **Cleanup** in Settings > Integrations:
+
+- **Remove worktrees after merge**: removes a worktree once its pull request has
+  merged and the worktree has nothing newer than the commit that merged. A
+  squash merge counts, and so does a branch whose remote was deleted after the
+  merge. This only covers projects in the active Space, because those are the
+  ones Tori asks the host about.
+- **Remove idle worktrees after**: Off, 3, 7, 14 or 30 days. Removes a worktree
+  once that long has passed since it was created, since its last commit, and
+  since a session in it last did anything, whichever is latest. Its branch must
+  have no unpushed commits. This covers every Space.
+
+Tori never removes:
+
+- the main checkout, a [Topic's](/docs/workspace/topics/) worktree or a fan-out
+  attempt
+- a worktree on a detached HEAD, which has no branch to bring it back with
+- a worktree with uncommitted changes
+- a worktree an agent is running in, or one with a terminal or editor tab open
+- the worktree you have selected
+- a worktree an autopilot item is still working in
+
+It checks when Tori starts, when you change either setting, every hour, and
+for a project's merged branches whenever pull request status refreshes. Just
+before removing a worktree it checks for uncommitted changes once more.
+
+The branch is always kept, so **Add Worktree** brings any of them back. Files
+your `.gitignore` covers, like `node_modules` or `.env.local`, are removed with
+the folder, the same as removing it by hand. Files in
+[Shared files](/docs/git/shared-files/) are only links, so they are safe.
+When a check removes anything, a message lists the branches.
+
 ## When the upstream was force-pushed
 
 If someone force-pushed the remote branch over commits you have, pushing would
