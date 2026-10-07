@@ -1,6 +1,6 @@
 ---
 title: The composer
-description: Write and send prompts, mention files, reference sessions and pull requests, attach images and documents, recall earlier messages, and draft long prompts in the editor.
+description: Write and send prompts, mention files, reference sessions, projects, spaces and pull requests, attach images and documents, recall earlier messages, and draft long prompts in the editor.
 ---
 
 import Aside from "../../../../components/docs/Aside.astro";
@@ -151,6 +151,52 @@ and agent, click it to open or focus that session.
 Session references need the `tori` tool server, which Claude, Codex and
 opencode chats get. Pi does not, so a Pi chat's `@` menu lists files only.
 Pi sessions can still be referenced from the other agents.
+
+## Reference a project or a space with @
+
+`@projects/` and `@spaces/` walk your projects the way the sidebar lays
+them out, one level per `/`:
+
+- `@spaces/` lists your spaces, and `@spaces/work/` lists the projects in
+  one of them.
+- `@projects/` lists the projects in the space this chat belongs to.
+- Under a project you get its checkouts (worktrees, or the checked out branch
+  of a plain repository) and its sessions from every checkout.
+- Under a checkout you get its files.
+
+Each level is named by the last part of its folder, so a space called
+"Client Work" in a folder named `client-work` is `@spaces/client-work/`. Two
+projects whose folders share a name are told apart as `tori` and `tori-2`, in
+the order the sidebar shows them. The menu shows that name next to each row.
+Type part of it to filter. With a row highlighted, `/` opens it and fills in
+its name. On a session `/` does nothing, since there is nothing under it.
+Under a checkout `/` is just part of the file path you are typing.
+
+`Enter`, `Tab` or a click picks the highlighted row:
+
+- A space puts `[Space: name]` in your sentence. The agent gets the space's
+  name and each of its projects' names and folders.
+- A project puts `[Project: name]` in your sentence. The agent gets the
+  project's name, its folder and its space. For more, it can use the
+  `projects_list` and `sessions_list` tools.
+- A session is referenced the same way as above.
+- A checkout opens, the same as `/`.
+- A file is attached by its full path, as `[File 1]`.
+
+Brackets in a name are dropped, and two different projects or spaces with the
+same name in one message become `name (2)`. In the transcript, click a project
+chip to show that project in the sidebar, or a space chip to switch to that
+space. Neither click changes which branch you have selected.
+
+<Aside type="note">
+Claude asks for permission before it reads a file outside the folder the
+chat runs in. A file from another project is outside it, so the first read
+brings up a permission prompt. Tori does not give the chat that whole folder
+behind your back. The agent gets the one file you named.
+</Aside>
+
+Like sessions, projects and spaces need the `tori` tool server, so Pi chats
+do not offer them.
 
 ## Reference a pull request with #
 
