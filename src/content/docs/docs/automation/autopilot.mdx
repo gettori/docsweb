@@ -58,7 +58,10 @@ request, ask before everything.
 | Where issues come from | The project's own repo, or the issue sources you list | Issues assigned to you in the project's repo |
 
 Tell the autopilot how a project should work and it records the contract,
-or set it yourself with
+or set it yourself in **Settings > Autopilot**, under **Projects**: pick the
+project, then its choices. Each choice saves as soon as you pick it.
+**Workers run on** picks the agent, account and model the same way the
+autopilot's own model is picked. From a shell, use
 [`tori autopilot project`](/docs/automation/cli/#autopilot).
 
 ### Issue sources
@@ -93,7 +96,15 @@ branch itself is made in the project's repo. Its suggested branch name
 leads with that repo's name, such as `tickets-31-dogfood`, so it never
 collides with the project's own issue 31.
 
-Set sources with the `--issues` flag of
+Set sources in **Settings > Autopilot**, under **Projects**. **Add source**
+gives you a blank one to fill in. Labels and exclude labels are comma
+separated. **Remove source** takes one out. Nothing changes until you press
+**Save sources**, which saves the whole list at once. If a source is refused,
+for example because its repo is not `owner/name`, the list stays as you typed
+it and the reason shows below the list. With no sources, the editor says the
+project reads the issues assigned to you in its own repo.
+
+You can also use the `--issues` flag of
 [`tori autopilot project`](/docs/automation/cli/#autopilot), or ask the
 autopilot to set them:
 
