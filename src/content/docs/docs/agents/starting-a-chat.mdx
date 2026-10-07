@@ -52,6 +52,12 @@ enabled. Turn one on in Settings.**).
 - Creating a worktree or branch from the sidebar opens a chat draft in it, so
   it does not land on an empty strip. A worktree folder that already has tabs
   keeps those instead.
+- Selecting a branch or worktree whose strip is empty (no chat, terminal or
+  file tab) opens a chat draft too, when an agent is turned on and its account
+  is not signed out. Closing your last tab does not bring one back. The draft
+  steps aside for whatever you open next, until you type in it yourself:
+  **New session** replaces it, an issue's prompt is written into it, and the
+  first **+** brings it forward instead of opening a second empty draft.
 - Starting a branch from an issue opens a draft with the issue written in as
   the prompt, and a **from** link above the composer that opens the issue.
 - A chat that another chat spawns, or that the Autopilot starts, opens as a
