@@ -74,7 +74,8 @@ store, with their bookkeeping under `~/.config/tori/`. They are never
 commits on your branch and are never pushed.
 
 Account homes that Tori creates for extra Claude accounts live under
-`~/Library/Application Support/tori/profiles/`, and the latest usage readings
+`~/Library/Application Support/tori/profiles/`, each with a `claude-<name>`
+command script in `~/.local/bin/`, and the latest usage readings
 under `~/Library/Application Support/tori/usage/`. The published model list Tori uses for the context meter is cached under `~/Library/Caches/tori/`.
 
 Deleting all of the above removes every trace of Tori. Your agent CLIs' own

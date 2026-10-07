@@ -64,6 +64,32 @@ A folder is accepted if it already holds Claude's files, or is empty (a lone
 Claude's is refused, so a sign-in never writes into something unrelated. The
 default `~/.claude` and a folder that is already an account are refused too.
 
+## Use an account in a terminal
+
+Every account you add gets its own command, so you can run Claude as that
+account from any terminal, not only inside Tori. The command is `claude-`
+followed by the account's name in lowercase, with spaces and punctuation turned
+into dashes: an account named **Work** is `claude-work`, and **Tori Dev** is
+`claude-tori-dev`.
+
+Plain `claude` stays your existing login, whatever you name it and whichever
+account is the default for new chats.
+
+Each command is a small script in `~/.local/bin`, the folder Claude's own
+installer uses, and it works from any shell or script. Tori never edits your
+`.zshrc` or any other shell file. If `~/.local/bin` is not on your shell's
+`PATH`, the account's card says so, and you add it in your shell's startup
+file.
+
+- **Two accounts with the same name**: the second gets `-2`, as in
+  `claude-work-2`.
+- **A file of yours already has the name**: Tori leaves it alone and the
+  account gets the next free name. Tori only ever writes or deletes the scripts
+  it made.
+- **Removing an account** deletes its command.
+
+The account's card shows its command under **In a terminal**.
+
 ## Manage accounts
 
 Each account is a card under **Accounts**. Its header shows a green dot when
@@ -71,8 +97,12 @@ the agent confirms it is signed in, the account's name, the email or sign-in
 state, and the plan and number of models it offers. Click the chevron to open
 the card.
 
-- **Rename**: click the account's name, type, and press `Enter`. `Escape`
-  keeps the old name.
+- **Rename**: click the account's name to open **Rename**, type the new name,
+  and click **Rename** (or press `Enter`). For an account you added, when the
+  new name gives a different command, **Also rename command to claude-...** is
+  ticked. Untick it to keep the old command, so scripts that call it keep
+  working. If the new command is taken, Tori refuses the rename and says why.
+  **Cancel** or `Escape` keeps everything as it was.
 - **Default**: with two or more accounts, pick which one new chats start on.
   A project's own last-used account still wins over it.
 - **Sign in**: shown when the account is signed out. It opens the sign-in in
@@ -109,7 +139,8 @@ might assume:
   login, so they are only told apart by name.
 - **Runs in a folder that was already set**: Tori itself was started with
   `CLAUDE_CONFIG_DIR` set, so your existing login is that folder. Start Tori
-  from a shell without it to get your own login back.
+  from a shell without it to get your own login back. If your shell exports it
+  too, plain `claude` in a terminal runs that folder as well.
 
 ## Every chat runs on one account
 
