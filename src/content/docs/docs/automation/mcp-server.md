@@ -68,8 +68,8 @@ wherever it is included.
 | `ask.create` | Ask you a question in the calling chat and wait | Chat, worker |
 | `ask.wait` | Wait for the answer to a question asked earlier | Everyone |
 | `ask.answer` | Answer another session's question on your behalf | Shell, chat, phone |
-| `issues.assigned` | Open issues assigned to you, then pull requests waiting on your review | Everyone |
-| `issues.get` | One issue: title, body, url and a suggested branch name | Everyone |
+| `issues.assigned` | Open issues from the project's [issue sources](/docs/automation/autopilot/#issue-sources), or with none those assigned to you, then pull requests waiting on your review | Everyone |
+| `issues.get` | One issue: title, body, url and a suggested branch name. Given a URL, it finds the project by the repo's origin, or the one project whose issue sources read that repo | Everyone |
 | `issues.link_branch` | Make a branch on the host under an issue and fetch it | Shell, chat |
 | `pr.get` | One pull request to review, with the lines a comment may anchor to | Shell, chat |
 | `pr.create` | Push an exact commit, never forced, and open a pull request | Everyone; a background session needs an approval |

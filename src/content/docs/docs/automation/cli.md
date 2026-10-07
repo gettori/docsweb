@@ -45,7 +45,7 @@ tori autopilot item [<id>] [--kind ship|review --issue <key> | --pr <number> --r
                     [--pr-url <url>] [--note <text>] [--title <text>] [--contract <text>] [--json]
 tori autopilot project [--project <path>] [--ships pr|local]
                        [--autonomy ask-everything|auto-until-outward] [--pickup ask|auto]
-                       [--agent <id>] [--account <id>] [--model <id>] [--json]
+                       [--agent <id>] [--account <id>] [--model <id>] [--issues <json>] [--json]
 tori autopilot hold resolve <id> [--json]
 tori mcp
 ```
@@ -153,6 +153,13 @@ approval you gave for exactly this draft. See
 autopilot on and off. `item` adds or updates a queue item, `project` sets a
 project's contract, and `hold resolve` withdraws a pending approval card (it
 never approves one; only you do, on the card).
+
+`project --issues` takes a JSON list of
+[issue sources](/docs/automation/autopilot/#issue-sources) and replaces the
+project's list. Each source has a `repo` and optional `labels`,
+`exclude_labels`, `milestone`, `assignee` and `extra`. Pass `[]` to go back
+to the issues assigned to you in the project's repo. A contract printed by
+`project` shows each source as the search it runs.
 
 ## What a caller may do
 
