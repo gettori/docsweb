@@ -55,10 +55,51 @@ request, ask before everything.
 | How far it goes | Ask before everything, or go ahead alone until something would leave the machine | Ask before everything |
 | Picking up work | Propose and wait, or start on its own | Propose and wait |
 | Workers run on | The agent, account and model you pick for this project | Not set |
+| Where issues come from | The project's own repo, or the issue sources you list | Issues assigned to you in the project's repo |
 
 Tell the autopilot how a project should work and it records the contract,
 or set it yourself with
 [`tori autopilot project`](/docs/automation/cli/#autopilot).
+
+### Issue sources
+
+A project's work does not have to live in its own repo. If you keep tickets
+in a separate repo, maybe one shared by several projects, give the project
+one or more issue sources. Each source is a repo plus what an issue there
+has to match:
+
+| Field | What it matches |
+| --- | --- |
+| Repo | The repo the issues live in, as `owner/name`. Required. |
+| Labels | Every one of these labels. |
+| Exclude labels | None of these labels. |
+| Milestone | This milestone. |
+| Assignee | Left out, issues assigned to you. `any` is anyone, or give a login. |
+| Extra | Raw GitHub search qualifiers added after the rest, such as `sort:created-asc`. |
+
+Labels and milestones can have spaces and colons in them, for example
+`block 1` or `Phase 1: Mac and Android`. Only open issues are matched.
+
+Once you set sources they replace the default, so if you still want issues
+from the project's own repo, add it as a source too. Review requests always
+come from the project's own repo. A source whose repo is not `owner/name` is
+refused, because a search with no repo in it would read every repo your
+account can see.
+
+An issue from another repo is named by its repo, such as
+`gettori/tickets#31`. An issue in the project's own repo stays `#31`.
+Starting one links its branch to the issue in the other repo, while the
+branch itself is made in the project's repo. Its suggested branch name
+leads with that repo's name, such as `tickets-31-dogfood`, so it never
+collides with the project's own issue 31.
+
+Set sources with the `--issues` flag of
+[`tori autopilot project`](/docs/automation/cli/#autopilot), or ask the
+autopilot to set them:
+
+```sh
+tori autopilot project --issues '[{"repo":"gettori/tickets","milestone":"Phase 1: Mac and Android"}]'
+```
 
 ## The queue
 
@@ -75,9 +116,19 @@ branch to the issue, makes the worktree, starts a worker on the project's
 picks, and brings you a pull request to approve. A review item runs the
 same way, to one review for you to approve.
 
-With pickup on, each poll of the host reads your assigned issues and review
-requests. A project's first poll only proposes, so an old backlog never
-starts itself.
+With pickup on, each poll of the host reads the project's issue sources,
+or with none your assigned issues in its repo, plus your review requests.
+The first poll of a project, or of a source that is new or was just edited,
+only proposes, so an old backlog never starts itself. An issue that two
+sources both match becomes one item. An issue another project already has
+open is left to that project.
+
+When an issue leaves every list (it closed, it was unassigned, or it no
+longer matches its source), an item that has not started yet closes. An
+item already running is not stopped. It gets a note saying so, and the
+autopilot asks you whether to stop it. If a source fails to answer, or
+comes back with as many issues as one search can hold, nothing closes on
+that poll, since a missing issue proves nothing then.
 
 The queue is on disk. Quit Tori and relaunch, and the same items are there;
 an approval nobody answered comes back pending. An item closes itself when
