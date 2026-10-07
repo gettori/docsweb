@@ -1,6 +1,6 @@
 ---
 title: The composer
-description: Write and send prompts, mention files, reference pull requests, attach images and documents, recall earlier messages, and draft long prompts in the editor.
+description: Write and send prompts, mention files, reference sessions and pull requests, attach images and documents, recall earlier messages, and draft long prompts in the editor.
 ---
 
 import Aside from "../../../../components/docs/Aside.astro";
@@ -126,6 +126,31 @@ that list.
 
 You can also mention a file by dragging it into the composer from the Files
 tree or from an editor tab. A dragged file is a mention, the same as `@`.
+
+## Reference a session with @
+
+The `@` menu also lists the repository's other sessions, above the files: up
+to five that match what you typed, matched on the session's name or title.
+They come from the whole repository, every worktree included, not just the
+folder this chat runs in. The chat you are typing in is never listed.
+
+To see only one kind, start with a scope:
+
+- `@session/` lists sessions only, all of them that match.
+- `@file/` lists files only. Use it for a folder that is literally named
+  `file` or `session`, as `@file/session/...`.
+
+Picking a session puts `[Session: title]` in your sentence and a chip above
+the box. Brackets in the title are dropped, and a second session with the
+same title in one message becomes `[Session: title (2)]`. The agent gets the
+session's id, title, agent and project, and reads the conversation itself
+with the `session_history` tool, so nothing from that session is copied into
+your message. In the transcript the token is a chip: hover it for the title
+and agent, click it to open or focus that session.
+
+Session references need the `tori` tool server, which Claude, Codex and
+opencode chats get. Pi does not, so a Pi chat's `@` menu lists files only.
+Pi sessions can still be referenced from the other agents.
 
 ## Reference a pull request with #
 
