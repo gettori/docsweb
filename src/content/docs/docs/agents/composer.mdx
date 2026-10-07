@@ -1,6 +1,6 @@
 ---
 title: The composer
-description: Write and send prompts, mention files, attach images and documents, recall earlier messages, and draft long prompts in the editor.
+description: Write and send prompts, mention files, reference pull requests, attach images and documents, recall earlier messages, and draft long prompts in the editor.
 ---
 
 import Aside from "../../../../components/docs/Aside.astro";
@@ -126,6 +126,30 @@ that list.
 
 You can also mention a file by dragging it into the composer from the Files
 tree or from an editor tab. A dragged file is a mention, the same as `@`.
+
+## Reference a pull request with #
+
+Type `#` at the start of a word to list the project's open pull requests,
+newest first, each with its title. Type a number to filter by number, or a
+word to match titles. `Enter`, `Tab` or a click picks the highlighted one, and
+`[PR 123]` takes the place of what you typed. A `#` inside a fenced code block
+never opens the menu.
+
+When you type a number the list does not hold, such as an old or merged pull
+request, the first row offers to look it up. `Tab` fetches it and makes the
+reference. `Enter` sends your message exactly as typed, so "fixes #42" still
+works as plain text. If the number is not a pull request in this repository,
+Tori says so and leaves your text alone.
+
+The reference shows as a chip above the box. It carries the pull request's
+number, title, link, state, draft flag and branches as they were when you
+picked it, and tells the agent to read the rest with the `pr_get` tool. In the
+transcript, `[PR 123]` is drawn as a chip: hover it for the title and state,
+click it to open the pull request in a tab. Removing the chip removes the
+token from your sentence.
+
+A reference rides along in the queue, the stash and a relaunch the same way an
+attachment does.
 
 ## Run a slash command with /
 
