@@ -42,6 +42,7 @@ adapters. They are not equally deep integrations:
 | Status from the agent's own hooks | Yes | No | No | No | No | No | No |
 | Steer a running turn | Yes | No | No | No | No | No | No |
 | Rewind a chat | Yes | No | No | No | No | No | No |
+| [Ask why](/docs/git/who-wrote-this/#ask-why) on a hunk | Yes | If it says it can fork | Yes | If it says it can fork | If it says it can fork | If it says it can fork | If it says it can fork |
 | Dollar spending ceilings | Yes | No | No | No | No | No | No |
 | Several accounts at once | Yes | No | No | No | No | No | No |
 | Quota bars | Yes | Yes | No | No | No | No | No |
