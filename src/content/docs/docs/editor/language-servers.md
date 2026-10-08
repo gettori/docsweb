@@ -56,6 +56,7 @@ the [linters](/docs/editor/linters) page.
 | Python | pyright | npm |
 | Bash, sh | `bash-language-server` | npm |
 | Svelte | `svelte-language-server` | npm |
+| Astro | `@astrojs/language-server` | npm. Type checks with the project's own TypeScript when it has one, else the copy Tori bundles. |
 | PHP | Intelephense | npm |
 | Vim script | `vim-language-server` | npm |
 | Elm | `elm-language-server` | npm (needs `elm` installed) |
