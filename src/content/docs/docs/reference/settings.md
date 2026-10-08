@@ -39,6 +39,7 @@ account usage controls. See
 | Collapse agent work | Off | Folds thinking, tool calls, hooks and answered questions between two replies into a one line card |
 | Answer the agent's questions here | On | Structured questions render as an answerable form inline |
 | Attach long pastes as files | On | A paste over 30 lines or 3000 characters becomes a file chip |
+| Mark secret file reads | On | A turn that read a secret file, or ran a command naming one, says so in the chat, on its tab and in Checkpoints. See [Secret watch](/docs/reference/security/#secret-watch) |
 | Resume at reset | Off | A Claude chat stopped by a usage limit gets one message from Tori to continue, shortly after the limit resets |
 
 **Notifications**
@@ -206,6 +207,7 @@ that thing is rather than in the Settings window.
 | Commit box, history tabs | Changes panel `...` menu | Shown or hidden |
 | Follow live edits | Composer bar | Not remembered across a launch |
 | Editor behaviour for one project | `<project>/.tori/settings.json` | Overrides the workspace overridable rows above |
+| More secret file patterns | `secretWatch.patterns` in `~/.config/tori/settings.json` | [Adds to what Secret watch marks](/docs/reference/security/#secret-watch) |
 
 Every row of the Settings window is also a `Preferences:` command in the
 palette, and the search box at the top of Settings badges each tab with how
