@@ -15,6 +15,7 @@ The short version:
   approval you gave for that exact draft.
 - Tori never presses Enter in your terminal.
 - A destructive action either asks first or takes a snapshot first.
+- A turn in which an agent read a secret file says so.
 - Nothing about you or your code is sent anywhere by Tori itself.
 
 ## Project trust
@@ -76,6 +77,58 @@ action needs an approval reserved for it ahead of time.
   you.
 
 See [Autopilot](/docs/automation/autopilot/#approvals).
+
+## Secret watch
+
+When an agent opens a file that looks like it holds a secret, Tori marks the
+turn. It is a record, not a gate: nothing is blocked and nothing asks you, it
+tells you afterwards what happened. It is on by default; **Settings > Chat >
+Mark secret file reads** turns it off, and every mark goes with it.
+
+The mark makes one of two claims, depending on how much Tori actually knows:
+
+- **Read a secret file**: a read or search tool opened the path.
+- **A command named a secret file**: a shell command had the path as one of
+  its words, as in `cat .env`, `docker run --env-file=.env` or
+  `cp ~/.aws/credentials /tmp`. Tori cannot tell whether the command read the
+  file, so it says less.
+
+| Where | What you see |
+| --- | --- |
+| Chat transcript | A line at the head of the turn, with the paths in its tooltip, and a key on every tool card that touched one. Live and in a reopened chat, for Claude and ACP agents |
+| Tab | A key on the corner of the session's mark while the session is live, for a chat and for a terminal tab running Claude |
+| History dropdown | The same key on a live session's row |
+| Changes panel, Checkpoints | A key on the row of the turn that did it, for Claude sessions |
+
+The files it watches:
+
+- `.env` and `.env.*`, except names ending in `.example`, `.sample` or
+  `.template`
+- `*.pem` and `*.key`
+- `id_rsa`, `id_ed25519`, `id_ecdsa` and `id_dsa`, never a `.pub` file
+- `credentials` and `credentials.json`
+- `.netrc`
+- Everything under `~/.aws/` and `~/.config/gh/`
+- Files with no extension under `~/.ssh/`, except `config`, `known_hosts` and
+  `authorized_keys`
+
+To watch more, add patterns to `~/.config/tori/settings.json`:
+
+```json
+{
+  "secretWatch": {
+    "patterns": ["*.secret", "~/vault/"]
+  }
+}
+```
+
+A pattern with a `/` in it is a folder, and everything under it counts. Any
+other pattern is matched against the file name, with `*` and `?`. The list
+only adds to the defaults; none of them can be switched off. A change takes
+effect without a restart, and a reopened chat is checked against the list as
+it is now. A project's own `.tori/settings.json` cannot change this list, so
+a repository cannot narrow what Tori watches. A value that is not a list of
+strings is ignored, and the rest of your settings are kept.
 
 ## Your terminal
 
