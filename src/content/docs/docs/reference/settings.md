@@ -41,6 +41,7 @@ account usage controls. See
 | Attach long pastes as files | On | A paste over 30 lines or 3000 characters becomes a file chip |
 | Mark secret file reads | On | A turn that read a secret file, or ran a command naming one, says so in the chat, on its tab and in Checkpoints. See [Secret watch](/docs/reference/security/#secret-watch) |
 | Mark edits made without reading | On | An ACP agent's edit to a file the session never read, searched or named says so on the call and its turn. See [Blind edits](/docs/reference/security/#blind-edits) |
+| Mark unverified turns | On | A turn that changed code says whether a test, type check, lint or build ran after its last edit: verified, failed, or unverified when nothing ran or its exit was not seen. See [Verification](/docs/reference/security/#verification) |
 | Resume at reset | Off | A Claude chat stopped by a usage limit gets one message from Tori to continue, shortly after the limit resets |
 
 **Notifications**

@@ -17,6 +17,8 @@ The short version:
 - A destructive action either asks first or takes a snapshot first.
 - A turn in which an agent read a secret file says so.
 - An edit to a file the agent never looked at says so.
+- A turn that changed code says whether a check ran after it, and how it
+  ended.
 - Nothing about you or your code is sent anywhere by Tori itself.
 
 ## Project trust
@@ -165,6 +167,92 @@ from then on.
 Tori keeps track while the setting is off, so switching it back on shows the
 marks again. An edit made while it was off gets its mark the next time the
 chat is opened.
+
+## Verification
+
+A turn that changed code gets a badge saying whether the agent checked its
+work afterwards: a test run, a type check, a lint or a build. Like the marks
+above it is a record, not a gate. Tori never runs a check for the agent and
+never holds a turn back. It is on by default; **Settings > Chat > Mark
+unverified turns** turns it off, and every badge goes with it.
+
+The badge reads the last check the turn ran after its last edit:
+
+- **Verified**: it passed.
+- **Checks failed**: it failed.
+- **Unverified**: the turn changed code and ran no check after its last edit,
+  or the check ran but Tori could not see its exit.
+
+A check before a later edit does not count, since the code it passed is not
+the code the turn left behind. A turn that only ran a check, or changed
+nothing, gets no badge. Code changed means an edit, write, delete or move by
+the agent's file tools, a subagent's included. A file written by a shell
+command (`sed -i`, `echo > file`) does not count, so a turn that only did
+that gets no badge.
+
+Tori only trusts an exit that belongs to the check. These count as **ran,
+exit not seen**, and a turn resting on one reads unverified:
+
+- a check piped into another command, as in `cargo test | tail`,
+- a check followed by `;` or `||`, as in `pnpm test || true`,
+- a check run in the background,
+- a check that timed out or that you interrupted.
+
+`cd app && cargo test` and `cargo fmt && cargo test` are trusted: the exit is
+the last command's, and the ones before it had to succeed for it to run. A
+call you rejected never ran, so it checked nothing. When a chain of checks
+fails, the badge says which chain, not which check in it. When the chain also
+holds a command that is not a check, like `pnpm install && pnpm test`, Tori
+cannot tell which one failed and calls it exit not seen; `cd` and `export`
+are assumed not to be what failed.
+
+| Where | What you see |
+| --- | --- |
+| Chat transcript | A badge at the head of the turn. Its tooltip says what decided it and lists every check, as in `cargo test: passed in 14.2s`, `pnpm test: failed, exit 1 after 3.1s` or `cargo test: ran, exit not seen`. Live and in a reopened chat, for Claude and ACP agents |
+| Tab | A tick, a cross or a dashed circle on the corner of the session's mark for its latest turn that changed code, while the session is live, for a chat and for a terminal tab running Claude. A later passing turn clears an earlier failure. A screen reader hears failed and unverified, not verified |
+| History dropdown | The same mark on a live session's row |
+| Changes panel, Checkpoints | The badge on each turn's row, for Claude sessions |
+
+The time shows for a check Tori watched run. A Claude chat reopened from its
+transcript shows the result without it.
+
+### What counts as a check
+
+A command counts when its words start with one of the list's entries, with
+anything after them: `cargo test --workspace` matches `cargo test`, and a
+script with a suffix like `pnpm test:unit` matches `pnpm test`, but
+`pnpm testing` does not. Tori looks through `cd`, `export`, environment
+assignments like `CI=1`, and wrappers such as `npx`, `bunx`, `pnpm exec`,
+`pnpm dlx`, `uv run`, `poetry run`, `python -m`, `timeout`, `time`, `nice`
+and `env`, so `uv run pytest -q` and `timeout 600 cargo test` both count. A
+command inside `bash -c "..."` is read the same way.
+
+The built-in list:
+
+- `cargo test`, `cargo check`, `cargo clippy`, `cargo build`,
+  `cargo nextest`
+- `npm test`, `npm run test`, `npm run lint`, `npm run build`,
+  `npm run typecheck`, `npm run check`
+- `pnpm`, `yarn` and `bun` with `test`, `lint`, `build`, `typecheck` and
+  `check` (`bun run` for all but `bun test`)
+- `tsc`, `vitest`, `jest`, `eslint`
+- `pytest`, `mypy`, `ruff`
+- `go test`, `go vet`
+- `make test`, `make check`
+- `gradle test`, `./gradlew test`, `swift test`
+
+To set a project's own list, right-click the project and choose
+**Verification commands**. The dialog opens on the list in force, one
+command per line. **Save** replaces the built-in list for that project, it
+does not add to it, so keep the defaults you still want. **Reset to
+defaults** goes back to the built-in list. The list applies to every
+worktree and folder inside the project, a nested project's own list wins
+over its parent's, and a change applies from the agent's next turn without a
+restart. A reopened chat is checked against the list as it is now.
+
+The list lives in your own `~/.config/tori/settings.json`, under
+`verification.commands`, keyed by the project's path. Tori never reads one
+from the repository, so a project cannot claim its own work is verified.
 
 ## Your terminal
 
