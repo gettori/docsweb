@@ -16,6 +16,7 @@ The short version:
 - Tori never presses Enter in your terminal.
 - A destructive action either asks first or takes a snapshot first.
 - A turn in which an agent read a secret file says so.
+- An edit to a file the agent never looked at says so.
 - Nothing about you or your code is sent anywhere by Tori itself.
 
 ## Project trust
@@ -129,6 +130,41 @@ effect without a restart, and a reopened chat is checked against the list as
 it is now. A project's own `.tori/settings.json` cannot change this list, so
 a repository cannot narrow what Tori watches. A value that is not a list of
 strings is ignored, and the rest of your settings are kept.
+
+## Blind edits
+
+An agent that changes a file it never opened in the session is guessing at
+what is in it, and the diff does not show that. Tori marks such an edit
+**Edited without reading**. Like secret watch it is a record, not a gate. It is
+on by default; **Settings > Chat > Mark edits made without reading** turns it
+off, and every mark goes with it.
+
+It covers ACP agents only. Claude's own Edit and Write tools already refuse a
+file the agent has not read, so a Claude chat never gets the mark.
+
+A file counts as seen, and an edit to it is not marked, when earlier in the
+same session:
+
+- a read or search tool opened it,
+- a search printed a match from it (a `path:line` result from `rg` or `grep`),
+- a shell command had its path as one of its words, as in `cat src/a.rs` or
+  `cd src && sed -n 1,80p a.rs`,
+- the agent created it, or already edited it,
+- or it was moved from a path that counted as seen.
+
+A folder never counts for the files in it, so `ls src` or `find .` does not
+make every file under it seen. A read after the edit does not clear the mark,
+a failed or refused edit is never marked, and deleting a file is not an edit.
+Only the first blind edit of a file is marked, since the agent has seen it
+from then on.
+
+| Where | What you see |
+| --- | --- |
+| Chat transcript | A line at the head of the turn, with the paths in its tooltip, and an eye with a slash on the tool card that made the edit. Live, in a reopened chat and after a reload |
+
+Tori keeps track while the setting is off, so switching it back on shows the
+marks again. An edit made while it was off gets its mark the next time the
+chat is opened.
 
 ## Your terminal
 
