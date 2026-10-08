@@ -22,7 +22,7 @@ tori steer <id> <text>...
 tori interrupt <id>
 tori worktree new <branch> [--project <path>] [--from <ref>]
 tori checkpoints <id> [--json]
-tori checkpoint diff <id> <n> [<m>]
+tori checkpoint diff <id> <n> [<m>] [--why] [--json]
 tori checkpoint revert <id> <n> [--force]
 tori spawn [--agent <id>] [--account <id>] [--model <id>] [--mode <id>] [--effort <level>]
            [--folder <path> | --new-worktree <branch> [--project <path>] [--from <ref>]]
@@ -93,7 +93,39 @@ d4b80c13-9e7f-4a55-8c02-61f0e3a9b7d2  codex   default  working    fix/rate-limit
   quota windows.
 - `tori checkpoints <id>` lists a session's checkpoints, numbered by turn.
   `tori checkpoint diff <id> <n>` prints what turn `n` changed, and
-  `<n> <m>` spans a run of turns.
+  `<n> <m>` spans a run of turns. `--why` says who wrote each hunk (below),
+  and `--json` prints the answer as data.
+
+## Who wrote a hunk
+
+`tori checkpoint diff <id> <n> --why` prints the same diff with `# why` lines
+above each hunk, one per run of lines that one turn wrote, the same answer the
+[hunk panel](/docs/git/who-wrote-this/) gives:
+
+```diff
+# why lines 12 to 14: turn 3 of fix the parser at 20261008T140200Z, Edit /repo/src/parse.ts
+#   said: Splitting the tokenizer so the error carries its position.
+# why line 20: turn 3 of fix the parser at 20261008T140200Z, shell: Bash sed -i 's/old/new/' src/parse.ts
+@@ -10,6 +10,9 @@
+```
+
+The time is the prompt's, in UTC. `#   said:` is the first line of what the
+agent wrote before the call. Where a turn wrote the lines in several calls it
+says `one of:` and lists them, the ones naming the file first, three at most.
+Where nobody can be named the line gives the reason instead:
+
+- `no session Tori recorded wrote this, it was there at the first checkpoint`
+- `older than the changes Tori walks back`
+- `written in a turn of <session>, which Tori ran but cannot read back`
+- `written while <session>, <session> were each in a turn that could have written it`
+- `written while no session Tori knows of was in a turn: by hand, or by a session Tori did not see`
+
+`--json` prints the whole answer instead, the diff plus a `why` list of each
+file's hunks and their claims. A chat running in a Topic's home is refused with
+`why reads one worktree, and this session runs across a Topic's worktrees`.
+
+Over the socket, `provenance.hunks` answers the same question for any file in a
+worktree, against the working tree.
 
 ## Acting
 

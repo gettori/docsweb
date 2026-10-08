@@ -148,7 +148,8 @@ to be there.
 Turn on **Git blame** in Settings > Editor, or click the blame button on the
 editor's bar. The gutter then shows who last changed each line and when,
 shaded by age. Hover a line for the commit. A line not yet committed names the
-agent turn that wrote it, from the [checkpoints](/docs/git/checkpoints/).
+agent turn that wrote it, from the [checkpoints](/docs/git/checkpoints/), and
+agrees with [Who wrote a hunk](/docs/git/who-wrote-this/).
 
 ### Merge conflicts
 

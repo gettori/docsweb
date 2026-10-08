@@ -162,6 +162,11 @@ shows a dash when only some of its files are read.
   them.
 - A binary file says **Binary file, nothing to diff**, and a very large one
   **Diff too large to load**.
+- Each hunk has **Who wrote this hunk**. For a pull request opened from a
+  worktree here, it names the agent turn and tool call behind the lines, read
+  at the pull request's head. A fork's pull request, or a branch no worktree
+  here holds, says it was written outside any session Tori saw. See
+  [Who wrote a hunk](/docs/git/who-wrote-this/).
 
 | Keys | Action |
 | --- | --- |

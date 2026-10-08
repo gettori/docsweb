@@ -54,6 +54,8 @@ Each hunk has its own buttons:
   not staged, so git has no other copy, but Tori saves a snapshot before
   discarding, and you can bring it back from the
   [Checkpoints](/docs/git/checkpoints/#backstops) tab.
+- **Who wrote this hunk**: the agent turn and tool call behind the lines, and
+  a box to ask that session why. See [Who wrote a hunk](/docs/git/who-wrote-this/).
 
 To stage only some lines of a hunk:
 
@@ -79,7 +81,8 @@ read only buffer with git's changes drawn over it:
 - The editor's selection, find and Vim keys.
 - A stage button by each hunk in the gutter. Select lines to stage just those.
 
-**Switch back to diff rows** returns to the rows view.
+**Switch back to diff rows** returns to the rows view. The file view has no
+hunk headers, so **Who wrote this hunk** is only on the rows view.
 
 ## Comment on a hunk
 

@@ -1,0 +1,141 @@
+---
+title: Who wrote a hunk
+description: Open any hunk to see the agent turn and the tool call that wrote it and what the agent said before it, or why nothing recorded can say. Then ask that session why, in a side conversation.
+---
+
+import Aside from "../../../../components/docs/Aside.astro";
+
+Every hunk in a diff can tell you where it came from: which session, which
+turn, the tool call that wrote the lines, and what the agent said just before
+it. When Tori cannot tell, it says so and says why. It never guesses.
+
+## Open it on a hunk
+
+Click **Who wrote this hunk** (the footprints button) on a hunk's header. It is
+on the hunks of:
+
+- a file's diff tab, staged or not ([Diffs](/docs/git/diffs/)),
+- a checkpoint's diff tab ([Checkpoints](/docs/git/checkpoints/)),
+- a file in a pull request ([Pull requests and issues](/docs/git/pull-requests-and-issues/)).
+
+The panel opens under the header, above the lines. Click the button again
+(**Hide who wrote this hunk**) to close it. It reads only when you open it, so
+a long diff costs nothing until you ask.
+
+## What the panel shows
+
+For lines a turn wrote:
+
+- **One sentence** saying who wrote them, as strongly as Tori knows it (the
+  table below).
+- **The turn**: `turn 4 of <session>, 14:02`, the session's own numbering and
+  the time of the prompt. **Show in chat** scrolls that chat to the turn. It
+  appears only while that chat's tab is open, since only the tab can scroll.
+- **The prompt** that started the turn.
+- **What the agent said** just before the call, in its own words.
+- **The call**: the tool and the file it wrote, or the shell command it ran.
+  Up to three calls are listed, then `and N more`. Shell commands that name the
+  file come first.
+
+When different turns wrote different lines of one hunk, each run of lines gets
+its own entry, headed **Line 3**, **Lines 2 to 5** or **Removed after line 4**.
+Only changed lines are looked up, never a hunk's context lines.
+
+### How sure it is
+
+| What Tori found | What the panel says |
+| --- | --- |
+| One tool call wrote the lines | **Written by Edit in turn 4 of `<session>`.** |
+| The turn wrote the file in several calls and the lines do not pick one | **Written in turn 4 of `<session>` by one of 3 calls. The record does not say which.** |
+| The turn is known but its calls could not be read back | **Written in turn 4 of `<session>`. Tori could not read back which call.** |
+| The turn wrote the file only through shell commands | **Written by a shell command in turn 4 of `<session>`.**, or with several commands, **Written by one of 5 shell commands in turn 4 of `<session>`. None names the file for certain.** |
+| The lines were there before any session's first checkpoint | **No session Tori recorded wrote this. It was already there at the first checkpoint.** |
+| The lines are older than the changes Tori walks back through | **Older than the changes Tori walks back through, so no turn is named.** |
+| A session Tori ran was in a turn, but Tori cannot read what it did | **Written during a turn of `<session>`, which Tori ran but cannot read back.** |
+| More than one session could have written them | **`<session>` and `<session>` were each in a turn that could have written this, so Tori names none of them.** |
+| No session Tori knows of was in a turn | **No session Tori knows of was in a turn when this was written: by hand, or by a session Tori did not see.** |
+| A pull request whose branch no worktree here holds | **Written outside any session Tori saw. No worktree here holds this pull request's branch.** |
+
+When more than one session was in a turn at the time, Tori still names a call
+if exactly one call's own text holds the lines on screen. A session that was
+running tests next door does not hide the edit that wrote them.
+
+If the panel cannot be read at all it says **Tori could not work out who wrote
+this hunk:** and the reason. A file git treats as binary shows **Tori cannot
+follow this file line by line.**
+
+## Where the answer comes from
+
+- **Every session that ran in the worktree** is looked at, chat or terminal,
+  plus the sessions of any Topic the worktree belongs to. A Claude session run
+  in a terminal tab is read from its transcript like a chat.
+- **The [checkpoints](/docs/git/checkpoints/)** taken at every prompt split the
+  file's history into intervals, and each interval in which the file changed is
+  matched to the turns that were running then.
+- **Each turn is read from its own transcript**, or from the log Tori keeps
+  for an ACP agent, to find the call that named the file.
+
+Which tree the hunk is read against follows the diff:
+
+| Diff | Read against |
+| --- | --- |
+| Unstaged changes | The working tree |
+| Staged changes | The index (read from a copy, so your staging is never touched) |
+| A turn's checkpoint diff | That turn's end, the session's next checkpoint |
+| A checkpoint's "since" diff or a backstop | The working tree |
+| A pull request file | The pull request's head commit, in the worktree that holds its branch |
+
+<Aside type="note" title="What it cannot see">
+
+The answer is per turn, not per keystroke. An edit you make while a turn is
+running is credited to that turn, because no checkpoint separates the two.
+Tori walks back through the last 40 changes to a file; anything older reads as
+older than that. A pull request from a fork, or from a branch no worktree here
+holds, was not written by any session on this machine, so every hunk says so.
+
+</Aside>
+
+## Ask why
+
+Under each entry that names a turn there is a box: **Ask why, in a side
+conversation with this session**. Type a question and press `Enter` or
+**Ask**.
+
+The question does not go to the session itself. Tori forks it: a new chat that
+carries the whole conversation up to now opens in a tab, without taking focus,
+and its first message names the file and lines, the turn and its prompt, the
+calls, the hunk itself, and your question, asking it to answer from what it
+remembers. The session that wrote the code is never interrupted and never sees
+the question, even if it is in the middle of a turn.
+
+The answer appears under the hunk as it is written, and **Continue in chat**
+takes you to the fork to keep talking. Meanwhile the panel says:
+
+- **Asking a fork of this session...** until the first words arrive.
+- **The fork is waiting for you in its chat.** when it asks a question or wants
+  a permission.
+- **The fork has not started yet. Its chat says why.** when nothing has
+  happened after 30 seconds.
+- **The fork could not open:** and the agent's reason, for example when it no
+  longer holds the conversation.
+- **No finished answer yet. The rest is in its chat.** after 10 minutes.
+
+The fork is a real chat: it stays in the sidebar, and it runs in the mode a new
+fork starts in. Its first message tells it there is no need to change files,
+but it is not stopped from doing so.
+
+### Who can be asked
+
+- **Claude**: any session, chat or terminal.
+- **Agents over ACP**: those that say they can fork a conversation when they
+  connect. Measured with OpenCode. An agent Tori has not seen say so shows
+  **`<agent>` has not said it can fork a conversation, so there is no side
+  conversation to ask in.**
+- **Lines with no turn named**: **No turn is named for these lines, so there is
+  no one to ask.**
+
+## From the command line
+
+`tori checkpoint diff <session> <n> --why` prints the diff with a `# why` line
+above each hunk, and `--json` gives the same as data. See
+[The tori CLI](/docs/automation/cli/#who-wrote-a-hunk).
