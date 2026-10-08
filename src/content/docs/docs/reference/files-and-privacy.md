@@ -6,11 +6,28 @@ description: Everything Tori writes, and what it sends over the network.
 ## Privacy
 
 Tori sends no telemetry: no analytics, no crash reporting, no usage
-tracking. It makes exactly two network requests on its own behalf, both
-anonymous, both at most once a day, both silent on failure: a check against
-GitHub Releases for a newer version (never downloads or installs anything on
-its own), and a read of a public, unauthenticated model list that feeds the
-context meter.
+tracking. Its own network requests are these six. The forge calls carry what
+you send through them, such as a pull request you open or a review you submit;
+nothing about your code or your sessions goes out in any of the others:
+
+- **GitHub Releases**, at most once a day, to see whether a newer version of
+  Tori exists. Anonymous. It never downloads or installs anything on its own.
+- **`openrouter.ai/api/v1/models`**, at most once a day, for the published
+  per-model context window sizes the context meter reads. Anonymous, and
+  cached to disk.
+- **SchemaStore's catalog** (`schemastore.org`), at most once a day and only
+  when the JSON or YAML language server starts, so it knows which schema
+  validates which file. Anonymous, and cached to disk.
+- **Installs you accept**: a language server, debugger or agent that Tori
+  offers to install. A downloaded release is checked against the sha256 pinned
+  for it; a package install runs `npm` or `pip` the way you would.
+- **GitHub or GitLab's API**, only when you sign in to that forge and from then
+  on, for pull requests, issues, checks and reviews. It carries your own token.
+- **`api.anthropic.com/api/oauth/usage`**, only if you light a model's own
+  weekly chip on a Claude account, for that window's quota. It carries that
+  account's token, read from your login Keychain for the one request.
+
+The first three fail silently. Use the app offline to stop all six.
 
 Everything else is your agent's own traffic, going straight from your
 machine to its vendor, exactly as it would from a plain terminal. Tori

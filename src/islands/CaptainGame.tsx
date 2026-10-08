@@ -91,7 +91,7 @@ export default function CaptainGame() {
           Try it
         </div>
         <h2>
-          Be the captain <span class={s.accent}>for a minute.</span>
+          Answer them yourself, <span class={s.accent}>for a minute.</span>
         </h2>
         <p>Eight agents are working. When one needs you it turns rose. Click Allow and it goes back to work.</p>
         <div class={s.stats}>

@@ -101,10 +101,10 @@ documented and stable.
 
 Tori sends no telemetry. There is no analytics, no automatic crash reporting
 (a crash file stays on your Mac until you choose to report it), and no usage
-tracking of any kind. It makes two network requests on its own behalf,
-both anonymous, both at most once a day, both silent on failure: a check
-against GitHub Releases for a newer version, and a read of a public,
-unauthenticated model list that feeds the context meter. Your agent's own
+tracking of any kind. Its own network requests are listed one by one in
+[Files on disk and privacy](/docs/reference/files-and-privacy/): an update
+check, two public lists it caches, installs you accept, and the GitHub,
+GitLab or Claude usage calls you sign in or opt in to. Your agent's own
 traffic, and your git pushes and fetches, go straight from your machine to
 your agent's vendor and your remote; Tori starts the process, reads its
 output, and adds no endpoint of its own.
