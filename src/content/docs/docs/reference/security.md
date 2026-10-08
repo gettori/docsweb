@@ -351,8 +351,8 @@ and a copy of your own on the PATH always wins.
 ## Network
 
 Tori sends no telemetry. See
-[Files on disk and privacy](/docs/reference/files-and-privacy/) for the two
-requests it makes on its own behalf.
+[Files on disk and privacy](/docs/reference/files-and-privacy/) for every
+request it makes on its own behalf.
 
 ## Reporting a problem
 
