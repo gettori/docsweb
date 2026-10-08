@@ -48,6 +48,11 @@ Two marks can appear on a file, explained under the list:
   session recorded writing it, usually because a shell command wrote it. Tori
   cannot tell whose it is.
 
+In a turn's diff tab (**Open this diff in the editor**), each hunk has **Who
+wrote this hunk**, read against the tree as it stood when that turn ended, so
+later turns cannot move the lines under it. See
+[Who wrote a hunk](/docs/git/who-wrote-this/).
+
 Browsing never changes anything. Only the buttons at the bottom do.
 
 ## Put the files back to a turn
@@ -108,13 +113,17 @@ This is how a **Discard All Changes** or a revert you regret is undone.
 [Git blame](/docs/editor/editor/#git-blame) names the commit behind each line.
 For a line that is not committed yet, Tori looks in the checkpoints instead and
 names the agent turn that wrote it, so you can tell which session produced the
-code you are reading.
+code you are reading. It reads every session that ran in the worktree, chat or
+terminal, the same way [Who wrote a hunk](/docs/git/who-wrote-this/) does, so a
+line written through a shell command is named too, and the gutter and the hunk
+panel always agree.
 
 ## From the command line
 
 `tori checkpoints <session>` lists a session's turns, and
 `tori checkpoint diff <session> <n> [<m>]` prints what turn `n`, or turns `n`
-to `m`, changed. Agents can do the same through Tori's MCP server. See
+to `m`, changed. Add `--why` to have each hunk say which turn and call wrote
+it. Agents can do the same through Tori's MCP server. See
 [The tori CLI](/docs/automation/cli/).
 
 <Aside type="note" title="Where snapshots live">

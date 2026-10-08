@@ -64,7 +64,8 @@ wherever it is included.
 | `worktree.new` | Create a worktree on a new branch, from an issue or a pull request if given | Everyone |
 | `window.open` | Open a file in Tori's editor | Everyone |
 | `budget` | Spend against your ceilings, and the agent's quota windows | Everyone |
-| `checkpoints.list`, `checkpoint.diff`, `checkpoint.revert` | A session's per-turn checkpoints: list, diff, revert | Everyone |
+| `checkpoints.list`, `checkpoint.diff`, `checkpoint.revert` | A session's per-turn checkpoints: list, diff, revert. `checkpoint.diff` with `why` also says who wrote each hunk | Everyone |
+| `provenance.hunks` | Who wrote each hunk of a file in a worktree: the turn, the tool call and the agent's words before it, or why nothing recorded can say | Everyone |
 | `ask.create` | Ask you a question in the calling chat and wait | Chat, worker |
 | `ask.wait` | Wait for the answer to a question asked earlier | Everyone |
 | `ask.answer` | Answer another session's question on your behalf | Shell, chat, phone |

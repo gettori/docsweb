@@ -73,8 +73,10 @@ chat's work in the same folder is safe unless you say otherwise.
 
 - **Mid-turn**: **This chat is mid-turn. Let it finish or interrupt it, then
   rewind.**
-- **Agents other than Claude**: rewinding needs Tori to fork the conversation,
-  and those agents give it no way to. The button is not shown. Their turns can
+- **Agents other than Claude**: rewinding needs Tori to fork the conversation
+  and cut its replay at the turn. Some of those agents can fork (Tori uses that
+  to [ask a session why](/docs/git/who-wrote-this/#ask-why)), but cutting the
+  replay is not built for them. The button is not shown. Their turns can
   still be put back from the Checkpoints tab, which leaves the conversation as
   it is.
 - **Chats the Autopilot is driving**: **This chat can't be rewound.**
