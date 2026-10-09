@@ -1,5 +1,7 @@
 dist/
 .astro/
+.packs/
+.packs.next/
 node_modules/
 .DS_Store
 .wrangler/

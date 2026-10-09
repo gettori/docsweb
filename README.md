@@ -18,6 +18,12 @@ pnpm dev
 `pnpm build` writes the site to `dist/` and indexes it for search.
 `pnpm check` typechecks the Astro files.
 
+All three first run `scripts/fetch-packs.mjs`, which fetches the signed packs
+index from [gettori/packs](https://github.com/gettori/packs), the files it
+names, and Tori's `src-tauri/packs.lock`, and fails on a hash mismatch. Offline,
+or to try unpublished packs, set `PACKS_DIR` to a gettori/packs checkout after
+`tori packs-index` and `TORI_PACKS_LOCK` to a Tori checkout's lock.
+
 ## Deploy
 
 Cloudflare builds and publishes `main` on every push; there is nothing to run.
