@@ -1,0 +1,597 @@
+---
+import { getCollection } from "astro:content";
+import type { Pack } from "../../../packs/catalog";
+import Base from "../../../components/home/Base.astro";
+import Nav from "../../../components/home/Nav.astro";
+import Footer from "../../../components/home/Footer.astro";
+import AgentIcon from "../../../components/packs/AgentIcon.astro";
+import {
+  PLATFORMS,
+  RELEASE,
+  accounts,
+  chat,
+  color,
+  fileName,
+  filePath,
+  folder,
+  highlight,
+  inlineCode,
+  install,
+  kindName,
+  longDay,
+  newerThanRelease,
+  onMac,
+  palette,
+  settings,
+  shortVersion,
+  sourceUrl,
+  strong,
+  tabLabel,
+  usage,
+} from "../../../packs/view";
+
+export async function getStaticPaths() {
+  return (await getCollection("packs")).map((e) => ({ params: { kind: e.data.kind, id: e.data.id }, props: { pack: e.data } }));
+}
+
+const { pack } = Astro.props as { pack: Pack };
+const how = install(pack);
+const where = settings(pack);
+const platforms = PLATFORMS.filter((p) => pack.platforms.includes(p.key)).map((p) => p.name);
+const missing = PLATFORMS.filter((p) => !pack.platforms.includes(p.key)).map((p) => p.name);
+const lines = highlight(pack.text.replace(/\n$/, ""), pack.kind === "themes");
+const dark = pack.appearance === "dark";
+const c = (key: string) => color(pack, key);
+const preview = () =>
+  [
+    `<span style="color: ${c("synComment")}">// Greets whoever opens the project.</span>`,
+    `<span style="color: ${c("synKeyword")}">fn</span> <span style="color: ${c("synFunction")}">greet</span>(name: &amp;str) -&gt; String {`,
+    `    <span style="color: ${c("synFunction")}">format!</span>(<span style="color: ${c("synString")}">"hello, {name}"</span>)`,
+    "}",
+  ].join("\n");
+---
+
+<Base title={`${pack.label}, a ${kindName(pack).toLowerCase()} pack | Tori`} description={pack.description}>
+  <Nav />
+  <main class="main" data-pagefind-body>
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="/packs/">Packs</a>
+      <span class="sep">/</span>
+      <a href={`/packs/?kind=${pack.kind}`}>{tabLabel(pack.kind)}</a>
+      <span class="sep">/</span>
+      <span class="mono">{pack.id}</span>
+    </nav>
+
+    <div class="title">
+      {pack.kind === "agents" && <AgentIcon pack={pack} size="title" />}
+      <h1>{pack.label}</h1>
+    </div>
+
+    <div class="meta">
+      <span>{kindName(pack)}</span>
+      <span>by <strong>{pack.contributor.name}</strong> <a href={`https://github.com/${pack.contributor.github}`}>@{pack.contributor.github}</a></span>
+      <span class="mono small">{pack.license}</span>
+      {pack.bundled && <span class="bundled">Bundled</span>}
+    </div>
+
+    {
+      pack.runs_project_code && (
+        <div class="trust">
+          <strong>Runs your project’s code</strong>
+          <p>
+            {pack.label} loads code from the project it opens, such as its dependencies or its own configuration. Tori asks before starting it in each
+            project and remembers your answer for that project.
+          </p>
+        </div>
+      )
+    }
+
+    <div class="body">
+      <dl class="facts">
+        {
+          pack.verified_against && (
+            <div class="row">
+              <dt>Verified against</dt>
+              <dd>
+                <span class="mono">{pack.verified_against}</span>
+                {pack.verified_on && <span class="sub">Measured {longDay(pack.verified_on)}</span>}
+              </dd>
+            </div>
+          )
+        }
+        <div class="row">
+          <dt>Platforms</dt>
+          <dd>
+            {platforms.join(", ")}
+            {!onMac(pack) ? <span class="sub">Not available on macOS</span> : missing.length > 0 && <span class="sub">No {missing.join(" or ")} support</span>}
+          </dd>
+        </div>
+        <div class="row">
+          <dt>Install</dt>
+          <dd>
+            {how.what}
+            {how.detail && <span class="sub mono" set:html={inlineCode(how.detail)} />}
+          </dd>
+        </div>
+        <div class="row">
+          <dt>Needs Tori</dt>
+          <dd>
+            <span class="mono">{shortVersion(pack.min_tori)} or newer</span>
+            {newerThanRelease(pack.min_tori) && <span class="sub newer">Newer than the current release, {shortVersion(RELEASE)}</span>}
+          </dd>
+        </div>
+        <div class="row">
+          <dt>Schema</dt>
+          <dd>Version {pack.schema_version}</dd>
+        </div>
+        <div class="row">
+          <dt>Id</dt>
+          <dd class="mono">{pack.id}</dd>
+        </div>
+        <div class="row">
+          <dt>Source file</dt>
+          <dd>
+            <a class="mono" href={sourceUrl(pack)}>{pack.kind}/{fileName(pack)} ↗</a>
+            <span class="sub">gettori/packs on GitHub</span>
+          </dd>
+        </div>
+      </dl>
+
+      <div class="content">
+        <section>
+          <h2>Add it in Tori</h2>
+          <ol class="steps">
+            <li><span>Open <strong>Settings</strong> with the gear in the title bar.</span></li>
+            <li><span>Go to <strong>{where.pane}</strong>.</span></li>
+            <li><span>Click <strong>{where.button}</strong>, then <strong>Install</strong> next to <strong>{pack.label}</strong>.</span></li>
+          </ol>
+          <p class="note">Adding writes one file and runs nothing. <Fragment set:html={strong(how.sentence)} /></p>
+        </section>
+
+        <section>
+          <h2>Use it without the catalog</h2>
+          <p class="text">Download the file and drop it in the folder below. Tori loads it the next time it starts.</p>
+          <div class="use">
+            <a class="download" href={filePath(pack)} download={fileName(pack)}>
+              Download file <span class="mono">{fileName(pack)}</span>
+            </a>
+            <div class="path">
+              <span class="mono">{folder(pack)}</span>
+              <button type="button" class="copy" data-copy={folder(pack)}>Copy</button>
+            </div>
+          </div>
+        </section>
+
+        {
+          pack.kind === "themes" && (
+            <section>
+              <h2>Palette</h2>
+              <p class="text">
+                A {dark ? "dark" : "light"} theme. It is offered on the <strong>{dark ? "Dark" : "Light"}</strong> tab of <strong>Appearance</strong> &gt;{" "}
+                <strong>Theme</strong>, and the sun and moon button in the top bar switches between your dark and light choice.
+              </p>
+              <p class="variant">{dark ? "Dark" : "Light"}</p>
+              <div class="swatches">
+                {palette(pack).map((s) => (
+                  <div class="swatch">
+                    <span class="chip" style={`background: ${s.hex}`} />
+                    <span>{s.name}</span>
+                    <span class="mono hex">{s.hex}</span>
+                  </div>
+                ))}
+              </div>
+              <pre class="preview" style={`background: ${c("canvas")}; color: ${c("text")}`} set:html={preview()} />
+            </section>
+          )
+        }
+
+        {
+          pack.kind === "agents" && (
+            <section>
+              <h2>Chat and accounts</h2>
+              <div class="rows">
+                <div class="fact">
+                  <span class="name">Chat</span>
+                  <span class="value">{chat(pack).value}</span>
+                  <p>{chat(pack).text}</p>
+                </div>
+                <div class="fact">
+                  <span class="name">Accounts</span>
+                  <span class="value">{accounts(pack).value}</span>
+                  <p>{accounts(pack).text}</p>
+                </div>
+                <div class="fact">
+                  <span class="name">Usage readouts</span>
+                  <span class="value">{usage(pack).value}</span>
+                  <p>{usage(pack).text}</p>
+                </div>
+              </div>
+            </section>
+          )
+        }
+
+        <section data-pagefind-ignore>
+          <h2>The file</h2>
+          <div class="file">
+            <div class="head">
+              <span class="mono">{fileName(pack)}</span>
+              <span class="ro">Read only</span>
+              <button type="button" class="copy" data-copy={pack.text}>Copy</button>
+            </div>
+            <pre class="code"><code>{lines.map((line, i) => <span class="line"><span class="n">{i + 1}</span><span set:html={line} /></span>)}</code></pre>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Base>
+
+<script>
+  for (const button of document.querySelectorAll<HTMLButtonElement>("[data-copy]")) {
+    button.addEventListener("click", async () => {
+      await navigator.clipboard.writeText(button.dataset.copy!);
+      button.textContent = "Copied";
+      setTimeout(() => (button.textContent = "Copy"), 1400);
+    });
+  }
+</script>
+
+<style>
+  .main {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: calc(clamp(24px, 4vw, 44px) + 64px) var(--pad-x) 72px;
+  }
+  .mono {
+    font-family: var(--mono);
+  }
+  .small {
+    font-size: 13px;
+  }
+  .crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 13.5px;
+    color: var(--muted);
+  }
+  .sep {
+    color: var(--faint);
+  }
+  .title {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-top: clamp(24px, 4vw, 40px);
+  }
+  h1 {
+    margin: 0;
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(44px, 6.5vw, 84px);
+    line-height: 0.98;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 18px;
+    margin-top: 18px;
+    font-size: 14.5px;
+    color: var(--muted);
+  }
+  .meta strong {
+    font-weight: 500;
+    color: var(--text);
+  }
+  .bundled {
+    display: inline-flex;
+    align-items: center;
+    height: 22px;
+    padding: 0 9px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: var(--on-accent);
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .trust {
+    max-width: 780px;
+    margin-top: 28px;
+    padding: 16px 18px;
+    border-radius: 12px;
+    border: 1px solid var(--hair);
+    background: var(--card);
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+  .trust strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+  .trust p {
+    margin: 2px 0 0;
+  }
+  .body {
+    display: flex;
+    flex-direction: row-reverse;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 48px clamp(32px, 5vw, 72px);
+    margin-top: clamp(32px, 5vw, 56px);
+  }
+  .facts {
+    flex: 1 1 340px;
+    position: sticky;
+    top: 88px;
+    margin: 0;
+    border-radius: 12px;
+    border: 1px solid var(--hair);
+    background: var(--card);
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 118px minmax(0, 1fr);
+    gap: 14px;
+    padding: 13px 16px;
+  }
+  .row + .row {
+    border-top: 1px solid var(--hair);
+  }
+  dt {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  dd {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin: 0;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+  }
+  dd .mono,
+  dd.mono {
+    font-size: 13px;
+  }
+  .sub {
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+  .sub.mono {
+    font-size: 12px;
+  }
+  .newer {
+    color: var(--accent-text);
+  }
+  .content {
+    display: flex;
+    flex: 3 1 560px;
+    flex-direction: column;
+    gap: clamp(40px, 5vw, 56px);
+    min-width: 0;
+  }
+  h2 {
+    margin: 0 0 16px;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: step;
+    font-size: 15.5px;
+    line-height: 1.55;
+  }
+  .steps li {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    counter-increment: step;
+  }
+  .steps li::before {
+    content: counter(step);
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 1px solid light-dark(rgba(20, 22, 30, 0.24), rgba(255, 255, 255, 0.2));
+    font-family: var(--mono);
+    font-size: 12px;
+    transform: translateY(-1px);
+  }
+  .steps strong,
+  .note :global(strong),
+  .text strong {
+    font-weight: 600;
+    color: var(--text);
+  }
+  .note,
+  .text {
+    margin: 16px 0 0;
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+  .text {
+    margin: 0 0 16px;
+    font-size: 15.5px;
+  }
+  .use {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .download {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    height: 42px;
+    padding: 0 16px;
+    border-radius: 10px;
+    background: var(--accent);
+    color: var(--on-accent);
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .download:hover {
+    color: var(--on-accent);
+  }
+  .download .mono {
+    font-size: 12.5px;
+    font-weight: 400;
+    opacity: 0.75;
+  }
+  .path {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    height: 42px;
+    padding: 0 6px 0 14px;
+    border-radius: 10px;
+    border: 1px solid var(--hair);
+    background: var(--card);
+    font-size: 13px;
+  }
+  .copy {
+    height: 30px;
+    padding: 0 10px;
+    border-radius: 7px;
+    border: 1px solid var(--hair);
+    background: none;
+    font: inherit;
+    font-size: 12.5px;
+    color: var(--text);
+    cursor: pointer;
+  }
+  .variant {
+    margin: 0 0 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .swatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+    gap: 10px;
+  }
+  .swatch {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 12.5px;
+  }
+  .chip {
+    height: 56px;
+    border-radius: 10px;
+    border: 1px solid var(--hair);
+    margin-bottom: 4px;
+  }
+  .hex {
+    font-size: 11.5px;
+    color: var(--muted);
+  }
+  .preview {
+    margin: 16px 0 0;
+    padding: 16px 18px;
+    border-radius: 12px;
+    border: 1px solid var(--hair);
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.7;
+    overflow-x: auto;
+  }
+  .rows .fact {
+    display: grid;
+    gap: 4px;
+    padding: 14px 0;
+  }
+  .rows .fact + .fact {
+    border-top: 1px solid var(--hair);
+  }
+  .name {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .value {
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .fact p {
+    margin: 0;
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+  .file {
+    border-radius: 12px;
+    border: 1px solid var(--hair);
+    background: var(--card);
+    overflow: hidden;
+  }
+  .head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 42px;
+    padding: 0 6px 0 16px;
+    border-bottom: 1px solid var(--hair);
+    font-size: 12.5px;
+  }
+  .ro {
+    flex: 1;
+    font-size: 12px;
+    color: var(--faint);
+  }
+  .code {
+    margin: 0;
+    padding: 14px 16px 14px 0;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.7;
+    overflow-x: auto;
+  }
+  .line {
+    display: block;
+    white-space: pre;
+  }
+  .n {
+    display: inline-block;
+    width: 44px;
+    margin-right: 16px;
+    text-align: right;
+    color: var(--faint);
+    user-select: none;
+  }
+  .code :global(.k) {
+    color: var(--text);
+  }
+  .code :global(.c),
+  .code :global(.p) {
+    color: var(--faint);
+  }
+  .code :global(.s),
+  .code :global(.v) {
+    color: var(--accent-text);
+  }
+  .code :global(.q) {
+    color: var(--link);
+  }
+  @media (max-width: 640px) {
+    .facts {
+      position: static;
+    }
+  }
+</style>

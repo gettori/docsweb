@@ -5,10 +5,16 @@ import "@fontsource-variable/inter";
 import "@fontsource/instrument-serif/400-italic.css";
 import "../../styles/site.css";
 
-const title = "Tori: coding agent cockpit";
-const shareTitle = "Tori: a cockpit for the coding agents you already run";
-const description =
-  "A Mac app that runs Claude Code, Codex, Gemini and the rest of your agents side by side, and tells you the moment one needs you.";
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "Tori: coding agent cockpit",
+  description = "A Mac app that runs Claude Code, Codex, Gemini and the rest of your agents side by side, and tells you the moment one needs you.",
+} = Astro.props;
+const shareTitle = Astro.props.title ?? "Tori: a cockpit for the coding agents you already run";
 const ogImage = new URL("/og.png", Astro.site).href;
 ---
 
