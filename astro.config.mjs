@@ -2,6 +2,7 @@ import { defineConfig } from "astro/config";
 import expressiveCode from "astro-expressive-code";
 import mdx from "@astrojs/mdx";
 import solid from "@astrojs/solid-js";
+import servePacks from "./src/packs/serve.mjs";
 
 export default defineConfig({
   site: "https://gettori.app",
@@ -12,5 +13,6 @@ export default defineConfig({
     expressiveCode(),
     mdx(),
     solid(),
+    servePacks(),
   ],
 });

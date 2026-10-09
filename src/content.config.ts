@@ -1,6 +1,7 @@
 import { defineCollection, z } from "astro:content";
 import { glob, type Loader } from "astro/loaders";
 import { SITE } from "./config";
+import { pack, packs } from "./packs/catalog";
 
 // main rather than the latest tag, so a section can show before its release is published.
 const CHANGELOG = "https://raw.githubusercontent.com/gettori/tori/main/CHANGELOG.md";
@@ -46,4 +47,5 @@ export const collections = {
     loader: changelog(),
     schema: z.object({ version: z.string(), date: z.date(), patch: z.number() }),
   }),
+  packs: defineCollection({ loader: packs(), schema: pack }),
 };
