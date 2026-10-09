@@ -1,7 +1,7 @@
 // Lays out .packs/: the signed index from gettori/packs' `published` branch
 // byte for byte, every file a row names at the indexed commit checked against
-// its sha256, and the bundled set from tori's packs.lock. Any failure exits
-// before .packs/ changes, so Cloudflare keeps the last deploy.
+// its sha256, the bundled set from tori's packs.lock and the newest release.
+// Any failure exits before .packs/ changes, so Cloudflare keeps the last deploy.
 //
 //   node scripts/fetch-packs.mjs
 //   PACKS_DIR=<dir>          a gettori/packs checkout after `tori packs-index`
@@ -20,6 +20,8 @@ const PUBLISHED = "https://raw.githubusercontent.com/gettori/packs/published";
 const TARBALL = "https://codeload.github.com/gettori/packs/tar.gz";
 // main rather than the latest tag, like the CHANGELOG: the next release's set.
 const LOCK = "https://raw.githubusercontent.com/gettori/tori/main/src-tauri/packs.lock";
+// The feed, not the API: no rate limit, and it lists pre-releases.
+const RELEASES = "https://github.com/gettori/tori/releases.atom";
 // A row url names the file it serves, so it is also the path in the repo.
 const FILE_URL = /^https:\/\/gettori\.app\/packs\/files\/(lsp|dap|formatters|themes|agents|icons)\/([a-z0-9][a-z0-9._-]*)\.(toml|json|svg)$/;
 
@@ -75,8 +77,14 @@ async function bundled() {
     .map((m) => `${m[1]}/${m[2]}`);
 }
 
+async function release() {
+  const feed = (await get(RELEASES)).toString("utf8");
+  return feed.match(/\/releases\/tag\/v([^"<]+)"/)?.[1] ?? fail(`${RELEASES} names no release`);
+}
+
 const { index, sig, repo } = await source();
 const ids = await bundled();
+const version = await release();
 if (ids.length === 0) fail("packs.lock lists no packs");
 const rows = JSON.parse(index.toString("utf8")).rows;
 if (!Array.isArray(rows) || rows.length === 0) fail("index.json has no rows");
@@ -96,6 +104,7 @@ for (const { path, bytes } of files) {
 writeFileSync(join(next, "index.json"), index);
 if (sig) writeFileSync(join(next, "index.json.sig"), sig);
 writeFileSync(join(next, "bundled.json"), JSON.stringify(ids));
+writeFileSync(join(next, "release.json"), JSON.stringify({ version }));
 rmSync(OUT, { recursive: true, force: true });
 renameSync(next, OUT);
-console.log(`fetch-packs: ${rows.length} rows, ${files.length} files, ${ids.length} bundled, ${sig ? "signed" : "unsigned"}`);
+console.log(`fetch-packs: ${rows.length} rows, ${files.length} files, ${ids.length} bundled, Tori ${version}, ${sig ? "signed" : "unsigned"}`);

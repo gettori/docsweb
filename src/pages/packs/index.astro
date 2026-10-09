@@ -1,0 +1,72 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../../components/home/Base.astro";
+import Nav from "../../components/home/Nav.astro";
+import Footer from "../../components/home/Footer.astro";
+import PackCard from "../../components/packs/PackCard.astro";
+import PacksFilter from "../../islands/PacksFilter";
+import { TABS } from "../../packs/view";
+
+const order = TABS.map((t) => t.kind as string);
+const packs = (await getCollection("packs"))
+  .map((e) => e.data)
+  .sort((a, b) => order.indexOf(a.kind) - order.indexOf(b.kind) || a.label.localeCompare(b.label));
+---
+
+<Base title="Packs | Tori" description="Language servers, debuggers, formatters, themes and agents for Tori, one config file each.">
+  <Nav />
+  <main class="main">
+    <h1>Packs</h1>
+    <p class="lead">
+      A pack is one config file that teaches Tori a language server, debugger, formatter, theme or agent. Adding one writes the file and runs nothing.
+    </p>
+    <PacksFilter client:load packs={packs.map((p) => ({ kind: p.kind, name: `${p.label} ${p.id}`.toLowerCase() }))}>
+      <div class="grid">
+        {packs.map((pack) => <PackCard pack={pack} />)}
+      </div>
+    </PacksFilter>
+    <nav class="more" aria-label="More about packs">
+      <a href="/docs/packs/contributing/">Contribute a pack →</a>
+      <a href="/docs/packs/bundled/">How the bundled set works →</a>
+      <a href="/docs/packs/custom/">Use a custom pack without publishing it →</a>
+    </nav>
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .main {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: calc(clamp(40px, 7vw, 96px) + 64px) var(--pad-x) 64px;
+  }
+  h1 {
+    margin: 0;
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(52px, 7vw, 92px);
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+  }
+  .lead {
+    max-width: 620px;
+    margin: 18px 0 0;
+    font-size: clamp(16px, 1.5vw, 19px);
+    line-height: 1.55;
+    color: var(--muted);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(272px, 1fr));
+    gap: 14px;
+  }
+  .more {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px 32px;
+    margin-top: clamp(48px, 6vw, 72px);
+    padding-top: 24px;
+    border-top: 1px solid var(--hair);
+    font-size: 15px;
+  }
+</style>

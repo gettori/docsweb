@@ -1,11 +1,14 @@
 ---
 import { SITE } from "../../config";
+
+const here = (path: string) => (Astro.url.pathname.startsWith(path) ? "page" : undefined);
 ---
 
 <nav class="nav">
   <a href="/" class="brand"><img src="/app-icon.png" alt="" width="22" height="22" />Tori</a>
   <span class="links">
     <a href="/docs/">Docs</a>
+    <a href="/packs/" aria-current={here("/packs")}>Packs</a>
     <a href="/changelog/">Changelog</a>
     <a href={SITE.github}>GitHub</a>
   </span>
@@ -61,6 +64,10 @@ import { SITE } from "../../config";
   .links a:hover {
     color: var(--text);
     background: var(--glass);
+  }
+  .links a[aria-current] {
+    color: var(--text);
+    font-weight: 500;
   }
   .theme {
     display: flex;

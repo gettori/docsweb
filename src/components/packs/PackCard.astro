@@ -1,0 +1,191 @@
+---
+import type { Pack } from "../../packs/catalog";
+import AgentIcon from "./AgentIcon.astro";
+import { PLATFORMS, chat, kindName, newerThanRelease, onMac, palette, shortDay, shortVersion } from "../../packs/view";
+
+interface Props {
+  pack: Pack;
+}
+
+const { pack } = Astro.props;
+const verified = pack.verified_against && pack.verified_on ? `${pack.verified_against} · ${shortDay(pack.verified_on)}` : null;
+---
+
+<a class="card" href={`/packs/${pack.kind}/${pack.id}/`} data-pack data-kind={pack.kind} data-name={`${pack.label} ${pack.id}`.toLowerCase()}>
+  <div class="top">
+    <span>{kindName(pack)}</span>
+    {pack.bundled && <span class="bundled">Bundled</span>}
+  </div>
+  <div class="who">
+    {pack.kind === "agents" && <AgentIcon pack={pack} size="card" />}
+    <div>
+      <div class="label">{pack.label}</div>
+      <div class="by">by {pack.contributor.name}</div>
+    </div>
+  </div>
+  {
+    pack.kind === "themes" && (
+      <div class="strip" aria-hidden="true">
+        {palette(pack).map((s) => (
+          <span style={`background: ${s.hex}`} />
+        ))}
+      </div>
+    )
+  }
+  {pack.kind === "agents" && <span class="tier">{chat(pack).pill}</span>}
+  <span class="spacer"></span>
+  {newerThanRelease(pack.min_tori) && <p class="newer">Needs Tori {shortVersion(pack.min_tori)} or newer</p>}
+  {!onMac(pack) && <p class="na">Not available on macOS</p>}
+  <div class="foot">
+    <span class="marks">
+      {
+        PLATFORMS.map((p) => {
+          const ok = pack.platforms.includes(p.key);
+          return (
+            <span class:list={["mark", { off: !ok }]} title={ok ? p.name : `${p.name} not supported`}>
+              {p.mark}
+            </span>
+          );
+        })
+      }
+    </span>
+    {
+      verified && (
+        <span class="verified" title="Verified against">
+          {verified}
+        </span>
+      )
+    }
+  </div>
+</a>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-height: 200px;
+    padding: 18px;
+    border-radius: 12px;
+    border: 1px solid var(--hair);
+    background: var(--card);
+    color: var(--text);
+    transition: border-color 0.3s var(--ease);
+  }
+  .card:hover {
+    color: var(--text);
+    border-color: light-dark(rgba(20, 22, 30, 0.22), rgba(255, 255, 255, 0.18));
+  }
+  .card[hidden] {
+    display: none;
+  }
+  .top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 20px;
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+  .bundled {
+    display: inline-flex;
+    align-items: center;
+    height: 20px;
+    padding: 0 8px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: var(--on-accent);
+    font-size: 11.5px;
+    font-weight: 600;
+  }
+  .who {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .label {
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.012em;
+  }
+  .by {
+    margin-top: 3px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .strip {
+    display: flex;
+    height: 26px;
+    border-radius: 7px;
+    border: 1px solid var(--hair);
+    overflow: hidden;
+  }
+  .strip span {
+    flex: 1;
+  }
+  .tier {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    height: 24px;
+    padding: 0 9px;
+    border-radius: 999px;
+    border: 1px solid var(--hair);
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+  .spacer {
+    flex: 1;
+  }
+  .newer,
+  .na {
+    margin: 0;
+    font-size: 13px;
+  }
+  .newer {
+    color: var(--accent-text);
+    font-weight: 500;
+  }
+  .na {
+    color: var(--muted);
+  }
+  .foot {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--hair);
+  }
+  .marks {
+    display: flex;
+    gap: 4px;
+  }
+  .mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 1px solid light-dark(rgba(20, 22, 30, 0.24), rgba(255, 255, 255, 0.2));
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .mark.off {
+    border-style: dashed;
+    opacity: 0.4;
+  }
+  .verified {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--faint);
+  }
+</style>
