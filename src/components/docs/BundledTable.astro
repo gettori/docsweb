@@ -1,12 +1,11 @@
 ---
 import { getCollection } from "astro:content";
-import { TABS, kindName } from "../../packs/view";
+import { byTab, kindName } from "../../packs/view";
 
-const order = TABS.map((t) => t.kind as string);
 const packs = (await getCollection("packs"))
   .map((e) => e.data)
   .filter((p) => p.bundled)
-  .sort((a, b) => order.indexOf(a.kind) - order.indexOf(b.kind) || a.label.localeCompare(b.label));
+  .sort(byTab);
 ---
 
 <table>

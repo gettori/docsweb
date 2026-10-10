@@ -1,17 +1,23 @@
 import { readFileSync } from "node:fs";
 import type { Pack } from "./catalog";
 
+const linter = (p: Pack) => p.kind === "lsp" && p.role === "secondary";
+
+// Linters are lsp packs, but Tori's Settings gives them their own pane, so the
+// catalog gives them their own tab. Their files and URLs stay under lsp.
 export const TABS = [
-  { kind: "agents", label: "Agents" },
-  { kind: "lsp", label: "Languages" },
-  { kind: "dap", label: "Debuggers" },
-  { kind: "formatters", label: "Formatters" },
-  { kind: "themes", label: "Themes" },
+  { tab: "agents", label: "Agents" },
+  { tab: "lsp", label: "Languages" },
+  { tab: "dap", label: "Debuggers" },
+  { tab: "linters", label: "Linters" },
+  { tab: "formatters", label: "Formatters" },
+  { tab: "themes", label: "Themes" },
 ] as const;
 
-export const tabLabel = (kind: Pack["kind"]) => TABS.find((t) => t.kind === kind)!.label;
-
-const linter = (p: Pack) => p.kind === "lsp" && p.role === "secondary";
+export const tabOf = (p: Pack): (typeof TABS)[number]["tab"] => (linter(p) ? "linters" : p.kind);
+export const tabLabel = (p: Pack) => TABS.find((t) => t.tab === tabOf(p))!.label;
+const rank = (p: Pack) => TABS.findIndex((t) => t.tab === tabOf(p));
+export const byTab = (a: Pack, b: Pack) => rank(a) - rank(b) || a.label.localeCompare(b.label);
 
 export function kindName(p: Pack) {
   if (linter(p)) return "Linter";
