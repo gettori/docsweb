@@ -1,0 +1,54 @@
+---
+title: The bundled set
+description: The packs that ship inside Tori, how they update, and how to switch one off.
+---
+
+import Aside from "../../../../components/docs/Aside.astro";
+import Steps from "../../../../components/docs/Steps.astro";
+import BundledTable from "../../../../components/docs/BundledTable.astro";
+
+Tori ships with a set of packs already in place, so a fresh install can open
+common projects and start the main agents without a trip to the catalog.
+
+## What ships inside Tori
+
+<BundledTable />
+
+Bundled packs are ordinary catalog packs. Each release embeds gettori/packs
+at one commit, and each pack has a page in the [catalog](/packs/) with its
+contributor, license and the version it was verified against.
+
+## How it updates
+
+Bundled packs update through the catalog, not only through Tori releases.
+When a bundled pack changes in gettori/packs, its row in the kind's
+**Add a ...** list in Settings says **Update available** and offers
+**Update**. Nothing changes until you press it. The update writes the
+catalog's file into `~/.config/tori/packs/<kind>/`, and from then on that
+copy is the one Tori loads; **Remove** on the same row goes back to the one
+Tori shipped with.
+
+## Switching a bundled pack off
+
+<Steps>
+
+1. Open Settings (the gear in the title bar).
+
+2. Go to the pack's pane: **LSP**, **Linters**, **Debuggers**,
+   **Formatters** or **Agents**.
+
+3. Turn off the switch on the pack's card. Tori stops starting it, and you
+   can turn it back on there. Themes have no switch: pick another one in
+   **Appearance** > **Theme**.
+
+</Steps>
+
+<Aside type="note" title="Replacing a bundled pack">
+
+Copy its file under a new id, change what you need, and switch the bundled
+one off. A file in `~/.config/tori/packs/` that reuses a bundled id is
+refused, with that fix named, since a file that took over the id would never
+receive the bundled pack's updates. Agent files that already carried a bundled id when Tori moved
+them into this folder keep it as recorded overrides.
+
+</Aside>

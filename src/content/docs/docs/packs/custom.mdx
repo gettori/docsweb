@@ -1,0 +1,54 @@
+---
+title: Custom packs on your machine
+description: Use a pack without publishing it, where errors show, and how ids clash.
+---
+
+You can use a pack without publishing it. Drop the file in a folder and Tori
+picks it up.
+
+## Drop a file in the folder
+
+Put the file in the folder for its kind:
+
+```text
+~/.config/tori/packs/
+  lsp/
+    acme-dsl.toml
+  dap/
+  formatters/
+  themes/
+  agents/
+  icons/
+```
+
+`lsp` holds language servers and linters, `dap` debuggers, and `icons` an
+agent's logo as `<id>.svg`. The **Download file** button on any pack's page
+in the [catalog](/packs/) gives you a file ready for its folder.
+
+## Loads at next start
+
+Tori reads the folders when it starts, so after adding or editing a file,
+quit and reopen Tori. Themes are the exception: Tori watches their folder, and
+a new or changed theme applies at once. Installing the tool a pack points at,
+such as a language server from npm, is still a separate click in Settings.
+
+## Errors show in Settings
+
+A file that does not load is not skipped quietly. The pane for its kind in
+Settings (**LSP** for language servers and linters, **Debuggers**,
+**Formatters**, **Agents** or **Appearance**) lists it under **Needs fixing**, with the file and what is
+wrong: it does not parse, it declares a `schema_version` newer than your Tori
+reads, it misses a required field, or its file name and `id` differ. Whatever
+it would have replaced keeps working.
+
+## Use your own id
+
+Name the file after its `id`, and give it an id no bundled pack uses.
+Prefixing it with your handle works: `mira-acme-dsl`. A file that reuses a
+bundled pack's id is refused; to change a bundled pack, copy it under a new id
+and switch the bundled one off, as [The bundled set](/docs/packs/bundled/)
+describes.
+
+If a pack with your id later appears in the catalog, yours keeps loading.
+Its row in the **Add a ...** list says **Your custom file uses this id**, and
+the catalog pack cannot be installed until you rename yours.

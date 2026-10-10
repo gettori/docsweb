@@ -143,7 +143,22 @@ const preview = () =>
           <ol class="steps">
             <li><span>Open <strong>Settings</strong> with the gear in the title bar.</span></li>
             <li><span>Go to <strong>{where.pane}</strong>.</span></li>
-            <li><span>Click <strong>{where.button}</strong>, then <strong>Install</strong> next to <strong>{pack.label}</strong>.</span></li>
+            {
+              pack.bundled ? (
+                <li>
+                  <span>
+                    <strong>{pack.label}</strong> is already there: it ships inside Tori. When the catalog has a newer version, <strong>{where.button}</strong>{" "}
+                    lists it with <strong>Update</strong>.
+                  </span>
+                </li>
+              ) : (
+                <li>
+                  <span>
+                    Click <strong>{where.button}</strong>, then <strong>Install</strong> next to <strong>{pack.label}</strong>.
+                  </span>
+                </li>
+              )
+            }
           </ol>
           <p class="note">Adding writes one file and runs nothing. <Fragment set:html={strong(how.sentence)} /></p>
         </section>

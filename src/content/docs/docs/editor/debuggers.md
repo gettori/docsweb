@@ -138,28 +138,10 @@ The card's switch writes `dap.disabled` in `~/.config/tori/settings.json`:
 
 ## Changing how a debugger starts
 
-Each debugger is a TOML file. One in `~/.config/tori/dap/` with the same `id`
-replaces the built in whole. This one runs Delve from `~/go/bin` when that
-is not on your PATH:
-
-```toml
-# ~/.config/tori/dap/delve.toml
-schema_version = 1
-id = "delve"
-label = "Go (Delve, from ~/go/bin)"
-root_markers = ["go.mod"]
-
-[languages]
-go = "go"
-
-[launch]
-kind = "tcp"
-program = "~/go/bin/dlv"
-args = ["dap", "--listen=127.0.0.1:{port}"]
-```
-
-Restart Tori after adding it. A broken file is logged and the built in keeps
-running.
+Each debugger is a TOML file in `~/.config/tori/packs/dap/`, but a file there
+may not reuse a built in `id`, and F5 knows each built in debugger by its id.
+So a file cannot change how a built in debugger starts. Put the program it
+runs on your PATH instead: for Delve, add `~/go/bin` to your PATH.
 
 A debugger for a new language is different from the other tools: the file
 gets a card, but what F5 offers to run is built into Tori per debugger. So a

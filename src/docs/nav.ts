@@ -66,6 +66,15 @@ export const NAV: NavGroup[] = [
     ],
   },
   {
+    label: "Packs",
+    items: [
+      { label: "Browse the catalog", href: "/packs/" },
+      page("Contributing a pack", "packs/contributing"),
+      page("The bundled set", "packs/bundled"),
+      page("Custom packs on your machine", "packs/custom"),
+    ],
+  },
+  {
     label: "Automation",
     items: [page("Autopilot", "automation/autopilot"), page("Tori's own MCP server", "automation/mcp-server"), page("The tori CLI", "automation/cli")],
   },
