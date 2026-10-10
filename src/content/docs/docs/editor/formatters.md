@@ -76,11 +76,11 @@ A disabled formatter is skipped and the file goes on to the next one.
 ## Adding a formatter
 
 Any formatter that reads the file on stdin and writes the result to stdout
-can be added as a TOML file in `~/.config/tori/formatters/`. This one adds
-`clang-format`:
+can be added as a TOML file in `~/.config/tori/packs/formatters/`, or from the
+[catalog](/packs/) with **Add a formatter**. This one adds `clang-format`:
 
 ```toml
-# ~/.config/tori/formatters/clang-format.toml
+# ~/.config/tori/packs/formatters/clang-format.toml
 schema_version = 1
 id = "clang-format"
 label = "clang-format"
@@ -101,9 +101,10 @@ and finds its settings. `[markers]` takes exact `files`, filename
 key = "tool.black" }`). Use `kind = "project_bin"` for a formatter the
 project installs itself. Restart Tori after adding the file.
 
-A file whose `id` matches a built in formatter replaces it whole, so to keep
-Prettier to web files, copy its markers and add an `extensions` list. A
-broken file is logged and the built in keeps running.
+A file may not reuse a built in formatter's `id`. To keep Prettier to web
+files, copy it under a new id, add an `extensions` list, and switch the built
+in Prettier off on its card. A broken file is listed under **Needs fixing** in
+Settings > Formatters, and the built in keeps running.
 
 ## Missing a formatter?
 

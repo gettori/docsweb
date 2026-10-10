@@ -76,14 +76,16 @@ linter off for everyone who opens it, in `.tori/settings.json`:
 ## Adding a linter
 
 A linter is a language server with `role = "secondary"`, so any linter that
-speaks LSP can be added as a TOML file in `~/.config/tori/lsp/`. This one is
-the shape of the built in oxlint:
+speaks LSP can be added as a TOML file in `~/.config/tori/packs/lsp/`, or
+from the [catalog](/packs/) with **Add a linter**. This one is the shape of
+the built in oxlint, under its own id, since a file may not reuse a built in
+one:
 
 ```toml
-# ~/.config/tori/lsp/oxlint.toml
+# ~/.config/tori/packs/lsp/oxlint-mine.toml
 schema_version = 1
-id = "oxlint"
-label = "oxlint"
+id = "oxlint-mine"
+label = "oxlint (mine)"
 role = "secondary"
 root_markers = [".git"]
 activation_markers = [".oxlintrc.json", ".oxlintrc.jsonc"]

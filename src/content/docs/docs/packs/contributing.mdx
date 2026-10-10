@@ -1,0 +1,115 @@
+---
+title: Contributing a pack
+description: One file, one pull request to gettori/packs, and what CI and a reviewer check.
+---
+
+import Aside from "../../../../components/docs/Aside.astro";
+import Steps from "../../../../components/docs/Steps.astro";
+
+A pack is one file. Contributing one is one pull request to
+[gettori/packs](https://github.com/gettori/packs). CI checks the file's shape
+with the same loaders Tori runs; a reviewer checks that it does what it says.
+Once it merges, it is in the [catalog](/packs/) and in Tori's **Add a ...**
+lists, without waiting for a Tori release.
+
+## One file
+
+Each pack lives at `<kind>/<id>.toml` in the repo, where the kind is `lsp`,
+`dap`, `formatters` or `agents`. Themes are JSON, at `themes/<id>.json`. The
+file is named after its `id`, and an id is lowercase letters, digits, `.`,
+`_` and `-`, starting with a letter or digit.
+
+```toml
+# formatters/stylua.toml
+schema_version = 1
+id = "stylua"
+label = "StyLua"
+description = "Format Lua and Luau with StyLua"
+license = "Apache-2.0"
+contributor = { name = "Tori", github = "gettori" }
+extensions = ["lua", "luau"]
+
+verified_against = "stylua 2.5.2"
+verified_on = "2026-09-21"
+
+[markers]
+files = ["stylua.toml", ".stylua.toml"]
+
+[launch]
+kind = "path"
+program = "stylua"
+args = ["--stdin-filepath", "{file}", "-"]
+```
+
+Every pack carries `description`, `contributor` (your name and GitHub
+handle) and `license`, an SPDX id for what you are contributing. Every kind
+except themes also carries `verified_against`, the exact version you ran it
+with, and `verified_on`, the day you ran it, as `YYYY-MM-DD`. Both show on the
+pack's page. The schema for each kind is in the Tori repo:
+[LSP-SERVERS.md](https://github.com/gettori/tori/blob/main/docs/LSP-SERVERS.md),
+[DEBUGGERS.md](https://github.com/gettori/tori/blob/main/docs/DEBUGGERS.md),
+[FORMATTERS.md](https://github.com/gettori/tori/blob/main/docs/FORMATTERS.md),
+[THEMES.md](https://github.com/gettori/tori/blob/main/docs/THEMES.md) and
+[ADAPTERS.md](https://github.com/gettori/tori/blob/main/docs/ADAPTERS.md).
+An agent can also bring its logo as `icons/<id>.svg`, one colour on a
+transparent background.
+
+## One pull request
+
+<Steps>
+
+1. Try the file in Tori first: copy it into `~/.config/tori/packs/<kind>/`
+   and restart Tori. If it does not load, the kind's pane in Settings lists it
+   under **Needs fixing** with the reason.
+
+2. Run the same check CI runs. `tori` is Tori's own binary, and each release
+   also publishes it alone as `tori-cli-<version>-macos-universal.tar.gz`:
+
+   ```sh
+   tori validate-pack --assets --registry formatters/stylua.toml
+   ```
+
+3. Fork gettori/packs, add the file, one pack per pull request, and open it.
+   The template asks what you measured and how.
+
+</Steps>
+
+## What CI checks
+
+- The file loads in the newest Tori that gettori/packs supports, with the
+  schema version it declares, and a pack written for an older Tori still
+  loads in that one.
+- The file name matches the `id`, and the id is well formed.
+- `description`, `contributor`, `license`, `verified_against` and
+  `verified_on` are present.
+- Every release asset the pack downloads exists and matches its sha256, and
+  every pinned npm or PyPI package exists at that exact version.
+- What a pack may run is limited: an agent installs only through `npm`,
+  `pnpm`, `bun`, `pip`, `pipx`, `uv`, `brew`, `cargo`, `go` or `gem`, with no
+  shell syntax in its arguments; its chat runs through `npx`, `bunx` or `uvx`
+  pinned to one version; and a hint's `update` and `uninstall` scripts may not
+  use `curl`, `wget`, `sudo`, `eval`, `sh -c` or pipe into a shell.
+- An icon is at most 32 KB of well-formed SVG with a `viewBox`, has an agent
+  of the same id beside it, and holds no `<script>`, no `<foreignObject>` and
+  no `on*` attribute.
+
+## What a reviewer checks by hand
+
+- The version in `verified_against` is a real release, and the pull request
+  shows it working: a language server's answer to `initialize`, an agent's
+  ACP handshake and one session, a formatter's file before and after, a
+  theme's screenshot.
+- The launch command and its arguments do what the label says.
+- A language server that loads the project's own code sets
+  `runs_project_code = true`, so Tori asks before starting it in each project.
+- The label names the tool plainly.
+- It does not duplicate a pack that already exists without a reason in the
+  pull request.
+
+<Aside type="note" title="Packs carry no code">
+
+There is no plugin runtime. A pack tells Tori how to start a tool that
+already exists; if what you want needs a script, it belongs in the tool, and
+the pack points at that tool.
+
+</Aside>

@@ -43,7 +43,8 @@ from the theme too.
 
 Open Settings (the gear in the title bar) > **Appearance** > **Theme**. The picker has **Dark** and
 **Light** tabs, and themes are grouped as **Bundled** and **From
-~/.config/tori/themes**. The theme applies as you click it.
+~/.config/tori/packs/themes**. The theme applies as you click it. **Add a
+theme** below the picker lists the themes in the [catalog](/packs/?kind=themes).
 
 The sun and moon button in the top bar switches between your light and dark
 choice. The first time you open Tori it follows your system's appearance.
@@ -51,8 +52,8 @@ choice. The first time you open Tori it follows your system's appearance.
 ## Make your own theme
 
 A theme is one JSON file of colours. Copy a bundled one as a starting point,
-change the colours, and save it in `~/.config/tori/themes/`. Tori watches the
-folder, so the theme appears in the picker without a restart, and edits to the
+give it its own `id` and file name, change the colours, and save it in
+`~/.config/tori/packs/themes/`. Tori watches the folder, so the theme appears in the picker without a restart, and edits to the
 file apply as you save.
 
 ```json

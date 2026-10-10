@@ -1,0 +1,31 @@
+---
+import { getCollection } from "astro:content";
+import { TABS, kindName } from "../../packs/view";
+
+const order = TABS.map((t) => t.kind as string);
+const packs = (await getCollection("packs"))
+  .map((e) => e.data)
+  .filter((p) => p.bundled)
+  .sort((a, b) => order.indexOf(a.kind) - order.indexOf(b.kind) || a.label.localeCompare(b.label));
+---
+
+<table>
+  <thead>
+    <tr><th>Kind</th><th>Pack</th><th>Id</th></tr>
+  </thead>
+  <tbody>
+    {
+      packs.map((p) => (
+        <tr>
+          <td>{kindName(p)}</td>
+          <td>
+            <a href={`/packs/${p.kind}/${p.id}/`}>{p.label}</a>
+          </td>
+          <td>
+            <code>{p.id}</code>
+          </td>
+        </tr>
+      ))
+    }
+  </tbody>
+</table>

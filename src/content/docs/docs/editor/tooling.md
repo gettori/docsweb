@@ -84,11 +84,16 @@ never switch back on something you turned off.
 
 ## Adding your own
 
-Every server, linter, formatter and debugger is a TOML file, not code. Drop
-one into `~/.config/tori/lsp/`, `~/.config/tori/formatters/` or
-`~/.config/tori/dap/` and restart Tori. A file whose `id` matches a built in
-one replaces it whole; a broken one is logged and the built in keeps
-running. Each page below has a complete example you can copy.
+Every server, linter, formatter and debugger is a [pack](/packs/): a TOML
+file, not code. Add one from the catalog with **Add a language**, **Add a
+linter**, **Add a formatter** or **Add a debugger** in its Settings pane, or
+drop one into `~/.config/tori/packs/lsp/`, `~/.config/tori/packs/formatters/`
+or `~/.config/tori/packs/dap/` and restart Tori. A file may not reuse a built
+in `id`: to change a built in, copy it under a new id and switch the built in
+off. A broken file is listed under **Needs fixing** in its pane, and whatever
+it would have replaced keeps running. Each page below has a complete example
+you can copy, and [Custom packs on your machine](/docs/packs/custom/) has the
+rules.
 
 ## Asking for a tool
 

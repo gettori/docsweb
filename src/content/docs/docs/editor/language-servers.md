@@ -109,14 +109,17 @@ monorepo, each package gets its own server.
 
 ## Adding or replacing a server
 
-Each server is a TOML file. Drop one into `~/.config/tori/lsp/` and restart
-Tori. This one adds Python through a pyright you installed yourself; its `id`
-matches the built in `python`, so it replaces it whole:
+Each server is a TOML file. Add one from the [catalog](/packs/) with **Add a
+language** in Settings > LSP, or drop one into `~/.config/tori/packs/lsp/` and
+restart Tori. A file may not reuse a built in `id`, so to replace a built in
+server, give your file its own id and switch the built in one off on its card.
+This one runs Python through a pyright you installed yourself, in place of the
+built in `python`:
 
 ```toml
-# ~/.config/tori/lsp/python.toml
+# ~/.config/tori/packs/lsp/python-pyright.toml
 schema_version = 1
-id = "python"
+id = "python-pyright"
 label = "Python (pyright)"
 root_markers = ["pyproject.toml", "setup.py", "requirements.txt", ".git"]
 
@@ -132,8 +135,9 @@ args = ["--stdio"]
 
 Keep every top level key above the first `[table]`: in TOML a key written
 after a table header belongs to that table. A replacement is whole, so list
-every extension you still want served. A file that fails to load is logged
-and the server it would have replaced keeps running.
+every extension you still want served. A file that fails to load is listed
+under **Needs fixing** in Settings > LSP, and the server it would have
+replaced keeps running.
 
 ## Missing a language?
 
