@@ -1,6 +1,7 @@
 ---
 import type { Pack } from "../../packs/catalog";
 import AgentIcon from "./AgentIcon.astro";
+import { PLATFORM_ICONS } from "../../packs/platformIcons";
 import { PLATFORMS, chat, kindName, newerThanRelease, onMac, palette, shortDay, shortVersion } from "../../packs/view";
 
 interface Props {
@@ -39,14 +40,13 @@ const verified = pack.verified_against && pack.verified_on ? `${pack.verified_ag
     <div class="foot">
       <span class="marks">
         {
-          PLATFORMS.map((p) => {
-            const ok = pack.platforms.includes(p.key);
-            return (
-              <span class:list={["mark", { off: !ok }]} title={ok ? p.name : `${p.name} not supported`}>
-                {p.mark}
-              </span>
-            );
-          })
+          PLATFORMS.filter((p) => pack.platforms.includes(p.key)).map((p) => (
+            <span class="mark" title={p.name}>
+              <svg viewBox={PLATFORM_ICONS[p.key].viewBox} aria-hidden="true">
+                <path d={PLATFORM_ICONS[p.key].d} />
+              </svg>
+            </span>
+          ))
         }
       </span>
       {
@@ -161,24 +161,17 @@ const verified = pack.verified_against && pack.verified_on ? `${pack.verified_ag
   }
   .marks {
     display: flex;
-    gap: 4px;
+    align-items: center;
+    gap: 9px;
   }
   .mark {
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 18px;
-    height: 18px;
-    border-radius: 4px;
-    border: 1px solid light-dark(rgba(20, 22, 30, 0.24), rgba(255, 255, 255, 0.2));
-    font-family: var(--mono);
-    font-size: 10px;
-    font-weight: 600;
-    color: var(--muted);
+    color: var(--faint);
   }
-  .mark.off {
-    border-style: dashed;
-    opacity: 0.4;
+  .mark svg {
+    width: auto;
+    height: 13px;
+    fill: currentColor;
   }
   .verified {
     flex: 1;

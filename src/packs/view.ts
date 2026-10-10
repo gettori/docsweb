@@ -52,9 +52,9 @@ export function newerThanRelease(min: string) {
 export const onMac = (p: Pack) => p.platforms.includes("macos");
 
 export const PLATFORMS = [
-  { key: "macos", mark: "M", name: "macOS" },
-  { key: "linux", mark: "L", name: "Linux" },
-  { key: "windows", mark: "W", name: "Windows" },
+  { key: "macos", name: "macOS" },
+  { key: "linux", name: "Linux" },
+  { key: "windows", name: "Windows" },
 ] as const;
 
 const day = (iso: string, opts: Intl.DateTimeFormatOptions) =>
