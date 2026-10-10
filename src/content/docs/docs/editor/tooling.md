@@ -65,8 +65,9 @@ installed.
 Most of these tools run code from the project: TypeScript loads the
 workspace's own compiler and plugins, rust-analyzer runs build scripts, and
 a debugger runs your program. They only start in a project you have trusted.
-The first time one is held back, Tori offers to trust the project; Settings >
-Projects lists trusted projects, each with Revoke. The list lives in
+The first time one is held back, Tori offers to trust the project. A
+project's [project settings](/docs/workspace/project-settings/#tooling) trusts or
+revokes it, and Settings > Projects lists trusted projects, each with Revoke. The list lives in
 `~/.config/tori/trusted.json`, outside any repo, so a repo cannot trust
 itself. An untrusted project still edits normally, with the JSON and YAML
 servers (which run nothing from the project) still working.

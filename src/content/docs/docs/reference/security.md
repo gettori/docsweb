@@ -42,8 +42,10 @@ what was refused, so nothing has to be reopened. One answer covers every
 worktree of the project.
 
 Trust lives in `~/.config/tori/trusted.json`, outside any repository, so a
-repository cannot mark itself trusted. Settings > Languages > Projects lists
-trusted and untrusted projects with a search, **Revoke** and **Revoke all**.
+repository cannot mark itself trusted. Each project's
+[project settings](/docs/workspace/project-settings/#tooling) has **Trust** or
+**Revoke** under **Tooling**, and Settings > Projects lists trusted and
+untrusted projects with a search, **Revoke** and **Revoke all**.
 
 Two related rules follow the same idea, that a repository never grants
 itself anything:
@@ -241,8 +243,8 @@ The built-in list:
 - `make test`, `make check`
 - `gradle test`, `./gradlew test`, `swift test`
 
-To set a project's own list, right-click the project and choose
-**Verification commands**. The dialog opens on the list in force, one
+To set a project's own list, right-click the project, choose **Project
+settings** and pick **Tooling**. The field opens on the list in force, one
 command per line. **Save** replaces the built-in list for that project, it
 does not add to it, so keep the defaults you still want. **Reset to
 defaults** goes back to the built-in list. The list applies to every

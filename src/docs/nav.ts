@@ -14,6 +14,7 @@ export const NAV: NavGroup[] = [
     label: "Workspace",
     items: [
       page("Spaces, projects and branches", "workspace/spaces"),
+      page("Project settings", "workspace/project-settings"),
       page("Topics", "workspace/topics"),
       page("Panes, tabs and layout", "workspace/panes-and-tabs"),
       page("Search and the omnibox", "workspace/search-and-shortcuts"),

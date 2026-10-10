@@ -198,14 +198,17 @@ that thing is rather than in the Settings window.
 
 | Setting | Where | Effect |
 | --- | --- | --- |
-| Setup command, and whether scripted sessions wait for it | Project menu > Worktree settings | [Runs in every new worktree](/docs/git/worktrees-and-branches/#a-setup-command-for-new-worktrees) |
-| Shared files | Project menu > Worktree settings | [Links untracked files into every worktree](/docs/git/shared-files) |
-| Agents allowed in a project | Project menu > Agents | [Limits agents and accounts](/docs/agents/accounts-and-usage/#limiting-agents-per-project) |
-| Host account for a repository | Settings > Integrations > Hosts, per repo | Which login its pull requests and pushes use |
+| Project icon | Project settings > General | [Automatic, an image or a picked glyph](/docs/workspace/project-settings/#general) |
+| Setup command, and whether scripted sessions wait for it | Project settings > Worktrees | [Runs in every new worktree](/docs/git/worktrees-and-branches/#a-setup-command-for-new-worktrees) |
+| Shared files | Project settings > Worktrees | [Links untracked files into every worktree](/docs/git/shared-files) |
+| Agents allowed in a project | Project settings > Agents | [Limits agents and accounts](/docs/agents/accounts-and-usage/#limiting-agents-per-project) |
+| Remembered chat picks | Project settings > Agents | [Shown per worktree, with Forget all](/docs/workspace/project-settings/#agents) |
+| Verification commands | Project settings > Tooling | [What counts as a check](/docs/reference/security/#what-counts-as-a-check) |
+| Host account for a repository | Project settings > General | Which login its pull requests and pushes use, kept per remote |
 | When a chat needs a worktree | Topic menu | [Ask, create or refuse](/docs/workspace/topics/#chats-in-a-topic) |
-| Autopilot contract | Per project | [How work ships and how far it goes](/docs/automation/autopilot/#per-project-contract) |
+| Autopilot contract | Project settings > Agents | [How work ships and how far it goes](/docs/automation/autopilot/#per-project-contract) |
 | Usage windows, warn threshold, notify | Settings > Agents, per account | Which quota bars show and when they warn |
-| Trusted projects | Settings > Languages > Projects | [Which folders may run their own code](/docs/reference/security/#project-trust) |
+| Trusted projects | Project settings > Tooling, and Settings > Projects | [Which folders may run their own code](/docs/reference/security/#project-trust) |
 | Commit box, history tabs | Changes panel `...` menu | Shown or hidden |
 | Follow live edits | Composer bar | Not remembered across a launch |
 | Editor behaviour for one project | `<project>/.tori/settings.json` | Overrides the workspace overridable rows above |

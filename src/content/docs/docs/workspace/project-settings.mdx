@@ -1,0 +1,172 @@
+---
+title: Project settings
+description: One dialog per project that holds everything set for that project, from its icon, remote and setup command to its agents, autopilot contract, trust and verification commands.
+---
+
+import Aside from "../../../../components/docs/Aside.astro";
+
+Everything Tori keeps for one project lives in that project's settings
+dialog. It is drawn like Settings, with the project's name, icon, space and
+path at the top where Settings has its title, and a rail of sections down the
+left.
+
+## Open it
+
+- Right-click a project in the sidebar, or hover it and click its actions
+  button, and choose **Project settings**.
+- Click the broken link mark on a project row, shown when a worktree is
+  missing a [shared file](/docs/git/shared-files/). The dialog opens on
+  **Worktrees**.
+- Click the shield mark on a project row, shown when the project is not
+  trusted. The dialog opens on **Tooling**.
+- In Settings > **Projects**, click a project. The dialog opens over
+  Settings, and closing it lands you back on the list.
+- In Settings > **Autopilot**, under **Project contracts**, click a project.
+  The dialog opens on **Agents**, where the contract is.
+
+Escape, the close button or a click outside closes it. While it is open, the
+project's row in the sidebar has an accent outline, so you can see where it
+sits.
+
+## What saves when
+
+Changes save as you make them, except three lists that keep a draft until you
+click their **Save**: allowed agents, verification commands and issue sources.
+While a draft differs from what is saved, its section carries a gold dot in
+the rail, the line beside the buttons says **Unsaved changes**, and
+**Discard** puts the saved list back.
+
+## Sections
+
+Which sections a project has depends on its layout:
+
+| Section | Folder | Repo | Bare |
+| --- | --- | --- | --- |
+| General | Yes | Yes | Yes |
+| Worktrees | | | Yes |
+| Agents | Yes | Yes | Yes |
+| Tooling | Yes | Yes | Yes |
+
+A bare project whose setup never finished (an empty container) gets the same
+sections as a bare project.
+
+### General
+
+**Project** shows the **Layout**, read from disk and not edited here: **Git
+repo**, **Bare repo with worktrees**, **Bare repo, no worktrees yet** or
+**Folder without git**. The name, space and path are at the top of the
+dialog, with a **Copy path** button beside the path.
+
+**Icon** sets what the project wears in the sidebar. The card at the top
+previews it beside a sample sidebar row at the size it is shown, and the strip
+picks where it comes from:
+
+- **Automatic**: a favicon Tori found inside the project, so replacing it
+  there replaces it here. With none, a glyph drawn from the folder's path.
+  Choosing **Automatic** saves at once.
+- **Upload**: drop an image on the zone or **choose a file**. SVG, PNG or
+  ICO, up to 2 MB, square works best. The image saves as soon as you choose
+  it, and wins over whatever the project has.
+- **Pick an icon**: search the set and click one. It saves on the click and
+  stays until you change it.
+
+Moving the strip alone changes nothing until you pick something.
+
+**Remote**, for repos and bare projects:
+
+- **Origin**, with its URL under it and **Set origin** or **Change origin**.
+  Accepts `https://`, `git@` and `ssh://` URLs. Existing branches keep their
+  names.
+- **Default branch**: what origin calls its default branch.
+- **Account**, shown when the origin is on a host Tori knows: the account
+  Tori uses for this repo's pull requests and checks. It is kept per remote,
+  so every project that shares this origin shares it. With no account added
+  for the host, **Add an account** opens Settings > Hosts. With more than one,
+  pick the one this repo uses.
+
+### Worktrees
+
+Bare projects only. What every new worktree gets:
+
+- **Setup command**, and whether **Agents started over the socket wait for
+  it**. See [A setup command for new worktrees](/docs/git/worktrees-and-branches/#a-setup-command-for-new-worktrees).
+- **Shared files**, with the shared folder's path and a refresh button. Each
+  entry says how many worktrees have it linked, how many are missing it and
+  how many hold a copy of their own, with a warning triangle while anything
+  is missing. See [Shared in worktrees](/docs/git/shared-files/).
+
+### Agents
+
+**Allowed agents** limits which agents and accounts may start or resume a
+session here: **Every agent**, or **Only selected** and tick the pairs. The
+line beside **Save** counts what is allowed. See
+[Limiting agents per project](/docs/agents/accounts-and-usage/#limiting-agents-per-project).
+
+**Remembered per worktree** is a table of the agent, model, effort and mode a
+chat last picked in each worktree still on disk, which the next chat in that
+worktree starts on. A new worktree starts on your defaults. **Forget all**
+clears every pick under the project, including ones left by worktrees you
+have since removed.
+
+**Autopilot contract**: while autopilot is on, the heading carries an
+**Autopilot on** badge and the project's
+[contract](/docs/automation/autopilot/#per-project-contract) is here: **How
+work ships**, **How far it goes**, **Picking up work**, **Workers run on**,
+and its **Issue sources** as one card per source, saved with **Save sources**.
+A change made anywhere else, in Settings or by an agent over the socket, shows
+here at once. While autopilot is off, a card says so and the contract is
+hidden.
+
+### Tooling
+
+Everything about tools that run or check the project's own code. When the
+project is not trusted, **Tooling** in the rail carries a warning dot.
+
+**Trust** decides whether language servers, debuggers and formatters that run
+the project's own code may start. See [Project trust](/docs/reference/security/#project-trust).
+
+- **Not trusted**: a warning card with **Trust**.
+- **Trusted**, with **Revoke**.
+- **Trusted** through a folder above the project, when you trusted a parent
+  folder rather than the project. That entry covers every project under it,
+  so it is not revoked from here: **Open trusted projects** takes you to the
+  list in Settings > Projects.
+
+**Verification commands**: the commands that count as a check for the
+[verification badge](/docs/reference/security/#what-counts-as-a-check), one
+per line. The heading says whether the project uses the **Built-in list** or
+its **Project's own list**, and the line under the field says what saving
+will do. **Save** makes the field the project's own list. **Reset to
+defaults** fills the field with the built-in list, and **Save** after it goes
+back to the built-in list.
+
+**Workspace settings**, for repos and folders: whether the repo has its own
+`.tori/settings.json`, the keys it sets as chips, and **Open file**, which
+closes the dialog and opens the file in the editor. The list updates when
+you save the file. A bare project has one such file per worktree, so it has
+no Workspace settings here.
+
+## Not trusted, in the sidebar
+
+Every project that is not trusted shows a shield mark at the right end of its
+sidebar row. Hover it for what is off, and click it to open the project's
+settings on **Tooling**, where **Trust** turns it on.
+
+## Settings > Projects
+
+Settings > **Projects** lists every project Tori found, with its space and
+whether it is trusted. Clicking a row opens that project's settings dialog
+over Settings. Nothing per project is edited in Settings itself.
+
+Below the list, **Trusted projects** keeps the full trust list, with a
+search, **Revoke** and **Revoke all**. It also holds trusted folders that
+are not projects Tori found, such as a parent folder you trusted.
+
+<Aside type="note" title="Where the old menu items went">
+
+**Worktree settings**, **Agents**, **Verification commands** and **Change
+icon** are no longer in the project menu. They are the Worktrees, Agents,
+Tooling and General sections of this dialog. **Set origin** and **Change
+origin** stay in the menu, and are also under General.
+
+</Aside>
