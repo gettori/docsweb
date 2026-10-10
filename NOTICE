@@ -16,6 +16,9 @@ Kept in this repository under their own licence:
   Catppuccin Mocha       src/app/theme/palettes   Catppuccin          MIT
   Rose Pine Dawn         src/app/theme/palettes   Rose Pine           MIT
   Tokyo Night            src/app/theme/palettes   Folke Lemaitre      Apache 2.0
+  Font Awesome Free 6.7.2 brand icons
+                         src/app/brandIcons.ts,   Fonticons, Inc.     CC BY 4.0
+                         src/packs/platformIcons.ts
 
 Fetched at install, not kept in this repository (see package.json and
 pnpm-lock.yaml for exact versions; each keeps its own licence):
