@@ -33,29 +33,30 @@ const verified = pack.verified_against && pack.verified_on ? `${pack.verified_ag
     )
   }
   {pack.kind === "agents" && <span class="tier">{chat(pack).pill}</span>}
-  <span class="spacer"></span>
-  {newerThanRelease(pack.min_tori) && <p class="newer">Needs Tori {shortVersion(pack.min_tori)} or newer</p>}
-  {!onMac(pack) && <p class="na">Not available on macOS</p>}
-  <div class="foot">
-    <span class="marks">
+  <div class="end">
+    {newerThanRelease(pack.min_tori) && <p class="newer">Needs Tori {shortVersion(pack.min_tori)} or newer</p>}
+    {!onMac(pack) && <p class="na">Not available on macOS</p>}
+    <div class="foot">
+      <span class="marks">
+        {
+          PLATFORMS.map((p) => {
+            const ok = pack.platforms.includes(p.key);
+            return (
+              <span class:list={["mark", { off: !ok }]} title={ok ? p.name : `${p.name} not supported`}>
+                {p.mark}
+              </span>
+            );
+          })
+        }
+      </span>
       {
-        PLATFORMS.map((p) => {
-          const ok = pack.platforms.includes(p.key);
-          return (
-            <span class:list={["mark", { off: !ok }]} title={ok ? p.name : `${p.name} not supported`}>
-              {p.mark}
-            </span>
-          );
-        })
+        verified && (
+          <span class="verified" title="Verified against">
+            {verified}
+          </span>
+        )
       }
-    </span>
-    {
-      verified && (
-        <span class="verified" title="Verified against">
-          {verified}
-        </span>
-      )
-    }
+    </div>
   </div>
 </a>
 
@@ -64,7 +65,6 @@ const verified = pack.verified_against && pack.verified_on ? `${pack.verified_ag
     display: flex;
     flex-direction: column;
     gap: 14px;
-    min-height: 200px;
     padding: 18px;
     border-radius: 12px;
     border: 1px solid var(--hair);
@@ -134,8 +134,11 @@ const verified = pack.verified_against && pack.verified_on ? `${pack.verified_ag
     font-size: 12.5px;
     color: var(--muted);
   }
-  .spacer {
-    flex: 1;
+  .end {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: auto;
   }
   .newer,
   .na {
