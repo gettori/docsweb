@@ -88,12 +88,16 @@ Moving the strip alone changes nothing until you pick something.
 
 Bare projects only. What every new worktree gets:
 
-- **Setup command**, and whether **Agents started over the socket wait for
-  it**. See [A setup command for new worktrees](/docs/git/worktrees-and-branches/#a-setup-command-for-new-worktrees).
-- **Shared files**, with the shared folder's path and a refresh button. Each
-  entry says how many worktrees have it linked, how many are missing it and
-  how many hold a copy of their own, with a warning triangle while anything
-  is missing. See [Shared in worktrees](/docs/git/shared-files/).
+- **Setup** holds the **Setup command**, and whether **Agents started over
+  the socket wait for it**. See [A setup command for new worktrees](/docs/git/worktrees-and-branches/#a-setup-command-for-new-worktrees).
+- **Shared files**, with the shared folder's path and a refresh button in its
+  heading. The list on the left says, for each entry, how many worktrees have
+  it linked, how many are missing it and how many hold a copy of their own,
+  with a warning triangle while anything is missing. Pick one and the right
+  side lists its worktrees, each with a state pill and **Link** or
+  **Unlink**, plus **Link into N worktrees**, **Stop sharing** and **Delete
+  entry** for the whole entry. With no worktrees yet, a card says so. See
+  [Shared in worktrees](/docs/git/shared-files/).
 
 ### Agents
 
