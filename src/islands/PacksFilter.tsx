@@ -1,13 +1,14 @@
 import { createEffect, createSignal, For, onMount, Show, type JSX } from "solid-js";
 import s from "./PacksFilter.module.css";
 
-type Kind = "all" | "lsp" | "dap" | "formatters" | "themes" | "agents";
+type Kind = "all" | "agents" | "lsp" | "dap" | "linters" | "formatters" | "themes";
 
 const TABS: { kind: Kind; label: string; noun: [string, string] }[] = [
   { kind: "all", label: "All", noun: ["pack", "packs"] },
   { kind: "agents", label: "Agents", noun: ["agent", "agents"] },
   { kind: "lsp", label: "Languages", noun: ["language", "languages"] },
   { kind: "dap", label: "Debuggers", noun: ["debugger", "debuggers"] },
+  { kind: "linters", label: "Linters", noun: ["linter", "linters"] },
   { kind: "formatters", label: "Formatters", noun: ["formatter", "formatters"] },
   { kind: "themes", label: "Themes", noun: ["theme", "themes"] },
 ];

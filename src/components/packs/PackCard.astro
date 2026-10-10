@@ -2,7 +2,7 @@
 import type { Pack } from "../../packs/catalog";
 import AgentIcon from "./AgentIcon.astro";
 import { PLATFORM_ICONS } from "../../packs/platformIcons";
-import { PLATFORMS, chat, kindName, newerThanRelease, onMac, palette, shortDay, shortVersion, splitVerified } from "../../packs/view";
+import { PLATFORMS, chat, kindName, newerThanRelease, onMac, palette, shortDay, shortVersion, splitVerified, tabOf } from "../../packs/view";
 
 interface Props {
   pack: Pack;
@@ -12,7 +12,7 @@ const { pack } = Astro.props;
 const verified = pack.verified_against && pack.verified_on ? { ...splitVerified(pack.verified_against), day: shortDay(pack.verified_on) } : null;
 ---
 
-<a class="card" href={`/packs/${pack.kind}/${pack.id}/`} data-pack data-kind={pack.kind} data-name={`${pack.label} ${pack.id}`.toLowerCase()}>
+<a class="card" href={`/packs/${pack.kind}/${pack.id}/`} data-pack data-kind={tabOf(pack)} data-name={`${pack.label} ${pack.id}`.toLowerCase()}>
   <div class="top">
     <span>{kindName(pack)}</span>
     {pack.bundled && <span class="bundled">Bundled</span>}

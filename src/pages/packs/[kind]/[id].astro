@@ -27,6 +27,7 @@ import {
   sourceUrl,
   strong,
   tabLabel,
+  tabOf,
   usage,
 } from "../../../packs/view";
 
@@ -57,7 +58,7 @@ const preview = () =>
     <nav class="crumbs" aria-label="Breadcrumb">
       <a href="/packs/">Packs</a>
       <span class="sep">/</span>
-      <a href={`/packs/?kind=${pack.kind}`}>{tabLabel(pack.kind)}</a>
+      <a href={`/packs/?kind=${tabOf(pack)}`}>{tabLabel(pack)}</a>
       <span class="sep">/</span>
       <span class="mono">{pack.id}</span>
     </nav>

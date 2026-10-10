@@ -5,12 +5,9 @@ import Nav from "../../components/home/Nav.astro";
 import Footer from "../../components/home/Footer.astro";
 import PackCard from "../../components/packs/PackCard.astro";
 import PacksFilter from "../../islands/PacksFilter";
-import { TABS } from "../../packs/view";
+import { byTab, tabOf } from "../../packs/view";
 
-const order = TABS.map((t) => t.kind as string);
-const packs = (await getCollection("packs"))
-  .map((e) => e.data)
-  .sort((a, b) => order.indexOf(a.kind) - order.indexOf(b.kind) || a.label.localeCompare(b.label));
+const packs = (await getCollection("packs")).map((e) => e.data).sort(byTab);
 ---
 
 <Base title="Packs | Tori" description="Language servers, debuggers, formatters, themes and agents for Tori, one config file each.">
@@ -20,7 +17,7 @@ const packs = (await getCollection("packs"))
     <p class="lead">
       A pack is one config file that teaches Tori a language server, debugger, formatter, theme or agent. Adding one writes the file and runs nothing.
     </p>
-    <PacksFilter client:load packs={packs.map((p) => ({ kind: p.kind, name: `${p.label} ${p.id}`.toLowerCase() }))}>
+    <PacksFilter client:load packs={packs.map((p) => ({ kind: tabOf(p), name: `${p.label} ${p.id}`.toLowerCase() }))}>
       <div class="grid">
         {packs.map((pack) => <PackCard pack={pack} />)}
       </div>
