@@ -32,7 +32,15 @@ const packs = (await getCollection("packs")).map((e) => e.data).sort(byTab);
 </Base>
 
 <style>
+  /* A short tab or filter result would leave the footer floating mid-page. */
+  :global(body) {
+    display: flex;
+    flex-direction: column;
+    min-height: 100svh;
+  }
   .main {
+    flex: 1;
+    width: 100%;
     max-width: var(--max);
     margin: 0 auto;
     padding: calc(clamp(40px, 7vw, 96px) + 64px) var(--pad-x) 64px;
