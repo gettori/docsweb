@@ -2,7 +2,7 @@
 import AgentSvg from "./AgentSvg.astro";
 import { SITE } from "../../config";
 
-const ORBIT = ["claude", "codex", "gemini", "opencode", "copilot", "kimi", "pi"];
+const ORBIT = ["claude", "codex", "opencode", "copilot", "pi"];
 
 // Real `tori` syntax and output (src-tauri/src/cli.rs): full session ids, the
 // seven column table, `ask` printing only the answer, `spawn` printing the id.
@@ -29,7 +29,7 @@ const CLI: [string, string, number][] = [
         <div class="text">
           <div class="title">Bring your own agent</div>
           <div class="body">
-            Claude, Codex, OpenCode, Gemini, Copilot, Kimi and Pi come bundled. Anything that speaks ACP is a short TOML file, and any other CLI runs in a terminal tab with the same status dot.
+            Claude, Codex, OpenCode, Copilot and Pi come bundled. Anything that speaks ACP is a short TOML file, and any other CLI runs in a terminal tab with the same status dot.
           </div>
         </div>
         <div class="orbit">
@@ -39,8 +39,8 @@ const CLI: [string, string, number][] = [
           <div class="spin">
             {
               ORBIT.map((a, i) => (
-                <div class="arm" style={`transform:rotate(${Math.round((i * 360) / 7)}deg) translateX(110px)`}>
-                  <div style={`transform:rotate(-${Math.round((i * 360) / 7)}deg)`}>
+                <div class="arm" style={`transform:rotate(${Math.round((i * 360) / ORBIT.length)}deg) translateX(110px)`}>
+                  <div style={`transform:rotate(-${Math.round((i * 360) / ORBIT.length)}deg)`}>
                     <div class={`planet p-${a}`}>
                       <AgentSvg agent={a} size={18} />
                     </div>
