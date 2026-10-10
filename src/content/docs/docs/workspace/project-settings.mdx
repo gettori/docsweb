@@ -6,9 +6,10 @@ description: One dialog per project that holds everything set for that project, 
 import Aside from "../../../../components/docs/Aside.astro";
 
 Everything Tori keeps for one project lives in that project's settings
-dialog. It is drawn like Settings, with the project's name, icon, space and
-path at the top where Settings has its title, and a rail of sections down the
-left.
+dialog. It is drawn like Settings: the project's icon and name where Settings
+has its title, a search box and the sections down the left, and a **This
+project** card at the foot of the rail with the project's space, layout and
+path, and a **Copy path** button.
 
 ## Open it
 
@@ -27,6 +28,13 @@ left.
 Escape, the close button or a click outside closes it. While it is open, the
 project's row in the sidebar has an accent outline, so you can see where it
 sits.
+
+## Search
+
+The box at the top of the rail searches every section at once, the way
+Settings' search does. Each section shows only what matches, under its name,
+and a group whose title matches shows whole. Click a section in the rail, or
+press Escape, to clear the search. A second Escape closes the dialog.
 
 ## What saves when
 
@@ -54,8 +62,8 @@ sections as a bare project.
 
 **Project** shows the **Layout**, read from disk and not edited here: **Git
 repo**, **Bare repo with worktrees**, **Bare repo, no worktrees yet** or
-**Folder without git**. The name, space and path are at the top of the
-dialog, with a **Copy path** button beside the path.
+**Folder without git**. The space, layout and path are in the **This
+project** card at the foot of the rail.
 
 **Icon** sets what the project wears in the sidebar. The card at the top
 previews it beside a sample sidebar row at the size it is shown, and the strip
