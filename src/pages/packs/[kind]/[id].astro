@@ -72,6 +72,7 @@ const preview = () =>
       <span>{kindName(pack)}</span>
       <span>by <strong>{pack.contributor.name}</strong> <a href={`https://github.com/${pack.contributor.github}`}>@{pack.contributor.github}</a></span>
       <span class="mono small">{pack.license}</span>
+      {pack.appearance && <span class="bundled tone">{pack.appearance === "dark" ? "Dark" : "Light"}</span>}
       {pack.bundled && <span class="bundled">Bundled</span>}
     </div>
 
@@ -313,6 +314,10 @@ const preview = () =>
     color: var(--accent-text);
     font-size: 12px;
     font-weight: 500;
+  }
+  .tone {
+    background: var(--glass-hi);
+    color: var(--muted);
   }
   .trust {
     max-width: 780px;
