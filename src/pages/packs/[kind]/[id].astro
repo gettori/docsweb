@@ -167,7 +167,9 @@ const preview = () =>
 
         <section>
           <h2>Use it without the catalog</h2>
-          <p class="text">Download the file and drop it in the folder below. Tori loads it the next time it starts.</p>
+          <p class="text">
+            Download the file and drop it in the folder below. {pack.kind === "themes" ? "Tori picks up a theme at once." : "Tori loads it the next time it starts."}
+          </p>
           <div class="use">
             <a class="download" href={filePath(pack)} download={fileName(pack)}>
               Download file <span class="mono">{fileName(pack)}</span>
