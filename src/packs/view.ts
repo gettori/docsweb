@@ -57,6 +57,14 @@ export const PLATFORMS = [
   { key: "windows", name: "Windows" },
 ] as const;
 
+// "@astrojs/language-server 2.17.2" -> the tool, which a card may cut short,
+// and the version it was measured at, which it keeps. Anything after the first
+// version ("with pi-acp 0.0.33") is left to the pack's page.
+export function splitVerified(text: string) {
+  const m = text.match(/^(.*?)\s*(\bv?\d[\w.+-]*)/);
+  return m ? { tool: m[1], version: m[2] } : { tool: "", version: text };
+}
+
 const day = (iso: string, opts: Intl.DateTimeFormatOptions) =>
   new Intl.DateTimeFormat("en", { ...opts, timeZone: "UTC" }).format(new Date(`${iso}T00:00:00Z`));
 export const shortDay = (iso: string) => day(iso, { month: "short", day: "numeric" });

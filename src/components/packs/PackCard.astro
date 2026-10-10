@@ -2,14 +2,14 @@
 import type { Pack } from "../../packs/catalog";
 import AgentIcon from "./AgentIcon.astro";
 import { PLATFORM_ICONS } from "../../packs/platformIcons";
-import { PLATFORMS, chat, kindName, newerThanRelease, onMac, palette, shortDay, shortVersion } from "../../packs/view";
+import { PLATFORMS, chat, kindName, newerThanRelease, onMac, palette, shortDay, shortVersion, splitVerified } from "../../packs/view";
 
 interface Props {
   pack: Pack;
 }
 
 const { pack } = Astro.props;
-const verified = pack.verified_against && pack.verified_on ? `${pack.verified_against} · ${shortDay(pack.verified_on)}` : null;
+const verified = pack.verified_against && pack.verified_on ? { ...splitVerified(pack.verified_against), day: shortDay(pack.verified_on) } : null;
 ---
 
 <a class="card" href={`/packs/${pack.kind}/${pack.id}/`} data-pack data-kind={pack.kind} data-name={`${pack.label} ${pack.id}`.toLowerCase()}>
@@ -51,8 +51,11 @@ const verified = pack.verified_against && pack.verified_on ? `${pack.verified_ag
       </span>
       {
         verified && (
-          <span class="verified" title="Verified against">
-            {verified}
+          <span class="verified" title={`Verified against ${pack.verified_against}`}>
+            {verified.tool && <span class="tool">{verified.tool}</span>}
+            <span class="keep">
+              {verified.version} · {verified.day}
+            </span>
           </span>
         )
       }
@@ -174,14 +177,22 @@ const verified = pack.verified_against && pack.verified_on ? `${pack.verified_ag
     fill: currentColor;
   }
   .verified {
+    display: flex;
     flex: 1;
+    justify-content: flex-end;
+    gap: 1ch;
     min-width: 0;
-    overflow: hidden;
-    text-align: right;
-    text-overflow: ellipsis;
     white-space: nowrap;
     font-family: var(--mono);
     font-size: 11.5px;
     color: var(--faint);
+  }
+  .tool {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .keep {
+    flex: none;
   }
 </style>
