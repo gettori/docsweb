@@ -5,11 +5,11 @@ type Kind = "all" | "lsp" | "dap" | "formatters" | "themes" | "agents";
 
 const TABS: { kind: Kind; label: string; noun: [string, string] }[] = [
   { kind: "all", label: "All", noun: ["pack", "packs"] },
+  { kind: "agents", label: "Agents", noun: ["agent", "agents"] },
   { kind: "lsp", label: "Languages", noun: ["language", "languages"] },
   { kind: "dap", label: "Debuggers", noun: ["debugger", "debuggers"] },
   { kind: "formatters", label: "Formatters", noun: ["formatter", "formatters"] },
   { kind: "themes", label: "Themes", noun: ["theme", "themes"] },
-  { kind: "agents", label: "Agents", noun: ["agent", "agents"] },
 ];
 
 // The cards are static HTML, so search engines and Pagefind see every one;

@@ -2,11 +2,11 @@ import { readFileSync } from "node:fs";
 import type { Pack } from "./catalog";
 
 export const TABS = [
+  { kind: "agents", label: "Agents" },
   { kind: "lsp", label: "Languages" },
   { kind: "dap", label: "Debuggers" },
   { kind: "formatters", label: "Formatters" },
   { kind: "themes", label: "Themes" },
-  { kind: "agents", label: "Agents" },
 ] as const;
 
 export const tabLabel = (kind: Pack["kind"]) => TABS.find((t) => t.kind === kind)!.label;
