@@ -54,6 +54,44 @@ worktree when the work reaches it.
 
 </Aside>
 
+## Move a worktree into a Topic
+
+Work that started as an ordinary worktree can join a Topic as it is. Right-click
+the worktree in Spaces and pick **Move to topic...**. The dialog has two tabs:
+
+- **Existing**: pick a Topic and click **Move to Topic**.
+- **New**: the New Topic form with this worktree already in it, shown as **This
+  worktree, on** its branch. **Branch** starts as the worktree's branch. Pick
+  any other repositories and click **Create Topic**. The dialog opens on New
+  when there are no Topics yet, and switching tabs keeps what you typed.
+
+Nothing in git changes: no checkout, no new branch, no commit, and the
+worktree's changes stay where they are. The worktree keeps its own branch even
+when the Topic's is a different one, and its member row then reads **On** that
+branch. Its pull request is looked up on that branch too.
+
+Some moves are refused, and the dialog says why before you click: the first
+two as soon as it opens, the last once you pick that Topic.
+
+| The dialog says | Why |
+| --- | --- |
+| **... is not on a branch** | The worktree has a detached `HEAD` |
+| **... is on main, the repository's default branch** | The default branch's checkout is what references read, so it stays out of Topics |
+| **... is already in ... with a worktree** | That Topic already has a worktree in the repository. Only that Topic is refused |
+
+If the Topic already has the repository as a reference, the worktree takes its
+place, **Replaces the reference to** the repository, and tabs open on the
+reference follow it.
+
+A moved worktree's branch is yours, not the Topic's, so Tori never deletes it:
+its menu has no **Remove worktree...**, a missing folder offers no
+**Recreate**, and removing the repository or deleting the Topic offers the
+worktree without the branch. **Remove repository** is how it leaves.
+
+Once moved, the worktree is listed under its Topic. Spaces lists it only with
+**Show Topic worktrees in Spaces** on, see
+[Topic worktrees in Spaces](#topic-worktrees-in-spaces).
+
 ## References
 
 A reference row wears a lock, says how far behind its remote it is, and warns
@@ -91,7 +129,7 @@ Right-click a member:
 | --- | --- |
 | **Pull** | References only: fast-forward the checkout |
 | **Create worktree** | Turns a reference into a worktree on the Topic's branch |
-| **Remove worktree...** | Turns a worktree back into a reference. The branch is kept, so creating the worktree again picks the work back up |
+| **Remove worktree...** | Turns a worktree back into a reference. The branch is kept, so creating the worktree again picks the work back up. Not offered for a [moved worktree](#move-a-worktree-into-a-topic) |
 | **Rename...** | Changes the name shown for the member. The repository and its worktree stay as they are |
 | **Move up**, **Move down** | Reorders the members |
 | **Remove repository** | Takes the repository out of the Topic, and asks what to do with its worktree. A Topic needs one member, so the last cannot be removed; delete the Topic instead |
@@ -105,8 +143,9 @@ repositories and the branches are still there.
 
 Then a second question, **webhooks is deleted. Its worktrees?**, asks per
 member whether to **Keep** or **Remove** its worktree, with a **Delete
-webhooks** checkbox for the branch too. **Keep all** keeps every worktree on
-disk.
+webhooks** checkbox for the branch too. A [moved worktree](#move-a-worktree-into-a-topic)
+has no checkbox: its branch is never deleted. **Keep all** keeps every worktree
+on disk.
 
 ## One workspace
 
